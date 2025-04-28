@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { API_ENDPOINTS } from "@/lib/config";
 import { apiRequest } from "@/lib/queryClient";
@@ -81,6 +81,7 @@ const ProductManager: React.FC = () => {
   const [currentProduct, setCurrentProduct] = useState<Product | null>(null);
   const [photoUrls, setPhotoUrls] = useState<string[]>([]);
   const [newPhotoUrl, setNewPhotoUrl] = useState("");
+  const [isUploading, setIsUploading] = useState(false);
 
   // Load products data
   const { data, isLoading, error } = useQuery({
