@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { API_ENDPOINTS } from "@/lib/config";
 import { apiRequest } from "@/lib/queryClient";
@@ -7,7 +7,15 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { InsertGallery, Gallery } from "@shared/schema";
-
+import {
+  FormDescription,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import {
   Card,
   CardContent,
@@ -24,23 +32,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Plus,
-  Trash2,
-  Loader2,
-  Image as ImageIcon,
-  Eye,
-} from "lucide-react";
-import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -50,8 +41,17 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import GalleryModal from "@/components/gallery/GalleryModal";
+import {
+  Plus,
+  Trash2,
+  Loader2,
+  Image as ImageIcon,
+  Eye,
+} from "lucide-react";
 
 const formSchema = z.object({
   photo: z.string().min(5, "Photo URL is required"),
@@ -64,10 +64,13 @@ type FormValues = z.infer<typeof formSchema>;
 const GalleryManager: React.FC = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<Gallery | null>(null);
+  const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
 
   // Load gallery data
   const { data, isLoading, error } = useQuery<{ gallery: Gallery[] }>({
@@ -86,9 +89,6 @@ const GalleryManager: React.FC = () => {
   });
 
   // Reset form and state for add dialog
-  const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
-  const [isUploading, setIsUploading] = useState(false);
-
   const openAddDialog = () => {
     form.reset({
       photo: "",
@@ -108,6 +108,34 @@ const GalleryManager: React.FC = () => {
   const openPreviewModal = (item: Gallery) => {
     setSelectedItem(item);
     setIsPreviewModalOpen(true);
+  };
+
+  // Handle file upload
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setIsUploading(true);
+      
+      // Read file as data URL
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const dataUrl = e.target?.result as string;
+        setUploadedImageUrl(dataUrl);
+        form.setValue('photo', dataUrl);
+        setIsUploading(false);
+      };
+      
+      reader.onerror = () => {
+        toast({
+          title: "Error",
+          description: "Failed to read file. Please try again.",
+          variant: "destructive",
+        });
+        setIsUploading(false);
+      };
+      
+      reader.readAsDataURL(file);
+    }
   };
 
   // Create gallery item mutation
@@ -270,112 +298,84 @@ const GalleryManager: React.FC = () => {
           <DialogHeader>
             <DialogTitle>Add New Gallery Photo</DialogTitle>
             <DialogDescription>
-              Enter the URL and description for the new gallery photo.
+              Upload a photo or enter a URL and description for the new gallery item.
             </DialogDescription>
           </DialogHeader>
 
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onAddSubmit)} className="space-y-6">
-              <div className="grid gap-4">
-                <div className="space-y-2">
-                  <h3 className="text-md font-medium">Upload Photo</h3>
-                  <div className="flex flex-col gap-4">
-                    <div className="border rounded-lg p-4">
-                      <FormField
-                        control={form.control}
-                        name="fileUpload"
-                        render={({ field: { value, onChange, ...fieldProps } }) => (
-                          <FormItem>
-                            <FormLabel>Select Image File</FormLabel>
-                            <FormControl>
-                              <Input 
-                                type="file" 
-                                accept="image/*"
-                                onChange={(e) => {
-                                  const file = e.target.files?.[0];
-                                  if (file) {
-                                    setIsUploading(true);
-                                    
-                                    // Create FormData for file upload
-                                    const formData = new FormData();
-                                    formData.append('file', file);
-                                    
-                                    // Read file as data URL to show preview
-                                    const reader = new FileReader();
-                                    reader.onload = (e) => {
-                                      const dataUrl = e.target?.result as string;
-                                      setUploadedImageUrl(dataUrl);
-                                      form.setValue('photo', dataUrl);
-                                      setIsUploading(false);
-                                    };
-                                    reader.readAsDataURL(file);
-                                  }
-                                }}
-                                {...fieldProps}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      
-                      {uploadedImageUrl && (
-                        <div className="mt-4">
-                          <p className="text-sm font-medium mb-2">Preview:</p>
-                          <div className="relative aspect-square w-full max-w-[200px] overflow-hidden rounded-md border">
-                            <img 
-                              src={uploadedImageUrl} 
-                              alt="Preview" 
-                              className="h-full w-full object-cover"
-                            />
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                    
-                    <div className="relative">
-                      <div className="absolute inset-0 flex items-center">
-                        <span className="w-full border-t" />
-                      </div>
-                      <div className="relative flex justify-center text-xs">
-                        <span className="bg-background px-2 text-muted-foreground">or use a URL</span>
+              <div className="space-y-4">
+                {/* File Upload Section */}
+                <div className="border rounded-lg p-4">
+                  <FormLabel className="block mb-2">Upload Image</FormLabel>
+                  <Input 
+                    type="file" 
+                    accept="image/*"
+                    ref={fileInputRef}
+                    disabled={isUploading || isOperationInProgress}
+                    onChange={handleFileUpload}
+                  />
+                  <FormDescription className="mt-2 text-xs">
+                    Upload an image file (JPG, PNG) directly from your computer
+                  </FormDescription>
+                  
+                  {uploadedImageUrl && (
+                    <div className="mt-4">
+                      <p className="text-sm text-gray-500 mb-2">Preview:</p>
+                      <div className="aspect-square w-full max-w-xs mx-auto overflow-hidden rounded-lg border">
+                        <img 
+                          src={uploadedImageUrl} 
+                          alt="Uploaded preview" 
+                          className="h-full w-full object-cover"
+                        />
                       </div>
                     </div>
-                    
-                    <FormField
-                      control={form.control}
-                      name="photo"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Photo URL</FormLabel>
-                          <FormControl>
-                            <Input 
-                              placeholder="https://example.com/image.jpg" 
-                              {...field} 
-                              disabled={isUploading}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                  )}
+                </div>
+                
+                <div className="relative my-4">
+                  <div className="absolute inset-0 flex items-center">
+                    <span className="w-full border-t" />
+                  </div>
+                  <div className="relative flex justify-center text-xs">
+                    <span className="bg-background px-2 text-muted-foreground">or use a URL</span>
                   </div>
                 </div>
+                
+                {/* URL Input */}
+                <FormField
+                  control={form.control}
+                  name="photo"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Photo URL</FormLabel>
+                      <FormControl>
+                        <Input 
+                          placeholder="Enter photo URL" 
+                          {...field} 
+                          disabled={isUploading || !!uploadedImageUrl}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                {/* Description Field */}
+                <FormField
+                  control={form.control}
+                  name="description"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Description</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter photo description" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
-
-              <FormField
-                control={form.control}
-                name="description"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Description</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Enter photo description" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
 
               <DialogFooter>
                 <Button
@@ -406,10 +406,7 @@ const GalleryManager: React.FC = () => {
       </Dialog>
 
       {/* Delete Confirmation Dialog */}
-      <AlertDialog
-        open={isDeleteDialogOpen}
-        onOpenChange={setIsDeleteDialogOpen}
-      >
+      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
