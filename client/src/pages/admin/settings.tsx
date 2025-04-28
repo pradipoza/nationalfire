@@ -42,7 +42,7 @@ import {
   Loader2,
   Info,
 } from "lucide-react";
-import { aboutStats } from "@shared/schema";
+import { aboutStats, AboutStats } from "@shared/schema";
 
 // Form schema for user profile
 const profileSchema = z.object({
@@ -108,7 +108,9 @@ const AdminSettings: React.FC = () => {
 
   // Load about stats
   const { data: aboutStatsData, isLoading: isLoadingAboutStats } = 
-    useQuery({ queryKey: [API_ENDPOINTS.ABOUT_STATS] });
+    useQuery<{ aboutStats: AboutStats }>({ 
+      queryKey: [API_ENDPOINTS.ABOUT_STATS] 
+    });
 
   // Set about stats form values when data is loaded
   React.useEffect(() => {

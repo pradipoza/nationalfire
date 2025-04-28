@@ -70,7 +70,7 @@ const GalleryManager: React.FC = () => {
   const [selectedItem, setSelectedItem] = useState<Gallery | null>(null);
 
   // Load gallery data
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading, error } = useQuery<{ gallery: Gallery[] }>({
     queryKey: [API_ENDPOINTS.GALLERY],
   });
 
@@ -158,7 +158,12 @@ const GalleryManager: React.FC = () => {
 
   // Handle form submission for add gallery item
   const onAddSubmit = (values: FormValues) => {
-    createGalleryItemMutation.mutateAsync(values);
+    // Make sure we send only the necessary data to the API
+    const galleryData: InsertGallery = {
+      photo: values.photo,
+      description: values.description
+    };
+    createGalleryItemMutation.mutateAsync(galleryData);
   };
 
   // Handle gallery item deletion
@@ -207,7 +212,7 @@ const GalleryManager: React.FC = () => {
             </div>
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {galleryItems.map((item) => (
+              {galleryItems.map((item: Gallery) => (
                 <div
                   key={item.id}
                   className="group relative aspect-square overflow-hidden rounded-lg bg-gray-100 border"
