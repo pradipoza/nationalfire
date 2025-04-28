@@ -1,0 +1,161 @@
+import { Switch, Route } from "wouter";
+import { queryClient } from "./lib/queryClient";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { Toaster } from "@/components/ui/toaster";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import NotFound from "@/pages/not-found";
+import { AuthProvider } from "@/context/AuthContext";
+
+// Layouts
+import MainLayout from "@/layouts/MainLayout";
+import AdminLayout from "@/layouts/AdminLayout";
+
+// Public Pages
+import Home from "@/pages/home";
+import ProductsPage from "@/pages/products";
+import ProductDetail from "@/pages/products/[id]";
+import BlogsPage from "@/pages/blogs";
+import BlogDetail from "@/pages/blogs/[id]";
+import GalleryPage from "@/pages/gallery";
+import AboutPage from "@/pages/about";
+import ContactPage from "@/pages/contact";
+
+// Admin Pages
+import AdminLogin from "@/pages/admin/login";
+import AdminDashboard from "@/pages/admin/dashboard";
+import AdminProducts from "@/pages/admin/products";
+import AdminBlogs from "@/pages/admin/blogs";
+import AdminGallery from "@/pages/admin/gallery";
+import AdminContact from "@/pages/admin/contact";
+import AdminSettings from "@/pages/admin/settings";
+
+function Router() {
+  return (
+    <Switch>
+      {/* Public Routes */}
+      <Route path="/">
+        {() => (
+          <MainLayout>
+            <Home />
+          </MainLayout>
+        )}
+      </Route>
+      <Route path="/products">
+        {() => (
+          <MainLayout>
+            <ProductsPage />
+          </MainLayout>
+        )}
+      </Route>
+      <Route path="/products/:id">
+        {(params) => (
+          <MainLayout>
+            <ProductDetail id={params.id} />
+          </MainLayout>
+        )}
+      </Route>
+      <Route path="/blogs">
+        {() => (
+          <MainLayout>
+            <BlogsPage />
+          </MainLayout>
+        )}
+      </Route>
+      <Route path="/blogs/:id">
+        {(params) => (
+          <MainLayout>
+            <BlogDetail id={params.id} />
+          </MainLayout>
+        )}
+      </Route>
+      <Route path="/gallery">
+        {() => (
+          <MainLayout>
+            <GalleryPage />
+          </MainLayout>
+        )}
+      </Route>
+      <Route path="/about">
+        {() => (
+          <MainLayout>
+            <AboutPage />
+          </MainLayout>
+        )}
+      </Route>
+      <Route path="/contact">
+        {() => (
+          <MainLayout>
+            <ContactPage />
+          </MainLayout>
+        )}
+      </Route>
+      
+      {/* Admin Routes */}
+      <Route path="/admin/login">
+        <AdminLogin />
+      </Route>
+      <Route path="/admin">
+        {() => (
+          <AdminLayout>
+            <AdminDashboard />
+          </AdminLayout>
+        )}
+      </Route>
+      <Route path="/admin/products">
+        {() => (
+          <AdminLayout>
+            <AdminProducts />
+          </AdminLayout>
+        )}
+      </Route>
+      <Route path="/admin/blogs">
+        {() => (
+          <AdminLayout>
+            <AdminBlogs />
+          </AdminLayout>
+        )}
+      </Route>
+      <Route path="/admin/gallery">
+        {() => (
+          <AdminLayout>
+            <AdminGallery />
+          </AdminLayout>
+        )}
+      </Route>
+      <Route path="/admin/contact">
+        {() => (
+          <AdminLayout>
+            <AdminContact />
+          </AdminLayout>
+        )}
+      </Route>
+      <Route path="/admin/settings">
+        {() => (
+          <AdminLayout>
+            <AdminSettings />
+          </AdminLayout>
+        )}
+      </Route>
+      
+      {/* Fallback to 404 */}
+      <Route>
+        <NotFound />
+      </Route>
+    </Switch>
+  );
+}
+
+function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Router />
+        </TooltipProvider>
+      </AuthProvider>
+    </QueryClientProvider>
+  );
+}
+
+export default App;
