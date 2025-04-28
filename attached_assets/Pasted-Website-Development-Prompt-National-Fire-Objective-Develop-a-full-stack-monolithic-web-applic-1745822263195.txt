@@ -1,0 +1,117 @@
+Website Development Prompt: National Fire
+
+Objective:
+Develop a full-stack, monolithic web application for a company specializing in fire trucks, ambulances, electric buses, and their parts.
+
+Website Structure
+Main Pages (6 total):
+1. Home
+2. Products
+3. Blogs
+4. Gallery
+5. About Us
+6. Contact Us
+
+Admin Dashboard
+The website will include a secure admin dashboard where the admin (website owner) can manage all content dynamically.
+
+Admin Capabilities:
+- Dashboard overview with basic analytics (site visits, inquiries, etc.)
+- Full content management for:
+  - Products
+  - Blogs
+  - Gallery
+  - Contact Information
+- Admin account settings: Update username, email, password
+
+Dynamic Content Management
+Products
+- Admin can add/edit/delete:
+  - Product Name
+  - Product Description
+  - Product Photo(s)
+- Display:
+  - Each product on the Products page will show:
+    - "Inquiry Now" button → Sends an inquiry email to the admin.
+    - "See Details" button → Redirects to a dedicated product details page showing full information and photos for that product.
+
+Blogs
+- Admin can add/edit/delete:
+  - Blog Title
+  - Blog Content
+  - Multiple Photos (with placement options: Top, Middle, Bottom)
+- Display:
+  - The Blogs page will show a summary preview of each blog.
+  - Each blog card will have a "Show More" button:
+    - Clicking it will expand or redirect to show the full blog post with all content and images, designed with attractive, clean layouts.
+
+Gallery
+- Admin can add/delete:
+  - Photo
+  - Photo Description
+- Display:
+  - Interactive, modern gallery grid with dynamic content management.
+
+Contact Us
+- Admin can dynamically update:
+  - Company Address (with Google Maps integration)
+  - Phone Number
+  - Email Address
+  - Social Media Links (Facebook, Instagram, WhatsApp, LinkedIn)
+- Visitor Inquiry Form:
+  - Fields: Name, Email, Message
+  - Submissions send an email inquiry to the admin’s registered email address.
+
+Static + Semi-Dynamic Pages
+About Us
+- Two Sections:
+  1. Company Introduction:
+     - Company Description + Photos
+  2. Experience Section:
+     - Dynamic number counters for:
+       - Years of Experience
+       - Customers Served
+       - Products Supplied (quantity per product)
+     - Popular Customers (use placeholder data for now)
+
+Home Page
+- Navbar with links to all main pages
+- Hero Section (design based on hometop.png)
+  - "Call Now" button redirects to WhatsApp
+- Dynamic Preview Blocks (90vh height) for:
+  - Products
+  - Blogs
+  - Gallery
+  - About Us
+  - Contact Us
+- Each block will have a brief preview with a "Read More" link that redirects to the full page.
+- Custom-designed footer.
+
+Technical Requirements
+Backend
+- Node.js with Express.js
+- MongoDB Database
+- Monolithic Architecture (Single codebase for frontend and backend)
+
+Admin Features
+- Secure authentication system
+- Full dynamic content management
+- Analytics dashboard
+- Admin profile management
+
+Other Notes
+- Use placeholder images from the path:
+  E:\webdevelopment\national fire website\public\images
+- Use garbage/dummy content where admin will replace manually.
+- Full mobile responsiveness and modern UI/UX best practices.
+
+Summary of Key Functionalities
+| Feature | Description |
+|:---|:---|
+| Dynamic Pages | Products, Blogs, Gallery, Contact Us |
+| Static + Semi-Dynamic Pages | About Us, Home |
+| Product Page | "Inquiry Now" (Email) + "See Details" (Dedicated Page) |
+| Blog Page | "Show More" button for full blog reading |
+| Admin Dashboard | Content management + analytics + profile settings |
+| Inquiry System | WhatsApp redirect + Email inquiry |
+
