@@ -10,12 +10,21 @@ import {
   insertContactInfoSchema, 
   insertInquirySchema, 
   insertAboutStatsSchema,
-  insertAnalyticsSchema 
+  insertAnalyticsSchema, 
+  User
 } from "@shared/schema";
 import session from "express-session";
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
 import MemoryStore from "memorystore";
+import bcrypt from "bcrypt";
+
+// Add TypeScript declaration for req.user
+declare global {
+  namespace Express {
+    interface User extends User {}
+  }
+}
 
 export async function registerRoutes(app: Express): Promise<Server> {
   const httpServer = createServer(app);
@@ -45,11 +54,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!user) {
         return done(null, false, { message: 'Incorrect username.' });
       }
-      if (user.password !== password) { // In production, use proper password hashing
+      
+      // Use bcrypt to compare passwords since we're storing hashed passwords
+      const isPasswordValid = await bcrypt.compare(password, user.password);
+      
+      if (!isPasswordValid) {
         return done(null, false, { message: 'Incorrect password.' });
       }
       return done(null, user);
     } catch (err) {
+      console.error("Auth error:", err);
       return done(err);
     }
   }));
