@@ -54,8 +54,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import GalleryModal from "@/components/gallery/GalleryModal";
 
 const formSchema = z.object({
-  photo: z.string().url("Must be a valid URL"),
+  photo: z.string().min(5, "Photo URL is required"),
   description: z.string().min(2, "Description must be at least 2 characters"),
+  fileUpload: z.any().optional()
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -85,11 +86,15 @@ const GalleryManager: React.FC = () => {
   });
 
   // Reset form and state for add dialog
+  const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+
   const openAddDialog = () => {
     form.reset({
       photo: "",
       description: "",
     });
+    setUploadedImageUrl(null);
     setIsAddDialogOpen(true);
   };
 
@@ -266,19 +271,92 @@ const GalleryManager: React.FC = () => {
 
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onAddSubmit)} className="space-y-6">
-              <FormField
-                control={form.control}
-                name="photo"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Photo URL</FormLabel>
-                    <FormControl>
-                      <Input placeholder="https://example.com/image.jpg" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <div className="grid gap-4">
+                <div className="space-y-2">
+                  <h3 className="text-md font-medium">Upload Photo</h3>
+                  <div className="flex flex-col gap-4">
+                    <div className="border rounded-lg p-4">
+                      <FormField
+                        control={form.control}
+                        name="fileUpload"
+                        render={({ field: { value, onChange, ...fieldProps } }) => (
+                          <FormItem>
+                            <FormLabel>Select Image File</FormLabel>
+                            <FormControl>
+                              <Input 
+                                type="file" 
+                                accept="image/*"
+                                onChange={(e) => {
+                                  const file = e.target.files?.[0];
+                                  if (file) {
+                                    setIsUploading(true);
+                                    
+                                    // Create FormData for file upload
+                                    const formData = new FormData();
+                                    formData.append('file', file);
+                                    
+                                    // Read file as data URL to show preview
+                                    const reader = new FileReader();
+                                    reader.onload = (e) => {
+                                      const dataUrl = e.target?.result as string;
+                                      setUploadedImageUrl(dataUrl);
+                                      form.setValue('photo', dataUrl);
+                                      setIsUploading(false);
+                                    };
+                                    reader.readAsDataURL(file);
+                                  }
+                                }}
+                                {...fieldProps}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      
+                      {uploadedImageUrl && (
+                        <div className="mt-4">
+                          <p className="text-sm font-medium mb-2">Preview:</p>
+                          <div className="relative aspect-square w-full max-w-[200px] overflow-hidden rounded-md border">
+                            <img 
+                              src={uploadedImageUrl} 
+                              alt="Preview" 
+                              className="h-full w-full object-cover"
+                            />
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                    
+                    <div className="relative">
+                      <div className="absolute inset-0 flex items-center">
+                        <span className="w-full border-t" />
+                      </div>
+                      <div className="relative flex justify-center text-xs">
+                        <span className="bg-background px-2 text-muted-foreground">or use a URL</span>
+                      </div>
+                    </div>
+                    
+                    <FormField
+                      control={form.control}
+                      name="photo"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Photo URL</FormLabel>
+                          <FormControl>
+                            <Input 
+                              placeholder="https://example.com/image.jpg" 
+                              {...field} 
+                              disabled={isUploading}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </div>
+              </div>
 
               <FormField
                 control={form.control}

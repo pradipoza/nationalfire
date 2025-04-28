@@ -1,5 +1,6 @@
 import React from "react";
 import { useAuth } from "@/context/AuthContext";
+import { useQuery } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -107,7 +108,7 @@ const AdminSettings: React.FC = () => {
 
   // Load about stats
   const { data: aboutStatsData, isLoading: isLoadingAboutStats } = 
-    useQueryClient().getQueryState([API_ENDPOINTS.ABOUT_STATS]);
+    useQuery({ queryKey: [API_ENDPOINTS.ABOUT_STATS] });
 
   // Set about stats form values when data is loaded
   React.useEffect(() => {

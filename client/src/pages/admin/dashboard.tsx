@@ -82,7 +82,11 @@ const AdminDashboard: React.FC = () => {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Button variant="outline" className="h-24 flex flex-col items-center justify-center space-y-2">
+              <Button 
+                variant="outline" 
+                className="h-24 flex flex-col items-center justify-center space-y-2"
+                onClick={() => navigate('/admin/products')}
+              >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M5 12h14"/>
                   <path d="M12 5v14"/>
@@ -90,7 +94,11 @@ const AdminDashboard: React.FC = () => {
                 <span>Add New Product</span>
               </Button>
               
-              <Button variant="outline" className="h-24 flex flex-col items-center justify-center space-y-2">
+              <Button 
+                variant="outline" 
+                className="h-24 flex flex-col items-center justify-center space-y-2"
+                onClick={() => navigate('/admin/blogs')}
+              >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-secondary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M12 20h9"/>
                   <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/>
