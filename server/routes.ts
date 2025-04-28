@@ -10,8 +10,8 @@ import {
   insertContactInfoSchema, 
   insertInquirySchema, 
   insertAboutStatsSchema,
-  insertAnalyticsSchema, 
-  User
+  insertAnalyticsSchema,
+  User as AppUser
 } from "@shared/schema";
 import session from "express-session";
 import passport from "passport";
@@ -22,7 +22,15 @@ import bcrypt from "bcrypt";
 // Add TypeScript declaration for req.user
 declare global {
   namespace Express {
-    interface User extends User {}
+    // Define User interface using properties from our schema
+    interface User {
+      id: number;
+      username: string;
+      email: string;
+      password: string;
+      createdAt: Date | null;
+      // Add any other properties your user has
+    }
   }
 }
 
