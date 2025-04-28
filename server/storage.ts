@@ -8,6 +8,9 @@ import {
   aboutStats, type AboutStats, type InsertAboutStats,
   analytics, type Analytics, type InsertAnalytics
 } from "@shared/schema";
+import { db } from "./db";
+import { eq, desc, sql } from "drizzle-orm";
+import bcrypt from "bcrypt";
 
 export interface IStorage {
   // Users
@@ -56,327 +59,418 @@ export interface IStorage {
   getPageVisits(limit?: number): Promise<Analytics[]>;
 }
 
-export class MemStorage implements IStorage {
-  private users: Map<number, User>;
-  private products: Map<number, Product>;
-  private blogs: Map<number, Blog>;
-  private galleryItems: Map<number, Gallery>;
-  private contactInfoData: ContactInfo | undefined;
-  private inquiriesData: Map<number, Inquiry>;
-  private aboutStatsData: AboutStats | undefined;
-  private analyticsData: Map<number, Analytics>;
-  
-  private currentUserId: number;
-  private currentProductId: number;
-  private currentBlogId: number;
-  private currentGalleryId: number;
-  private currentInquiryId: number;
-  private currentAnalyticsId: number;
-
-  constructor() {
-    this.users = new Map();
-    this.products = new Map();
-    this.blogs = new Map();
-    this.galleryItems = new Map();
-    this.inquiriesData = new Map();
-    this.analyticsData = new Map();
-    
-    this.currentUserId = 1;
-    this.currentProductId = 1;
-    this.currentBlogId = 1;
-    this.currentGalleryId = 1;
-    this.currentInquiryId = 1;
-    this.currentAnalyticsId = 1;
-    
-    // Initialize with default contact info
-    this.contactInfoData = {
-      id: 1,
-      address: "123 Emergency Avenue, Industrial Zone, Phoenix, AZ 85001, USA",
-      phone: "+1 (555) 123-4567",
-      email: "info@nationalfire.com",
-      facebook: "https://facebook.com/nationalfire",
-      instagram: "https://instagram.com/nationalfire",
-      whatsapp: "https://wa.me/15551234567",
-      linkedin: "https://linkedin.com/company/nationalfire",
-      updatedAt: new Date()
-    };
-    
-    // Initialize with default about stats
-    this.aboutStatsData = {
-      id: 1,
-      yearsExperience: 35,
-      customersServed: 500,
-      productsSupplied: 1200,
-      customersTestimonials: [],
-      updatedAt: new Date()
-    };
-    
-    // Add an initial admin user
-    this.createUser({
-      username: "admin",
-      password: "admin123", // This would be hashed in a real app
-      email: "admin@nationalfire.com"
-    });
-    
-    // Add some initial product data
-    this.createProduct({
-      name: "Premium Fire Truck",
-      description: "High-capacity fire truck with advanced water delivery systems and rescue equipment.",
-      photos: ["https://images.unsplash.com/photo-1516550893885-985da0253db1?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80"]
-    });
-    
-    this.createProduct({
-      name: "Advanced Ambulance",
-      description: "State-of-the-art ambulance with complete medical equipment and efficient response capabilities.",
-      photos: ["https://images.unsplash.com/photo-1587843618590-26adcc8dfc1a?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80"]
-    });
-    
-    this.createProduct({
-      name: "Electric Transport Bus",
-      description: "Eco-friendly electric bus designed for efficient urban transportation with zero emissions.",
-      photos: ["https://images.unsplash.com/photo-1619252584172-a83a949b6efd?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80"]
-    });
-    
-    // Add some initial blog data
-    this.createBlog({
-      title: "Fire Safety Innovations for 2023",
-      content: "Discover the latest technological advancements in fire safety equipment that are transforming emergency response capabilities...",
-      photos: [
-        { url: "https://images.unsplash.com/photo-1471039497385-b6d6ba609f9c?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80", position: "top" }
-      ]
-    });
-    
-    this.createBlog({
-      title: "The Future of Electric Emergency Vehicles",
-      content: "As cities worldwide embrace sustainability, electric emergency vehicles are becoming increasingly viable. Learn about the benefits and challenges...",
-      photos: [
-        { url: "https://images.unsplash.com/photo-1590332763583-aede28e83de6?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80", position: "top" }
-      ]
-    });
-    
-    this.createBlog({
-      title: "Advanced Medical Equipment in Modern Ambulances",
-      content: "Today's ambulances are equipped with sophisticated medical technology that can mean the difference between life and death. Explore the latest innovations...",
-      photos: [
-        { url: "https://images.unsplash.com/photo-1635166304271-3281e472ad24?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80", position: "top" }
-      ]
-    });
-    
-    // Add some initial gallery data
-    this.createGalleryItem({
-      photo: "https://images.unsplash.com/photo-1508522670557-664ed933c05d?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80",
-      description: "Fire truck responding to an emergency call"
-    });
-    
-    this.createGalleryItem({
-      photo: "https://images.unsplash.com/photo-1577201235656-480760500af5?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80",
-      description: "Advanced ambulance with emergency lights"
-    });
-    
-    this.createGalleryItem({
-      photo: "https://images.unsplash.com/photo-1622555048949-37728973c635?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80",
-      description: "Electric city bus with zero emissions"
-    });
-    
-    this.createGalleryItem({
-      photo: "https://images.unsplash.com/photo-1525438160292-a4a860951216?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80",
-      description: "Specialized fire fighting equipment"
-    });
-  }
-
+export class DatabaseStorage implements IStorage {
   // Users
   async getUser(id: number): Promise<User | undefined> {
-    return this.users.get(id);
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user;
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(
-      (user) => user.username === username,
-    );
+    const [user] = await db.select().from(users).where(eq(users.username, username));
+    return user;
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
-    const id = this.currentUserId++;
-    const user: User = { ...insertUser, id, createdAt: new Date() };
-    this.users.set(id, user);
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(insertUser.password, 10);
+    
+    const [user] = await db
+      .insert(users)
+      .values({
+        username: insertUser.username,
+        password: hashedPassword,
+        email: insertUser.email
+      })
+      .returning();
     return user;
   }
   
   async updateUser(id: number, updates: Partial<InsertUser>): Promise<User | undefined> {
-    const user = await this.getUser(id);
-    if (!user) return undefined;
+    // Only update values that are provided
+    const updateValues: any = {};
     
-    const updatedUser = { ...user, ...updates };
-    this.users.set(id, updatedUser);
+    if (updates.username) updateValues.username = updates.username;
+    if (updates.email) updateValues.email = updates.email;
+    
+    // If updating password, hash it
+    if (updates.password) {
+      updateValues.password = await bcrypt.hash(updates.password, 10);
+    }
+    
+    const [updatedUser] = await db
+      .update(users)
+      .set(updateValues)
+      .where(eq(users.id, id))
+      .returning();
     return updatedUser;
   }
 
   // Products
   async getProducts(): Promise<Product[]> {
-    return Array.from(this.products.values());
+    return db.select().from(products);
   }
   
   async getProduct(id: number): Promise<Product | undefined> {
-    return this.products.get(id);
+    const [product] = await db.select().from(products).where(eq(products.id, id));
+    return product;
   }
   
   async createProduct(product: InsertProduct): Promise<Product> {
-    const id = this.currentProductId++;
-    const now = new Date();
-    const newProduct: Product = { ...product, id, createdAt: now, updatedAt: now };
-    this.products.set(id, newProduct);
+    const [newProduct] = await db
+      .insert(products)
+      .values({
+        name: product.name,
+        description: product.description,
+        photos: product.photos || []
+      })
+      .returning();
     return newProduct;
   }
   
   async updateProduct(id: number, updates: Partial<InsertProduct>): Promise<Product | undefined> {
-    const product = await this.getProduct(id);
-    if (!product) return undefined;
+    // Only update values that are provided
+    const updateValues: any = { updatedAt: new Date() };
     
-    const updatedProduct = { ...product, ...updates, updatedAt: new Date() };
-    this.products.set(id, updatedProduct);
+    if (updates.name) updateValues.name = updates.name;
+    if (updates.description) updateValues.description = updates.description;
+    if (updates.photos) updateValues.photos = updates.photos;
+    
+    const [updatedProduct] = await db
+      .update(products)
+      .set(updateValues)
+      .where(eq(products.id, id))
+      .returning();
     return updatedProduct;
   }
   
   async deleteProduct(id: number): Promise<boolean> {
-    return this.products.delete(id);
+    const [deleted] = await db
+      .delete(products)
+      .where(eq(products.id, id))
+      .returning({ id: products.id });
+    return !!deleted;
   }
   
   // Blogs
   async getBlogs(): Promise<Blog[]> {
-    return Array.from(this.blogs.values());
+    return db.select().from(blogs);
   }
   
   async getBlog(id: number): Promise<Blog | undefined> {
-    return this.blogs.get(id);
+    const [blog] = await db.select().from(blogs).where(eq(blogs.id, id));
+    return blog;
   }
   
   async createBlog(blog: InsertBlog): Promise<Blog> {
-    const id = this.currentBlogId++;
-    const now = new Date();
-    const newBlog: Blog = { ...blog, id, createdAt: now, updatedAt: now };
-    this.blogs.set(id, newBlog);
+    const [newBlog] = await db
+      .insert(blogs)
+      .values({
+        title: blog.title,
+        content: blog.content,
+        photos: blog.photos || []
+      })
+      .returning();
     return newBlog;
   }
   
   async updateBlog(id: number, updates: Partial<InsertBlog>): Promise<Blog | undefined> {
-    const blog = await this.getBlog(id);
-    if (!blog) return undefined;
+    // Only update values that are provided
+    const updateValues: any = { updatedAt: new Date() };
     
-    const updatedBlog = { ...blog, ...updates, updatedAt: new Date() };
-    this.blogs.set(id, updatedBlog);
+    if (updates.title) updateValues.title = updates.title;
+    if (updates.content) updateValues.content = updates.content;
+    if (updates.photos) updateValues.photos = updates.photos;
+    
+    const [updatedBlog] = await db
+      .update(blogs)
+      .set(updateValues)
+      .where(eq(blogs.id, id))
+      .returning();
     return updatedBlog;
   }
   
   async deleteBlog(id: number): Promise<boolean> {
-    return this.blogs.delete(id);
+    const [deleted] = await db
+      .delete(blogs)
+      .where(eq(blogs.id, id))
+      .returning({ id: blogs.id });
+    return !!deleted;
   }
   
   // Gallery
   async getGalleryItems(): Promise<Gallery[]> {
-    return Array.from(this.galleryItems.values());
+    return db.select().from(gallery);
   }
   
   async getGalleryItem(id: number): Promise<Gallery | undefined> {
-    return this.galleryItems.get(id);
+    const [item] = await db.select().from(gallery).where(eq(gallery.id, id));
+    return item;
   }
   
   async createGalleryItem(galleryItem: InsertGallery): Promise<Gallery> {
-    const id = this.currentGalleryId++;
-    const newGalleryItem: Gallery = { ...galleryItem, id, createdAt: new Date() };
-    this.galleryItems.set(id, newGalleryItem);
-    return newGalleryItem;
+    const [newItem] = await db
+      .insert(gallery)
+      .values({
+        photo: galleryItem.photo,
+        description: galleryItem.description
+      })
+      .returning();
+    return newItem;
   }
   
   async deleteGalleryItem(id: number): Promise<boolean> {
-    return this.galleryItems.delete(id);
+    const [deleted] = await db
+      .delete(gallery)
+      .where(eq(gallery.id, id))
+      .returning({ id: gallery.id });
+    return !!deleted;
   }
   
   // Contact Info
   async getContactInfo(): Promise<ContactInfo | undefined> {
-    return this.contactInfoData;
+    const [info] = await db.select().from(contactInfo);
+    return info;
   }
   
   async updateContactInfo(updates: Partial<InsertContactInfo>): Promise<ContactInfo | undefined> {
-    if (!this.contactInfoData) return undefined;
+    const existingInfo = await this.getContactInfo();
     
-    this.contactInfoData = { 
-      ...this.contactInfoData, 
-      ...updates, 
-      updatedAt: new Date() 
-    };
+    if (!existingInfo) {
+      // Create if doesn't exist
+      const [newInfo] = await db
+        .insert(contactInfo)
+        .values({
+          address: updates.address || "123 Emergency Avenue, Phoenix, AZ",
+          phone: updates.phone || "+1 (555) 123-4567",
+          email: updates.email || "info@nationalfire.com",
+          facebook: updates.facebook,
+          instagram: updates.instagram,
+          whatsapp: updates.whatsapp,
+          linkedin: updates.linkedin
+        })
+        .returning();
+      return newInfo;
+    }
     
-    return this.contactInfoData;
+    // Only update values that are provided
+    const updateValues: any = { updatedAt: new Date() };
+    
+    if (updates.address) updateValues.address = updates.address;
+    if (updates.phone) updateValues.phone = updates.phone;
+    if (updates.email) updateValues.email = updates.email;
+    if (updates.facebook !== undefined) updateValues.facebook = updates.facebook;
+    if (updates.instagram !== undefined) updateValues.instagram = updates.instagram;
+    if (updates.whatsapp !== undefined) updateValues.whatsapp = updates.whatsapp;
+    if (updates.linkedin !== undefined) updateValues.linkedin = updates.linkedin;
+    
+    const [updatedInfo] = await db
+      .update(contactInfo)
+      .set(updateValues)
+      .where(eq(contactInfo.id, existingInfo.id))
+      .returning();
+    return updatedInfo;
   }
   
   // Inquiries
   async getInquiries(): Promise<Inquiry[]> {
-    return Array.from(this.inquiriesData.values());
+    return db.select().from(inquiries);
   }
   
   async getInquiry(id: number): Promise<Inquiry | undefined> {
-    return this.inquiriesData.get(id);
+    const [inquiry] = await db.select().from(inquiries).where(eq(inquiries.id, id));
+    return inquiry;
   }
   
   async createInquiry(inquiry: InsertInquiry): Promise<Inquiry> {
-    const id = this.currentInquiryId++;
-    const newInquiry: Inquiry = { 
-      ...inquiry, 
-      id, 
-      createdAt: new Date(),
-      read: false
-    };
-    this.inquiriesData.set(id, newInquiry);
+    const [newInquiry] = await db
+      .insert(inquiries)
+      .values({
+        name: inquiry.name,
+        email: inquiry.email,
+        message: inquiry.message,
+        productId: inquiry.productId || null
+      })
+      .returning();
     return newInquiry;
   }
   
   async markInquiryAsRead(id: number): Promise<Inquiry | undefined> {
-    const inquiry = await this.getInquiry(id);
-    if (!inquiry) return undefined;
-    
-    const updatedInquiry = { ...inquiry, read: true };
-    this.inquiriesData.set(id, updatedInquiry);
+    const [updatedInquiry] = await db
+      .update(inquiries)
+      .set({ read: true })
+      .where(eq(inquiries.id, id))
+      .returning();
     return updatedInquiry;
   }
   
   async deleteInquiry(id: number): Promise<boolean> {
-    return this.inquiriesData.delete(id);
+    const [deleted] = await db
+      .delete(inquiries)
+      .where(eq(inquiries.id, id))
+      .returning({ id: inquiries.id });
+    return !!deleted;
   }
   
   // About Stats
   async getAboutStats(): Promise<AboutStats | undefined> {
-    return this.aboutStatsData;
+    const [stats] = await db.select().from(aboutStats);
+    return stats;
   }
   
   async updateAboutStats(updates: Partial<InsertAboutStats>): Promise<AboutStats | undefined> {
-    if (!this.aboutStatsData) return undefined;
+    const existingStats = await this.getAboutStats();
     
-    this.aboutStatsData = { 
-      ...this.aboutStatsData, 
-      ...updates, 
-      updatedAt: new Date() 
-    };
+    if (!existingStats) {
+      // Create if doesn't exist
+      const [newStats] = await db
+        .insert(aboutStats)
+        .values({
+          yearsExperience: updates.yearsExperience || 35,
+          customersServed: updates.customersServed || 500,
+          productsSupplied: updates.productsSupplied || 1200,
+          customersTestimonials: updates.customersTestimonials || []
+        })
+        .returning();
+      return newStats;
+    }
     
-    return this.aboutStatsData;
+    // Only update values that are provided
+    const updateValues: any = { updatedAt: new Date() };
+    
+    if (updates.yearsExperience !== undefined) updateValues.yearsExperience = updates.yearsExperience;
+    if (updates.customersServed !== undefined) updateValues.customersServed = updates.customersServed;
+    if (updates.productsSupplied !== undefined) updateValues.productsSupplied = updates.productsSupplied;
+    if (updates.customersTestimonials) updateValues.customersTestimonials = updates.customersTestimonials;
+    
+    const [updatedStats] = await db
+      .update(aboutStats)
+      .set(updateValues)
+      .where(eq(aboutStats.id, existingStats.id))
+      .returning();
+    return updatedStats;
   }
   
   // Analytics
   async logPageVisit(pageVisit: InsertAnalytics): Promise<Analytics> {
-    const id = this.currentAnalyticsId++;
-    const visit: Analytics = { 
-      ...pageVisit, 
-      id, 
-      timestamp: new Date() 
-    };
-    this.analyticsData.set(id, visit);
+    const [visit] = await db
+      .insert(analytics)
+      .values({
+        pageVisited: pageVisit.pageVisited,
+        ipAddress: pageVisit.ipAddress || null
+      })
+      .returning();
     return visit;
   }
   
   async getPageVisits(limit?: number): Promise<Analytics[]> {
-    const visits = Array.from(this.analyticsData.values())
-      .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
+    if (limit) {
+      return db
+        .select()
+        .from(analytics)
+        .orderBy(desc(analytics.timestamp))
+        .limit(limit);
+    }
     
-    return limit ? visits.slice(0, limit) : visits;
+    return db
+      .select()
+      .from(analytics)
+      .orderBy(desc(analytics.timestamp));
   }
 }
 
-export const storage = new MemStorage();
+// Initialize seed data if needed
+async function initializeSeedData() {
+  try {
+    // Check if there are any users already in the database
+    const userResults = await db.select().from(users);
+    
+    if (userResults.length === 0) {
+      console.log("Initializing seed data...");
+      const storage = new DatabaseStorage();
+      
+      // Create admin user
+      await storage.createUser({
+        username: "admin",
+        password: "admin123",
+        email: "admin@nationalfire.com"
+      });
+      
+      // Create initial products
+      await storage.createProduct({
+        name: "Premium Fire Truck",
+        description: "High-capacity fire truck with advanced water delivery systems and rescue equipment.",
+        photos: ["https://images.unsplash.com/photo-1516550893885-985da0253db1?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80"]
+      });
+      
+      await storage.createProduct({
+        name: "Advanced Ambulance",
+        description: "State-of-the-art ambulance with complete medical equipment and efficient response capabilities.",
+        photos: ["https://images.unsplash.com/photo-1587843618590-26adcc8dfc1a?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80"]
+      });
+      
+      await storage.createProduct({
+        name: "Electric Transport Bus",
+        description: "Eco-friendly electric bus designed for efficient urban transportation with zero emissions.",
+        photos: ["https://images.unsplash.com/photo-1619252584172-a83a949b6efd?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80"]
+      });
+      
+      // Create initial blogs
+      await storage.createBlog({
+        title: "Fire Safety Innovations for 2023",
+        content: "Discover the latest technological advancements in fire safety equipment that are transforming emergency response capabilities...",
+        photos: [
+          { url: "https://images.unsplash.com/photo-1471039497385-b6d6ba609f9c?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80", position: "top" }
+        ]
+      });
+      
+      await storage.createBlog({
+        title: "The Future of Electric Emergency Vehicles",
+        content: "As cities worldwide embrace sustainability, electric emergency vehicles are becoming increasingly viable. Learn about the benefits and challenges...",
+        photos: [
+          { url: "https://images.unsplash.com/photo-1590332763583-aede28e83de6?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80", position: "top" }
+        ]
+      });
+      
+      // Create initial gallery items
+      await storage.createGalleryItem({
+        photo: "https://images.unsplash.com/photo-1508522670557-664ed933c05d?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80",
+        description: "Fire truck responding to an emergency call"
+      });
+      
+      await storage.createGalleryItem({
+        photo: "https://images.unsplash.com/photo-1577201235656-480760500af5?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80",
+        description: "Advanced ambulance with emergency lights"
+      });
+      
+      // Create initial contact info
+      await storage.updateContactInfo({
+        address: "123 Emergency Avenue, Industrial Zone, Phoenix, AZ 85001, USA",
+        phone: "+1 (555) 123-4567",
+        email: "info@nationalfire.com",
+        facebook: "https://facebook.com/nationalfire",
+        instagram: "https://instagram.com/nationalfire",
+        whatsapp: "https://wa.me/15551234567",
+        linkedin: "https://linkedin.com/company/nationalfire"
+      });
+      
+      // Create initial about stats
+      await storage.updateAboutStats({
+        yearsExperience: 35,
+        customersServed: 500,
+        productsSupplied: 1200,
+        customersTestimonials: []
+      });
+      
+      console.log("Seed data initialization complete!");
+    }
+  } catch (error) {
+    console.error("Error initializing seed data:", error);
+  }
+}
+
+// Create an instance of DatabaseStorage
+export const storage = new DatabaseStorage();
+
+// Initialize seed data
+initializeSeedData().catch(console.error);

@@ -1,4 +1,5 @@
 import { pgTable, text, serial, integer, boolean, timestamp, uuid, json } from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 import { nanoid } from "nanoid";
@@ -149,3 +150,15 @@ export const insertAnalyticsSchema = createInsertSchema(analytics).omit({
 
 export type InsertAnalytics = z.infer<typeof insertAnalyticsSchema>;
 export type Analytics = typeof analytics.$inferSelect;
+
+// Relations
+export const productsRelations = relations(products, ({ many }) => ({
+  inquiries: many(inquiries),
+}));
+
+export const inquiriesRelations = relations(inquiries, ({ one }) => ({
+  product: one(products, {
+    fields: [inquiries.productId],
+    references: [products.id],
+  }),
+}));
