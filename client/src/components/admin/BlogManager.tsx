@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { API_ENDPOINTS } from "@/lib/config";
 import { apiRequest } from "@/lib/queryClient";
@@ -96,6 +96,8 @@ const BlogManager: React.FC = () => {
   const [photos, setPhotos] = useState<PhotoItem[]>([]);
   const [newPhotoUrl, setNewPhotoUrl] = useState("");
   const [newPhotoPosition, setNewPhotoPosition] = useState<"top" | "middle" | "bottom">("top");
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Load blogs data
   const { data, isLoading, error } = useQuery({
@@ -170,6 +172,46 @@ const BlogManager: React.FC = () => {
     setPhotos(updatedPhotos);
     form.setValue("photos", updatedPhotos, { shouldValidate: true });
     setNewPhotoUrl("");
+  };
+  
+  // Handle file upload
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    setIsUploading(true);
+    
+    // Read file as data URL
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const dataUrl = e.target?.result as string;
+      
+      const newPhoto: PhotoItem = {
+        url: dataUrl,
+        position: newPhotoPosition,
+      };
+      
+      const updatedPhotos = [...photos, newPhoto];
+      setPhotos(updatedPhotos);
+      form.setValue("photos", updatedPhotos, { shouldValidate: true });
+      setIsUploading(false);
+      
+      // Clear the file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    };
+    
+    reader.onerror = () => {
+      toast({
+        title: "Error",
+        description: "Failed to read file. Please try again.",
+        variant: "destructive",
+      });
+      setIsUploading(false);
+    };
+    
+    reader.readAsDataURL(file);
   };
 
   // Remove photo from the list
