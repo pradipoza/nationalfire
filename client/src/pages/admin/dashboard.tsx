@@ -6,9 +6,11 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { BellRing, Info } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
+import { useLocation } from "wouter";
 
 const AdminDashboard: React.FC = () => {
   const { user } = useAuth();
+  const [, navigate] = useLocation();
 
   return (
     <div>
@@ -106,7 +108,11 @@ const AdminDashboard: React.FC = () => {
                 <span>Create New Blog</span>
               </Button>
               
-              <Button variant="outline" className="h-24 flex flex-col items-center justify-center space-y-2">
+              <Button 
+                variant="outline" 
+                className="h-24 flex flex-col items-center justify-center space-y-2"
+                onClick={() => navigate('/admin/gallery')}
+              >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-green-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/>
                   <circle cx="12" cy="13" r="3"/>
@@ -114,7 +120,11 @@ const AdminDashboard: React.FC = () => {
                 <span>Upload Gallery Image</span>
               </Button>
               
-              <Button variant="outline" className="h-24 flex flex-col items-center justify-center space-y-2">
+              <Button 
+                variant="outline" 
+                className="h-24 flex flex-col items-center justify-center space-y-2"
+                onClick={() => navigate('/admin/contact')}
+              >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-amber-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M3 9a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z"/>
                   <path d="M21 9V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v2"/>
