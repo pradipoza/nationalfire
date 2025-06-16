@@ -70,7 +70,7 @@
   }
 
   .hero-section {
-    background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+    background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.7)), url('https://media.istockphoto.com/id/901429536/id/foto/truk-pemadam-kebakaran-new-york.jpg?s=2048x2048&w=is&k=20&c=hrs5L8-WdX4PaypMCniPx1HZdhRua7iU3Oc7VPtFmDw=');
     background-size: cover;
     background-position: center;
     @apply min-h-screen flex items-center;
