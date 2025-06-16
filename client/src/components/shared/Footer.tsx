@@ -33,7 +33,7 @@ const Footer: React.FC = () => {
                 </svg>
               </div>
               <span className="text-xl font-bold text-white font-montserrat">
-                NATIONAL FIRE
+                NATIONAL FIRE PVT LTD
               </span>
             </div>
             <p className="text-gray-400 mb-6">
@@ -174,7 +174,7 @@ const Footer: React.FC = () => {
         
         <div className="border-t border-gray-700 pt-6 text-center">
           <p className="text-gray-400">
-            &copy; {new Date().getFullYear()} National Fire. All rights reserved.
+            &copy; {new Date().getFullYear()} National Fire Pvt Ltd. All rights reserved.
           </p>
         </div>
       </div>

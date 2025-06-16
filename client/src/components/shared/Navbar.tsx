@@ -61,7 +61,7 @@ const Navbar: React.FC = () => {
                   </svg>
                 </div>
                 <span className="text-xl font-bold text-gray-900 font-montserrat">
-                  NATIONAL FIRE
+                  NATIONAL FIRE PVT LTD
                 </span>
               </div>
             </Link>
