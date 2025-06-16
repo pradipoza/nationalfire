@@ -27,7 +27,6 @@ const CounterSection: React.FC = () => {
           animateValue("years-counter", 0, aboutStats.yearsExperience, 1500);
           animateValue("customers-counter", 0, aboutStats.customersServed, 1500);
           animateValue("products-counter", 0, aboutStats.productsSupplied, 1500);
-          animateValue("countries-counter", 0, 28, 1500); // Hardcoded for now
           setHasAnimated(true);
         }
       });
@@ -66,7 +65,7 @@ const CounterSection: React.FC = () => {
   return (
     <section ref={counterRef} className="counter-section py-16 text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
           <div>
             <div className="text-4xl lg:text-5xl font-bold font-montserrat mb-2">
               {isLoading ? (
@@ -103,18 +102,7 @@ const CounterSection: React.FC = () => {
             </div>
             <p className="text-lg">Vehicles Supplied</p>
           </div>
-          <div>
-            <div className="text-4xl lg:text-5xl font-bold font-montserrat mb-2">
-              {isLoading ? (
-                <Skeleton className="h-12 w-20 mx-auto bg-gray-700" />
-              ) : (
-                <>
-                  <span id="countries-counter">0</span>
-                </>
-              )}
-            </div>
-            <p className="text-lg">Countries Served</p>
-          </div>
+
         </div>
       </div>
     </section>
