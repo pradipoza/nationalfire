@@ -13,9 +13,9 @@ import AdminLayout from "@/layouts/AdminLayout";
 
 // Public Pages
 import Home from "@/pages/home";
-import ProductsPage from "@/pages/products";
+import ProductsPage from "@/pages/products/index";
 import ProductDetail from "@/pages/products/[id]";
-import BlogsPage from "@/pages/blogs";
+import BlogsPage from "@/pages/blogs/index";
 import BlogDetail from "@/pages/blogs/[id]";
 import GalleryPage from "@/pages/gallery";
 import AboutPage from "@/pages/about";

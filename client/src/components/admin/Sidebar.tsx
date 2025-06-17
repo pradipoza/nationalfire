@@ -30,19 +30,18 @@ const SidebarLink: React.FC<{
   const isActive = location === href;
 
   return (
-    <Link href={href}>
-      <a
-        className={cn(
-          "flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors",
-          isActive
-            ? "bg-sidebar-accent text-sidebar-accent-foreground"
-            : "text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground"
-        )}
-        onClick={onClick}
-      >
-        {icon}
-        <span>{children}</span>
-      </a>
+    <Link 
+      href={href}
+      className={cn(
+        "flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors",
+        isActive
+          ? "bg-sidebar-accent text-sidebar-accent-foreground"
+          : "text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground"
+      )}
+      onClick={onClick}
+    >
+      {icon}
+      <span>{children}</span>
     </Link>
   );
 };
@@ -184,11 +183,12 @@ const Sidebar: React.FC = () => {
             {/* User dropdown menu */}
             {showUserMenu && (
               <div className="absolute left-0 right-0 mt-1 p-2 bg-sidebar-accent rounded-md shadow-lg border border-sidebar-border">
-                <Link href="/admin/settings">
-                  <a className="flex items-center gap-2 px-3 py-2 text-sm rounded-md hover:bg-sidebar-background text-sidebar-foreground">
-                    <Settings className="h-4 w-4" />
-                    Settings
-                  </a>
+                <Link 
+                  href="/admin/settings"
+                  className="flex items-center gap-2 px-3 py-2 text-sm rounded-md hover:bg-sidebar-background text-sidebar-foreground"
+                >
+                  <Settings className="h-4 w-4" />
+                  Settings
                 </Link>
                 <button
                   onClick={handleLogout}

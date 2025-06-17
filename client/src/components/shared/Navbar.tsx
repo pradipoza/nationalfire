@@ -88,65 +88,60 @@ const Navbar: React.FC = () => {
 
           {/* Desktop menu */}
           <div className="hidden md:flex md:items-center md:space-x-4">
-            <Link href="/">
-              <a
-                className={cn(
-                  "px-3 py-2 rounded-md text-sm font-medium transition",
-                  isActive("/")
-                    ? "text-gray-900"
-                    : "text-gray-500 hover:text-gray-900 hover:bg-gray-100"
-                )}
-              >
-                Home
-              </a>
+            <Link 
+              href="/"
+              className={cn(
+                "px-3 py-2 rounded-md text-sm font-medium transition",
+                isActive("/")
+                  ? "text-gray-900"
+                  : "text-gray-500 hover:text-gray-900 hover:bg-gray-100"
+              )}
+            >
+              Home
             </Link>
-            <Link href="/products">
-              <a
-                className={cn(
-                  "px-3 py-2 rounded-md text-sm font-medium transition",
-                  isActive("/products")
-                    ? "text-gray-900"
-                    : "text-gray-500 hover:text-gray-900 hover:bg-gray-100"
-                )}
-              >
-                Products
-              </a>
+            <Link 
+              href="/products"
+              className={cn(
+                "px-3 py-2 rounded-md text-sm font-medium transition",
+                isActive("/products")
+                  ? "text-gray-900"
+                  : "text-gray-500 hover:text-gray-900 hover:bg-gray-100"
+              )}
+            >
+              Products
             </Link>
-            <Link href="/blogs">
-              <a
-                className={cn(
-                  "px-3 py-2 rounded-md text-sm font-medium transition",
-                  isActive("/blogs")
-                    ? "text-gray-900"
-                    : "text-gray-500 hover:text-gray-900 hover:bg-gray-100"
-                )}
-              >
-                Blogs
-              </a>
+            <Link 
+              href="/blogs"
+              className={cn(
+                "px-3 py-2 rounded-md text-sm font-medium transition",
+                isActive("/blogs")
+                  ? "text-gray-900"
+                  : "text-gray-500 hover:text-gray-900 hover:bg-gray-100"
+              )}
+            >
+              Blogs
             </Link>
-            <Link href="/gallery">
-              <a
-                className={cn(
-                  "px-3 py-2 rounded-md text-sm font-medium transition",
-                  isActive("/gallery")
-                    ? "text-gray-900"
-                    : "text-gray-500 hover:text-gray-900 hover:bg-gray-100"
-                )}
-              >
-                Gallery
-              </a>
+            <Link 
+              href="/gallery"
+              className={cn(
+                "px-3 py-2 rounded-md text-sm font-medium transition",
+                isActive("/gallery")
+                  ? "text-gray-900"
+                  : "text-gray-500 hover:text-gray-900 hover:bg-gray-100"
+              )}
+            >
+              Gallery
             </Link>
-            <Link href="/about">
-              <a
-                className={cn(
-                  "px-3 py-2 rounded-md text-sm font-medium transition",
-                  isActive("/about")
-                    ? "text-gray-900"
-                    : "text-gray-500 hover:text-gray-900 hover:bg-gray-100"
-                )}
-              >
-                About Us
-              </a>
+            <Link 
+              href="/about"
+              className={cn(
+                "px-3 py-2 rounded-md text-sm font-medium transition",
+                isActive("/about")
+                  ? "text-gray-900"
+                  : "text-gray-500 hover:text-gray-900 hover:bg-gray-100"
+              )}
+            >
+              About Us
             </Link>
             <Link href="/contact">
               <Button
@@ -169,70 +164,66 @@ const Navbar: React.FC = () => {
         )}
       >
         <div className="px-2 pt-2 pb-3 space-y-1">
-          <Link href="/">
-            <a
-              className={cn(
-                "block px-3 py-2 rounded-md text-base font-medium",
-                isActive("/")
-                  ? "text-gray-900"
-                  : "text-gray-500 hover:text-gray-900 hover:bg-gray-100"
-              )}
-            >
-              Home
-            </a>
+          <Link 
+            href="/"
+            className={cn(
+              "block px-3 py-2 rounded-md text-base font-medium",
+              isActive("/")
+                ? "text-gray-900"
+                : "text-gray-500 hover:text-gray-900 hover:bg-gray-100"
+            )}
+          >
+            Home
           </Link>
-          <Link href="/products">
-            <a
-              className={cn(
-                "block px-3 py-2 rounded-md text-base font-medium",
-                isActive("/products")
-                  ? "text-gray-900"
-                  : "text-gray-500 hover:text-gray-900 hover:bg-gray-100"
-              )}
-            >
-              Products
-            </a>
+          <Link 
+            href="/products"
+            className={cn(
+              "block px-3 py-2 rounded-md text-base font-medium",
+              isActive("/products")
+                ? "text-gray-900"
+                : "text-gray-500 hover:text-gray-900 hover:bg-gray-100"
+            )}
+          >
+            Products
           </Link>
-          <Link href="/blogs">
-            <a
-              className={cn(
-                "block px-3 py-2 rounded-md text-base font-medium",
-                isActive("/blogs")
-                  ? "text-gray-900"
-                  : "text-gray-500 hover:text-gray-900 hover:bg-gray-100"
-              )}
-            >
-              Blogs
-            </a>
+          <Link 
+            href="/blogs"
+            className={cn(
+              "block px-3 py-2 rounded-md text-base font-medium",
+              isActive("/blogs")
+                ? "text-gray-900"
+                : "text-gray-500 hover:text-gray-900 hover:bg-gray-100"
+            )}
+          >
+            Blogs
           </Link>
-          <Link href="/gallery">
-            <a
-              className={cn(
-                "block px-3 py-2 rounded-md text-base font-medium",
-                isActive("/gallery")
-                  ? "text-gray-900"
-                  : "text-gray-500 hover:text-gray-900 hover:bg-gray-100"
-              )}
-            >
-              Gallery
-            </a>
+          <Link 
+            href="/gallery"
+            className={cn(
+              "block px-3 py-2 rounded-md text-base font-medium",
+              isActive("/gallery")
+                ? "text-gray-900"
+                : "text-gray-500 hover:text-gray-900 hover:bg-gray-100"
+            )}
+          >
+            Gallery
           </Link>
-          <Link href="/about">
-            <a
-              className={cn(
-                "block px-3 py-2 rounded-md text-base font-medium",
-                isActive("/about")
-                  ? "text-gray-900"
-                  : "text-gray-500 hover:text-gray-900 hover:bg-gray-100"
-              )}
-            >
-              About Us
-            </a>
+          <Link 
+            href="/about"
+            className={cn(
+              "block px-3 py-2 rounded-md text-base font-medium",
+              isActive("/about")
+                ? "text-gray-900"
+                : "text-gray-500 hover:text-gray-900 hover:bg-gray-100"
+            )}
+          >
+            About Us
           </Link>
-          <Link href="/contact">
-            <a className="block px-3 py-2 rounded-md text-base font-medium bg-primary text-white hover:bg-primary/90">
-              Contact Us
-            </a>
+          <Link 
+            href="/contact"
+            className="block px-3 py-2 rounded-md text-base font-medium bg-primary text-white hover:bg-primary/90"
+          >
+            Contact Us
           </Link>
         </div>
       </div>
