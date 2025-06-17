@@ -51,6 +51,7 @@ import {
   Loader2,
   Image as ImageIcon,
   Eye,
+  Edit,
 } from "lucide-react";
 
 const formSchema = z.object({
@@ -66,6 +67,7 @@ const GalleryManager: React.FC = () => {
   const queryClient = useQueryClient();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<Gallery | null>(null);
@@ -88,6 +90,15 @@ const GalleryManager: React.FC = () => {
     },
   });
 
+  // Form for editing gallery items
+  const editForm = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      photo: "",
+      description: "",
+    },
+  });
+
   // Reset form and state for add dialog
   const openAddDialog = () => {
     form.reset({
@@ -96,6 +107,16 @@ const GalleryManager: React.FC = () => {
     });
     setUploadedImageUrl(null);
     setIsAddDialogOpen(true);
+  };
+
+  // Open edit dialog
+  const openEditDialog = (item: Gallery) => {
+    setSelectedItem(item);
+    editForm.reset({
+      photo: item.photo,
+      description: item.description,
+    });
+    setIsEditDialogOpen(true);
   };
 
   // Open delete confirmation dialog
@@ -161,6 +182,29 @@ const GalleryManager: React.FC = () => {
     },
   });
 
+  // Update gallery item mutation
+  const updateGalleryItemMutation = useMutation({
+    mutationFn: async ({ id, data }: { id: number; data: InsertGallery }) => {
+      const res = await apiRequest("PATCH", API_ENDPOINTS.GALLERY_ITEM(id), data);
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [API_ENDPOINTS.GALLERY] });
+      toast({
+        title: "Gallery Item Updated",
+        description: "The gallery item has been updated successfully",
+      });
+      setIsEditDialogOpen(false);
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: "Failed to update gallery item. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
   // Delete gallery item mutation
   const deleteGalleryItemMutation = useMutation({
     mutationFn: async (id: number) => {
@@ -194,6 +238,16 @@ const GalleryManager: React.FC = () => {
     createGalleryItemMutation.mutateAsync(galleryData);
   };
 
+  // Handle form submission for edit gallery item
+  const onEditSubmit = (values: FormValues) => {
+    if (!selectedItem) return;
+    const galleryData: InsertGallery = {
+      photo: values.photo,
+      description: values.description
+    };
+    updateGalleryItemMutation.mutateAsync({ id: selectedItem.id, data: galleryData });
+  };
+
   // Handle gallery item deletion
   const onDeleteConfirm = () => {
     if (!selectedItem) return;
@@ -202,7 +256,7 @@ const GalleryManager: React.FC = () => {
 
   // Check if there's an operation in progress
   const isOperationInProgress =
-    createGalleryItemMutation.isPending || deleteGalleryItemMutation.isPending;
+    createGalleryItemMutation.isPending || updateGalleryItemMutation.isPending || deleteGalleryItemMutation.isPending;
 
   return (
     <div>
@@ -269,20 +323,33 @@ const GalleryManager: React.FC = () => {
                       </Button>
                     </div>
                     <div>
-                      <p className="text-sm text-white font-medium mb-2">
+                      <div className="flex gap-2 mb-2">
+                        <Button
+                          variant="secondary"
+                          size="sm"
+                          className="flex-1 bg-blue-600 hover:bg-blue-700 text-white"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            openEditDialog(item);
+                          }}
+                        >
+                          <Edit className="h-4 w-4 mr-1" /> Edit
+                        </Button>
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          className="flex-1"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            openDeleteDialog(item);
+                          }}
+                        >
+                          <Trash2 className="h-4 w-4 mr-1" /> Delete
+                        </Button>
+                      </div>
+                      <p className="text-sm text-white font-medium">
                         {item.description}
                       </p>
-                      <Button
-                        variant="destructive"
-                        size="sm"
-                        className="w-full"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          openDeleteDialog(item);
-                        }}
-                      >
-                        <Trash2 className="h-4 w-4 mr-1" /> Delete
-                      </Button>
                     </div>
                   </div>
                 </div>
