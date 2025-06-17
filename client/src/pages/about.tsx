@@ -4,6 +4,7 @@ import { API_ENDPOINTS } from "@/lib/config";
 import { Button } from "@/components/ui/button";
 import { Check, Loader2 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Link } from "wouter";
 
 const AboutPage: React.FC = () => {
   const { data, isLoading } = useQuery({
@@ -29,7 +30,6 @@ const AboutPage: React.FC = () => {
           animateValue("years-counter", 0, aboutStats.yearsExperience, 1500);
           animateValue("customers-counter", 0, aboutStats.customersServed, 1500);
           animateValue("products-counter", 0, aboutStats.productsSupplied, 1500);
-          animateValue("countries-counter", 0, 28, 1500); // Hardcoded for now
           setHasAnimated(true);
         }
       });
@@ -198,7 +198,7 @@ const AboutPage: React.FC = () => {
       {/* Experience & Statistics */}
       <section ref={counterRef} className="counter-section py-16 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
             <div>
               <div className="text-4xl lg:text-5xl font-bold font-montserrat mb-2">
                 {isLoading ? (
@@ -235,91 +235,12 @@ const AboutPage: React.FC = () => {
               </div>
               <p className="text-lg">Vehicles Supplied</p>
             </div>
-            <div>
-              <div className="text-4xl lg:text-5xl font-bold font-montserrat mb-2">
-                {isLoading ? (
-                  <Skeleton className="h-12 w-20 mx-auto bg-gray-700" />
-                ) : (
-                  <>
-                    <span id="countries-counter">0</span>
-                  </>
-                )}
-              </div>
-              <p className="text-lg">Countries Served</p>
-            </div>
+
           </div>
         </div>
       </section>
 
-      {/* Our Team */}
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 font-montserrat">Our Leadership Team</h2>
-            <p className="mt-4 text-lg text-gray-500 max-w-3xl mx-auto">
-              Meet the experienced professionals guiding our company
-            </p>
-          </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div className="text-center">
-              <div className="relative mb-4">
-                <div className="aspect-square rounded-lg overflow-hidden bg-gray-100">
-                  <img
-                    src="https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80"
-                    alt="CEO"
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-              </div>
-              <h3 className="text-lg font-bold text-gray-900">Robert Johnson</h3>
-              <p className="text-primary font-medium">Chief Executive Officer</p>
-            </div>
-            
-            <div className="text-center">
-              <div className="relative mb-4">
-                <div className="aspect-square rounded-lg overflow-hidden bg-gray-100">
-                  <img
-                    src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80"
-                    alt="COO"
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-              </div>
-              <h3 className="text-lg font-bold text-gray-900">Sarah Mitchell</h3>
-              <p className="text-primary font-medium">Chief Operations Officer</p>
-            </div>
-            
-            <div className="text-center">
-              <div className="relative mb-4">
-                <div className="aspect-square rounded-lg overflow-hidden bg-gray-100">
-                  <img
-                    src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80"
-                    alt="CTO"
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-              </div>
-              <h3 className="text-lg font-bold text-gray-900">Michael Chen</h3>
-              <p className="text-primary font-medium">Chief Technical Officer</p>
-            </div>
-            
-            <div className="text-center">
-              <div className="relative mb-4">
-                <div className="aspect-square rounded-lg overflow-hidden bg-gray-100">
-                  <img
-                    src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80"
-                    alt="Head of Design"
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-              </div>
-              <h3 className="text-lg font-bold text-gray-900">Elena Rodriguez</h3>
-              <p className="text-primary font-medium">Head of Design</p>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* CTA Section */}
       <section className="py-16 bg-gray-900 text-white">
@@ -332,9 +253,11 @@ const AboutPage: React.FC = () => {
               </p>
             </div>
             <div className="md:w-1/3 flex justify-center md:justify-end">
-              <Button size="lg" className="bg-primary hover:bg-primary/90 text-white px-8 py-3 rounded-md text-lg">
-                Get in Touch
-              </Button>
+              <Link href="/contact">
+                <Button size="lg" className="bg-primary hover:bg-primary/90 text-white px-8 py-3 rounded-md text-lg">
+                  Get in Touch
+                </Button>
+              </Link>
             </div>
           </div>
         </div>
