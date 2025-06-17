@@ -3,8 +3,17 @@ import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import { config } from "@/lib/config";
 import { Phone, MessageSquare } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { API_ENDPOINTS } from "@/lib/config";
 
 const HeroSection: React.FC = () => {
+  const { data } = useQuery({
+    queryKey: [API_ENDPOINTS.CONTACT_INFO],
+  });
+
+  const contactInfo = data?.contactInfo;
+  const whatsappUrl = contactInfo?.whatsapp || config.social.whatsapp;
+
   return (
     <section className="hero-section h-screen flex items-center">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
@@ -22,7 +31,7 @@ const HeroSection: React.FC = () => {
               </Button>
             </Link>
             <a 
-              href={config.social.whatsapp}
+              href={whatsappUrl}
               target="_blank"
               rel="noopener noreferrer"
             >
