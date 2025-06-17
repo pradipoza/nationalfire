@@ -346,6 +346,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
+  app.patch('/api/gallery/:id', isAuthenticated, async (req, res) => {
+    try {
+      const galleryId = parseInt(req.params.id);
+      const validData = insertGallerySchema.parse(req.body);
+      const galleryItem = await storage.updateGalleryItem(galleryId, validData);
+      
+      if (!galleryItem) {
+        return res.status(404).json({ message: 'Gallery item not found' });
+      }
+      
+      res.json({ message: 'Gallery item updated successfully', galleryItem });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: 'Invalid data', errors: error.errors });
+      }
+      res.status(500).json({ message: 'Server error' });
+    }
+  });
+  
   app.delete('/api/gallery/:id', isAuthenticated, async (req, res) => {
     try {
       const galleryId = parseInt(req.params.id);

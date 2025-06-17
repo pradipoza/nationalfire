@@ -472,6 +472,77 @@ const GalleryManager: React.FC = () => {
         </DialogContent>
       </Dialog>
 
+      {/* Edit Gallery Item Dialog */}
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Edit Gallery Photo</DialogTitle>
+            <DialogDescription>
+              Update the description for this gallery item.
+            </DialogDescription>
+          </DialogHeader>
+
+          <Form {...editForm}>
+            <form onSubmit={editForm.handleSubmit(onEditSubmit)} className="space-y-6">
+              <div className="space-y-4">
+                {/* Current Image Preview */}
+                {selectedItem && (
+                  <div className="border rounded-lg p-4">
+                    <FormLabel className="block mb-2">Current Image</FormLabel>
+                    <div className="aspect-square w-full max-w-xs mx-auto overflow-hidden rounded-lg border">
+                      <img 
+                        src={selectedItem.photo} 
+                        alt="Current image" 
+                        className="h-full w-full object-cover"
+                      />
+                    </div>
+                  </div>
+                )}
+                
+                {/* Description Field */}
+                <FormField
+                  control={editForm.control}
+                  name="description"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Description</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter photo description" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <DialogFooter>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setIsEditDialogOpen(false)}
+                  disabled={isOperationInProgress}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  className="bg-primary hover:bg-primary/90"
+                  disabled={isOperationInProgress}
+                >
+                  {updateGalleryItemMutation.isPending ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Updating...
+                    </>
+                  ) : (
+                    "Update Photo"
+                  )}
+                </Button>
+              </DialogFooter>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
+
       {/* Delete Confirmation Dialog */}
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <AlertDialogContent>
