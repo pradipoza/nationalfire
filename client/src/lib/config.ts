@@ -10,6 +10,7 @@ export const config = {
   },
   social: {
     facebook: "https://facebook.com/nationalfire",
+    twitter: "https://twitter.com/nationalfire",
     instagram: "https://instagram.com/nationalfire",
     whatsapp: "https://wa.me/15551234567",
     linkedin: "https://linkedin.com/company/nationalfire",

@@ -6,6 +6,12 @@ import { config } from "@/lib/config";
 import { Facebook, Twitter, Instagram, Linkedin, MapPin, Phone, Mail } from "lucide-react";
 
 const Footer: React.FC = () => {
+  const { data } = useQuery({
+    queryKey: [API_ENDPOINTS.CONTACT_INFO],
+  });
+
+  const contactInfo = data?.contactInfo;
+
   return (
     <footer className="bg-gray-900 text-white pt-16 pb-6">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -43,7 +49,7 @@ const Footer: React.FC = () => {
             </p>
             <div className="flex space-x-4">
               <a 
-                href={config.social.facebook} 
+                href={contactInfo?.facebook || config.social.facebook} 
                 target="_blank" 
                 rel="noopener noreferrer" 
                 className="text-gray-400 hover:text-white transition"
@@ -51,7 +57,7 @@ const Footer: React.FC = () => {
                 <Facebook size={20} />
               </a>
               <a 
-                href="#" 
+                href={contactInfo?.twitter || config.social.twitter} 
                 target="_blank" 
                 rel="noopener noreferrer" 
                 className="text-gray-400 hover:text-white transition"
@@ -59,7 +65,7 @@ const Footer: React.FC = () => {
                 <Twitter size={20} />
               </a>
               <a 
-                href={config.social.instagram} 
+                href={contactInfo?.instagram || config.social.instagram} 
                 target="_blank" 
                 rel="noopener noreferrer" 
                 className="text-gray-400 hover:text-white transition"
@@ -67,7 +73,7 @@ const Footer: React.FC = () => {
                 <Instagram size={20} />
               </a>
               <a 
-                href={config.social.linkedin} 
+                href={contactInfo?.linkedin || config.social.linkedin} 
                 target="_blank" 
                 rel="noopener noreferrer" 
                 className="text-gray-400 hover:text-white transition"
@@ -160,15 +166,15 @@ const Footer: React.FC = () => {
             <ul className="space-y-4">
               <li className="flex items-start">
                 <MapPin className="mt-1 mr-3 text-primary" size={18} />
-                <span className="text-gray-400">{config.contactAddress}</span>
+                <span className="text-gray-400">{contactInfo?.address || config.contactAddress}</span>
               </li>
               <li className="flex items-center">
                 <Phone className="mr-3 text-primary" size={18} />
-                <span className="text-gray-400">{config.contactPhone}</span>
+                <span className="text-gray-400">{contactInfo?.phone || config.contactPhone}</span>
               </li>
               <li className="flex items-center">
                 <Mail className="mr-3 text-primary" size={18} />
-                <span className="text-gray-400">{config.contactEmail}</span>
+                <span className="text-gray-400">{contactInfo?.email || config.contactEmail}</span>
               </li>
             </ul>
           </div>
