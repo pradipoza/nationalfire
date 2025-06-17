@@ -1,5 +1,7 @@
 import React from "react";
 import { Link } from "wouter";
+import { useQuery } from "@tanstack/react-query";
+import { API_ENDPOINTS } from "@/lib/config";
 import { config } from "@/lib/config";
 import { Facebook, Twitter, Instagram, Linkedin, MapPin, Phone, Mail } from "lucide-react";
 
