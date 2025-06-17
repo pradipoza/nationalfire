@@ -4,9 +4,10 @@ import { useQuery } from "@tanstack/react-query";
 import { API_ENDPOINTS } from "@/lib/config";
 import { config } from "@/lib/config";
 import { Facebook, Twitter, Instagram, Linkedin, MapPin, Phone, Mail } from "lucide-react";
+import type { ContactInfo } from "@shared/schema";
 
 const Footer: React.FC = () => {
-  const { data } = useQuery({
+  const { data } = useQuery<{ contactInfo: ContactInfo } | undefined>({
     queryKey: [API_ENDPOINTS.CONTACT_INFO],
   });
 
@@ -57,7 +58,7 @@ const Footer: React.FC = () => {
                 <Facebook size={20} />
               </a>
               <a 
-                href={contactInfo?.twitter || config.social.twitter} 
+                href={config.social.twitter} 
                 target="_blank" 
                 rel="noopener noreferrer" 
                 className="text-gray-400 hover:text-white transition"
@@ -89,33 +90,33 @@ const Footer: React.FC = () => {
             </h4>
             <ul className="space-y-3">
               <li>
-                <Link href="/">
-                  <a className="text-gray-400 hover:text-white transition">Home</a>
+                <Link href="/" className="text-gray-400 hover:text-white transition">
+                  Home
                 </Link>
               </li>
               <li>
-                <Link href="/products">
-                  <a className="text-gray-400 hover:text-white transition">Products</a>
+                <Link href="/products" className="text-gray-400 hover:text-white transition">
+                  Products
                 </Link>
               </li>
               <li>
-                <Link href="/blogs">
-                  <a className="text-gray-400 hover:text-white transition">Blogs</a>
+                <Link href="/blogs" className="text-gray-400 hover:text-white transition">
+                  Blogs
                 </Link>
               </li>
               <li>
-                <Link href="/gallery">
-                  <a className="text-gray-400 hover:text-white transition">Gallery</a>
+                <Link href="/gallery" className="text-gray-400 hover:text-white transition">
+                  Gallery
                 </Link>
               </li>
               <li>
-                <Link href="/about">
-                  <a className="text-gray-400 hover:text-white transition">About Us</a>
+                <Link href="/about" className="text-gray-400 hover:text-white transition">
+                  About Us
                 </Link>
               </li>
               <li>
-                <Link href="/contact">
-                  <a className="text-gray-400 hover:text-white transition">Contact Us</a>
+                <Link href="/contact" className="text-gray-400 hover:text-white transition">
+                  Contact Us
                 </Link>
               </li>
             </ul>
@@ -127,33 +128,33 @@ const Footer: React.FC = () => {
             </h4>
             <ul className="space-y-3">
               <li>
-                <Link href="/products?category=fire-trucks">
-                  <a className="text-gray-400 hover:text-white transition">Fire Trucks</a>
+                <Link href="/products?category=fire-trucks" className="text-gray-400 hover:text-white transition">
+                  Fire Trucks
                 </Link>
               </li>
               <li>
-                <Link href="/products?category=ambulances">
-                  <a className="text-gray-400 hover:text-white transition">Ambulances</a>
+                <Link href="/products?category=ambulances" className="text-gray-400 hover:text-white transition">
+                  Ambulances
                 </Link>
               </li>
               <li>
-                <Link href="/products?category=electric-buses">
-                  <a className="text-gray-400 hover:text-white transition">Electric Buses</a>
+                <Link href="/products?category=electric-buses" className="text-gray-400 hover:text-white transition">
+                  Electric Buses
                 </Link>
               </li>
               <li>
-                <Link href="/products?category=rescue-equipment">
-                  <a className="text-gray-400 hover:text-white transition">Rescue Equipment</a>
+                <Link href="/products?category=rescue-equipment" className="text-gray-400 hover:text-white transition">
+                  Rescue Equipment
                 </Link>
               </li>
               <li>
-                <Link href="/products?category=spare-parts">
-                  <a className="text-gray-400 hover:text-white transition">Spare Parts</a>
+                <Link href="/products?category=spare-parts" className="text-gray-400 hover:text-white transition">
+                  Spare Parts
                 </Link>
               </li>
               <li>
-                <Link href="/products?category=custom-solutions">
-                  <a className="text-gray-400 hover:text-white transition">Custom Solutions</a>
+                <Link href="/products?category=custom-solutions" className="text-gray-400 hover:text-white transition">
+                  Custom Solutions
                 </Link>
               </li>
             </ul>
