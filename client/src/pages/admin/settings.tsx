@@ -195,15 +195,15 @@ const AdminSettings: React.FC = () => {
   });
 
   const onProfileSubmit = (values: ProfileFormValues) => {
-    updateProfileMutation.mutateAsync(values);
+    updateProfileMutation.mutate(values);
   };
 
   const onPasswordSubmit = (values: PasswordFormValues) => {
-    changePasswordMutation.mutateAsync(values);
+    changePasswordMutation.mutate(values);
   };
 
   const onAboutStatsSubmit = (values: AboutStatsFormValues) => {
-    updateAboutStatsMutation.mutateAsync(values);
+    updateAboutStatsMutation.mutate(values);
   };
 
   return (

@@ -146,6 +146,75 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
   
   // User routes
+  app.put('/api/me', isAuthenticated, async (req, res) => {
+    try {
+      const updateSchema = insertUserSchema.partial().omit({ password: true });
+      const validData = updateSchema.parse(req.body);
+      
+      const updatedUser = await storage.updateUser(req.user.id, validData);
+      if (!updatedUser) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+      
+      res.json({ 
+        message: 'Profile updated successfully', 
+        user: { 
+          id: updatedUser.id, 
+          username: updatedUser.username, 
+          email: updatedUser.email 
+        } 
+      });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: 'Invalid data', errors: error.errors });
+      }
+      res.status(500).json({ message: 'Server error' });
+    }
+  });
+
+  // Change password route
+  app.put('/api/me/password', isAuthenticated, async (req, res) => {
+    try {
+      const passwordSchema = z.object({
+        currentPassword: z.string().min(1, 'Current password is required'),
+        newPassword: z.string().min(6, 'New password must be at least 6 characters'),
+      });
+      
+      const { currentPassword, newPassword } = passwordSchema.parse(req.body);
+      
+      // Get current user with password
+      const currentUser = await storage.getUserByUsername(req.user.username);
+      if (!currentUser) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+      
+      // Verify current password
+      const isCurrentPasswordValid = await bcrypt.compare(currentPassword, currentUser.password);
+      if (!isCurrentPasswordValid) {
+        return res.status(400).json({ message: 'Current password is incorrect' });
+      }
+      
+      // Hash new password
+      const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+      
+      // Update user with new password
+      const updatedUser = await storage.updateUser(req.user.id, { 
+        password: hashedNewPassword 
+      });
+      
+      if (!updatedUser) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+      
+      res.json({ message: 'Password changed successfully' });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: 'Invalid data', errors: error.errors });
+      }
+      res.status(500).json({ message: 'Server error' });
+    }
+  });
+
   app.put('/api/users/:id', isAuthenticated, async (req, res) => {
     try {
       const userId = parseInt(req.params.id);

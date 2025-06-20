@@ -108,6 +108,11 @@ The application uses the following main entities:
 
 Changelog:
 - June 16, 2025. Initial setup
+- June 20, 2025. Fixed admin panel CRUD operations and added password change functionality
+  - Fixed mutation patterns (changed mutateAsync to mutate) for reliable form submissions
+  - Added password change API endpoint with bcrypt validation
+  - Resolved nested anchor tag warnings in navigation components
+  - All admin features now working: products, blogs, gallery, contact management, and settings
 
 ## User Preferences
 
