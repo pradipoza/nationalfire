@@ -100,7 +100,7 @@ const BlogManager: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Load blogs data
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading, error } = useQuery<{ blogs: Blog[] } | undefined>({
     queryKey: [API_ENDPOINTS.BLOGS],
   });
 
@@ -298,13 +298,13 @@ const BlogManager: React.FC = () => {
 
   // Handle form submission for add blog
   const onAddSubmit = (values: FormValues) => {
-    createBlogMutation.mutateAsync(values);
+    createBlogMutation.mutate(values);
   };
 
   // Handle form submission for edit blog
   const onEditSubmit = (values: FormValues) => {
     if (!currentBlog) return;
-    updateBlogMutation.mutateAsync({
+    updateBlogMutation.mutate({
       id: currentBlog.id,
       data: values,
     });

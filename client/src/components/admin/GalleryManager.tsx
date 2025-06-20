@@ -235,7 +235,7 @@ const GalleryManager: React.FC = () => {
       photo: values.photo,
       description: values.description
     };
-    createGalleryItemMutation.mutateAsync(galleryData);
+    createGalleryItemMutation.mutate(galleryData);
   };
 
   // Handle form submission for edit gallery item
@@ -245,13 +245,13 @@ const GalleryManager: React.FC = () => {
       photo: values.photo,
       description: values.description
     };
-    updateGalleryItemMutation.mutateAsync({ id: selectedItem.id, data: galleryData });
+    updateGalleryItemMutation.mutate({ id: selectedItem.id, data: galleryData });
   };
 
   // Handle gallery item deletion
   const onDeleteConfirm = () => {
     if (!selectedItem) return;
-    deleteGalleryItemMutation.mutateAsync(selectedItem.id);
+    deleteGalleryItemMutation.mutate(selectedItem.id);
   };
 
   // Check if there's an operation in progress

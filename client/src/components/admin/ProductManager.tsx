@@ -84,7 +84,7 @@ const ProductManager: React.FC = () => {
   const [isUploading, setIsUploading] = useState(false);
 
   // Load products data
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading, error } = useQuery<{ products: Product[] } | undefined>({
     queryKey: [API_ENDPOINTS.PRODUCTS],
   });
 

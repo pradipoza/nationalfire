@@ -227,7 +227,7 @@ const ContactManager: React.FC = () => {
   // Delete inquiry
   const onDeleteConfirm = () => {
     if (!selectedInquiry) return;
-    deleteInquiryMutation.mutateAsync(selectedInquiry.id);
+    deleteInquiryMutation.mutate(selectedInquiry.id);
   };
 
   // Format date
