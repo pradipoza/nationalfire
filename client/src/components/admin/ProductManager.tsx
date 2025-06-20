@@ -235,13 +235,13 @@ const ProductManager: React.FC = () => {
 
   // Handle form submission for add product
   const onAddSubmit = (values: FormValues) => {
-    createProductMutation.mutateAsync(values);
+    createProductMutation.mutate(values);
   };
 
   // Handle form submission for edit product
   const onEditSubmit = (values: FormValues) => {
     if (!currentProduct) return;
-    updateProductMutation.mutateAsync({
+    updateProductMutation.mutate({
       id: currentProduct.id,
       data: values,
     });
@@ -250,7 +250,7 @@ const ProductManager: React.FC = () => {
   // Handle product deletion
   const onDeleteConfirm = () => {
     if (!currentProduct) return;
-    deleteProductMutation.mutateAsync(currentProduct.id);
+    deleteProductMutation.mutate(currentProduct.id);
   };
 
   // Check if there's an operation in progress

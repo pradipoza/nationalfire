@@ -313,7 +313,7 @@ const BlogManager: React.FC = () => {
   // Handle blog deletion
   const onDeleteConfirm = () => {
     if (!currentBlog) return;
-    deleteBlogMutation.mutateAsync(currentBlog.id);
+    deleteBlogMutation.mutate(currentBlog.id);
   };
 
   // Check if there's an operation in progress
