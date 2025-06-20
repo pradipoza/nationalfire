@@ -113,6 +113,8 @@ Changelog:
   - Added password change API endpoint with bcrypt validation
   - Resolved nested anchor tag warnings in navigation components
   - All admin features now working: products, blogs, gallery, contact management, and settings
+  - Fixed password change double-hashing issue with dedicated updateUserPassword method
+  - Password change feature now fully operational and reliable
 
 ## User Preferences
 
