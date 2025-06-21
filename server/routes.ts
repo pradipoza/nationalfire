@@ -17,7 +17,9 @@ import session from "express-session";
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
 import MemoryStore from "memorystore";
+import ConnectPgSimple from "connect-pg-simple";
 import bcrypt from "bcrypt";
+import { pool } from "./db";
 
 // Add TypeScript declaration for req.user
 declare global {
@@ -37,18 +39,30 @@ declare global {
 export async function registerRoutes(app: Express): Promise<Server> {
   const httpServer = createServer(app);
   
-  // Configure session store
-  const MemoryStoreSession = MemoryStore(session);
+  // Configure session store - use PostgreSQL in production, memory in development
+  let sessionStore;
+  if (process.env.NODE_ENV === 'production') {
+    const PgSession = ConnectPgSimple(session);
+    sessionStore = new PgSession({
+      pool: pool,
+      tableName: 'user_sessions',
+      createTableIfMissing: true
+    });
+  } else {
+    const MemoryStoreSession = MemoryStore(session);
+    sessionStore = new MemoryStoreSession({
+      checkPeriod: 86400000 // 24 hours
+    });
+  }
+
   app.use(session({
     secret: process.env.SESSION_SECRET || 'national-fire-secret',
     resave: false,
     saveUninitialized: false,
-    store: new MemoryStoreSession({
-      checkPeriod: 86400000 // 24 hours
-    }),
+    store: sessionStore,
     cookie: {
       maxAge: 24 * 60 * 60 * 1000, // 24 hours
-      secure: false, // Set to false to work in all environments
+      secure: false,
       httpOnly: true,
       sameSite: 'lax'
     }
@@ -117,18 +131,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use(trackPageVisit);
   
   // Authentication routes
-  app.post('/api/login', passport.authenticate('local'), (req, res) => {
-    if (!req.user) {
-      return res.status(401).json({ message: 'Authentication failed' });
-    }
-    res.json({ 
-      message: 'Login successful', 
-      user: { 
-        id: req.user!.id, 
-        username: req.user!.username, 
-        email: req.user!.email 
-      } 
-    });
+  app.post('/api/login', (req, res, next) => {
+    passport.authenticate('local', (err, user, info) => {
+      if (err) {
+        console.error('Login error:', err);
+        return res.status(500).json({ message: 'Server error during login' });
+      }
+      if (!user) {
+        return res.status(401).json({ message: info?.message || 'Invalid credentials' });
+      }
+      
+      req.logIn(user, (err) => {
+        if (err) {
+          console.error('Session error:', err);
+          return res.status(500).json({ message: 'Session creation failed' });
+        }
+        
+        res.json({ 
+          message: 'Login successful', 
+          user: { 
+            id: user.id, 
+            username: user.username, 
+            email: user.email 
+          } 
+        });
+      });
+    })(req, res, next);
   });
   
   app.post('/api/logout', (req, res) => {
@@ -188,7 +216,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { currentPassword, newPassword } = passwordSchema.parse(req.body);
       
       // Get current user with password
-      const currentUser = await storage.getUserByUsername(req.user.username);
+      const currentUser = await storage.getUserByUsername(req.user!.username);
       if (!currentUser) {
         return res.status(404).json({ message: 'User not found' });
       }
@@ -201,7 +229,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Hash new password and update
       const hashedNewPassword = await bcrypt.hash(newPassword, 10);
-      const updatedUser = await storage.updateUserPassword(req.user.id, hashedNewPassword);
+      const updatedUser = await storage.updateUserPassword(req.user!.id, hashedNewPassword);
       
       if (!updatedUser) {
         return res.status(404).json({ message: 'User not found' });
@@ -219,7 +247,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.put('/api/users/:id', isAuthenticated, async (req, res) => {
     try {
       const userId = parseInt(req.params.id);
-      if (userId !== req.user.id) {
+      if (userId !== req.user!.id) {
         return res.status(403).json({ message: 'Forbidden' });
       }
       
