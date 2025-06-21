@@ -48,7 +48,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }),
     cookie: {
       maxAge: 24 * 60 * 60 * 1000, // 24 hours
-      secure: process.env.NODE_ENV === 'production'
+      secure: false, // Set to false to work in all environments
+      httpOnly: true,
+      sameSite: 'lax'
     }
   }));
   
@@ -91,10 +93,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Authentication middleware
   const isAuthenticated = (req: Request, res: Response, next: any) => {
-    if (req.isAuthenticated()) {
+    if (req.isAuthenticated() && req.user) {
       return next();
     }
-    res.status(401).json({ message: 'Unauthorized' });
+    res.status(401).json({ message: 'Not authenticated' });
   };
   
   // Analytics middleware
@@ -116,12 +118,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Authentication routes
   app.post('/api/login', passport.authenticate('local'), (req, res) => {
+    if (!req.user) {
+      return res.status(401).json({ message: 'Authentication failed' });
+    }
     res.json({ 
       message: 'Login successful', 
       user: { 
-        id: req.user.id, 
-        username: req.user.username, 
-        email: req.user.email 
+        id: req.user!.id, 
+        username: req.user!.username, 
+        email: req.user!.email 
       } 
     });
   });
@@ -133,7 +138,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
   
   app.get('/api/me', (req, res) => {
-    if (!req.isAuthenticated()) {
+    if (!req.isAuthenticated() || !req.user) {
       return res.status(401).json({ message: 'Not authenticated' });
     }
     res.json({ 
@@ -151,7 +156,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const updateSchema = insertUserSchema.partial().omit({ password: true });
       const validData = updateSchema.parse(req.body);
       
-      const updatedUser = await storage.updateUser(req.user.id, validData);
+      const updatedUser = await storage.updateUser(req.user!.id, validData);
       if (!updatedUser) {
         return res.status(404).json({ message: 'User not found' });
       }
