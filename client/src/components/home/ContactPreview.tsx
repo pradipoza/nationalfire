@@ -31,16 +31,22 @@ const ContactPreview: React.FC = () => {
         </div>
         
         <div className="mt-12 rounded-lg overflow-hidden shadow-md h-[400px] relative">
-          <iframe
-            src={`https://www.google.com/maps/embed/v1/place?key=${import.meta.env.VITE_GOOGLE_MAPS_API_KEY || 'AIzaSyC8eVi6rG2ZrGcAjRVjqcMQEBlxT17hc0I'}&q=Phoenix,AZ+Fire+Department`}
-            width="100%"
-            height="100%"
-            style={{ border: 0 }}
-            allowFullScreen
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-            title="Company Location"
-          ></iframe>
+          {import.meta.env.VITE_GOOGLE_MAPS_API_KEY ? (
+            <iframe
+              src={`https://www.google.com/maps/embed/v1/place?key=${import.meta.env.VITE_GOOGLE_MAPS_API_KEY}&q=Phoenix,AZ+Fire+Department`}
+              width="100%"
+              height="100%"
+              style={{ border: 0 }}
+              allowFullScreen
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              title="Company Location"
+            ></iframe>
+          ) : (
+            <div className="w-full h-full bg-gray-100 flex items-center justify-center">
+              <p className="text-gray-500">Map unavailable - API key required</p>
+            </div>
+          )}
         </div>
       </div>
     </section>
