@@ -14,6 +14,7 @@ import {
   X,
   ChevronDown,
   ChevronUp,
+  Building2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -218,6 +219,13 @@ const Sidebar: React.FC = () => {
               onClick={() => isMobile && setIsOpen(false)}
             >
               Products
+            </SidebarLink>
+            <SidebarLink
+              href="/admin/brands"
+              icon={<Building2 className="h-5 w-5" />}
+              onClick={() => isMobile && setIsOpen(false)}
+            >
+              Brands
             </SidebarLink>
             <SidebarLink
               href="/admin/blogs"

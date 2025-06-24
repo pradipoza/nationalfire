@@ -27,6 +27,7 @@ import ContactPage from "@/pages/contact";
 import AdminLogin from "@/pages/admin/login";
 import AdminDashboard from "@/pages/admin/dashboard";
 import AdminProducts from "@/pages/admin/products";
+import AdminBrands from "@/pages/admin/brands";
 import AdminBlogs from "@/pages/admin/blogs";
 import AdminGallery from "@/pages/admin/gallery";
 import AdminContact from "@/pages/admin/contact";
