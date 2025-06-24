@@ -115,6 +115,16 @@ Changelog:
   - All admin features now working: products, blogs, gallery, contact management, and settings
   - Fixed password change double-hashing issue with dedicated updateUserPassword method
   - Password change feature now fully operational and reliable
+- June 24, 2025. Added brands functionality and enhanced security
+  - Fixed Google Maps API key security vulnerability by removing hardcoded fallback
+  - Updated session configuration for better production deployment compatibility
+  - Added comprehensive brands system with database schema and relationships
+  - Created brands page with grid layout showing brand logos and descriptions
+  - Implemented brand detail pages displaying products filtered by brand
+  - Added 6 sample fire equipment brands with proper logos and descriptions
+  - Built complete CRUD API endpoints for brands management
+  - Added product search functionality with real-time filtering by name
+  - Enhanced navigation with brands link positioned between Gallery and About Us
 
 ## User Preferences
 

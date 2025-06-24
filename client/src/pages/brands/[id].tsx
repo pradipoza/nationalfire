@@ -1,6 +1,6 @@
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
-
+import { useParams } from "wouter";
 import { API_ENDPOINTS } from "@/lib/config";
 import { Product, Brand } from "@shared/schema";
 import ProductCard from "@/components/products/ProductCard";
@@ -9,8 +9,11 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, Building2, ShoppingCart } from "lucide-react";
 import { Link } from "wouter";
 
-const BrandProductsPage: React.FC = () => {
-  const { id } = useParams();
+interface BrandProductsPageProps {
+  id: string;
+}
+
+const BrandProductsPage: React.FC<BrandProductsPageProps> = ({ id }) => {
   const brandId = parseInt(id || "0");
 
   const { data: brandData, isLoading: brandLoading } = useQuery({
