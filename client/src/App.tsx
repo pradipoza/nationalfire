@@ -138,6 +138,13 @@ function Router() {
           </AdminLayout>
         )}
       </Route>
+      <Route path="/admin/brands">
+        {() => (
+          <AdminLayout>
+            <AdminBrands />
+          </AdminLayout>
+        )}
+      </Route>
       <Route path="/admin/blogs">
         {() => (
           <AdminLayout>
