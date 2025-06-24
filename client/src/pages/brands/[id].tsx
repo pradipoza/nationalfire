@@ -1,6 +1,5 @@
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useParams } from "wouter";
 import { API_ENDPOINTS } from "@/lib/config";
 import { Product, Brand } from "@shared/schema";
 import ProductCard from "@/components/products/ProductCard";
