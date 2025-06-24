@@ -125,6 +125,42 @@ export class DatabaseStorage implements IStorage {
     return updatedUser;
   }
 
+  // Brands
+  async getBrands(): Promise<Brand[]> {
+    return db.select().from(brands).orderBy(desc(brands.createdAt));
+  }
+  
+  async getBrand(id: number): Promise<Brand | undefined> {
+    const [brand] = await db.select().from(brands).where(eq(brands.id, id));
+    return brand;
+  }
+  
+  async createBrand(brand: InsertBrand): Promise<Brand> {
+    const [newBrand] = await db
+      .insert(brands)
+      .values({
+        name: brand.name,
+        logo: brand.logo,
+        description: brand.description
+      })
+      .returning();
+    return newBrand;
+  }
+  
+  async updateBrand(id: number, updates: Partial<InsertBrand>): Promise<Brand | undefined> {
+    const [updatedBrand] = await db
+      .update(brands)
+      .set(updates)
+      .where(eq(brands.id, id))
+      .returning();
+    return updatedBrand;
+  }
+  
+  async deleteBrand(id: number): Promise<boolean> {
+    const result = await db.delete(brands).where(eq(brands.id, id));
+    return result.rowCount! > 0;
+  }
+
   // Products
   async getProducts(): Promise<Product[]> {
     return db.select().from(products);
@@ -135,13 +171,18 @@ export class DatabaseStorage implements IStorage {
     return product;
   }
   
+  async getProductsByBrand(brandId: number): Promise<Product[]> {
+    return db.select().from(products).where(eq(products.brandId, brandId)).orderBy(desc(products.createdAt));
+  }
+  
   async createProduct(product: InsertProduct): Promise<Product> {
     const [newProduct] = await db
       .insert(products)
       .values({
         name: product.name,
         description: product.description,
-        photos: product.photos || []
+        photos: product.photos || [],
+        brandId: product.brandId
       })
       .returning();
     return newProduct;
@@ -424,23 +465,45 @@ async function initializeSeedData() {
         email: "admin@nationalfire.com"
       });
       
+      // Create initial brands
+      const rosenbauer = await storage.createBrand({
+        name: "Rosenbauer",
+        logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Rosenbauer_logo.svg/512px-Rosenbauer_logo.svg.png",
+        description: "Leading manufacturer of firefighting vehicles and equipment worldwide"
+      });
+
+      const pierce = await storage.createBrand({
+        name: "Pierce Manufacturing", 
+        logo: "https://www.piercemfg.com/sites/all/themes/pierce/logo.png",
+        description: "Premier fire truck manufacturer known for custom emergency vehicles"
+      });
+
+      const ferrara = await storage.createBrand({
+        name: "Ferrara Fire Apparatus",
+        logo: "https://www.ferrarafire.com/images/ferrara-logo.png", 
+        description: "American manufacturer of custom fire apparatus and emergency vehicles"
+      });
+
       // Create initial products
       await storage.createProduct({
         name: "Premium Fire Truck",
         description: "High-capacity fire truck with advanced water delivery systems and rescue equipment.",
-        photos: ["https://images.unsplash.com/photo-1516550893885-985da0253db1?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80"]
+        photos: ["https://images.unsplash.com/photo-1516550893885-985da0253db1?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80"],
+        brandId: rosenbauer.id
       });
       
       await storage.createProduct({
-        name: "Advanced Ambulance",
+        name: "Advanced Ambulance", 
         description: "State-of-the-art ambulance with complete medical equipment and efficient response capabilities.",
-        photos: ["https://images.unsplash.com/photo-1587843618590-26adcc8dfc1a?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80"]
+        photos: ["https://images.unsplash.com/photo-1587843618590-26adcc8dfc1a?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80"],
+        brandId: pierce.id
       });
       
       await storage.createProduct({
         name: "Electric Transport Bus",
-        description: "Eco-friendly electric bus designed for efficient urban transportation with zero emissions.",
-        photos: ["https://images.unsplash.com/photo-1619252584172-a83a949b6efd?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80"]
+        description: "Eco-friendly electric bus designed for efficient urban transportation with zero emissions.", 
+        photos: ["https://images.unsplash.com/photo-1619252584172-a83a949b6efd?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80"],
+        brandId: ferrara.id
       });
       
       // Create initial blogs
