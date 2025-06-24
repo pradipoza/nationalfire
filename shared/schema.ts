@@ -22,12 +22,32 @@ export const insertUserSchema = createInsertSchema(users).pick({
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
 
+// Brands schema
+export const brands = pgTable("brands", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  logo: text("logo").notNull(),
+  description: text("description"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const insertBrandSchema = createInsertSchema(brands).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export type InsertBrand = z.infer<typeof insertBrandSchema>;
+export type Brand = typeof brands.$inferSelect;
+
 // Products schema
 export const products = pgTable("products", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
   description: text("description").notNull(),
   photos: json("photos").$type<string[]>().notNull().default([]),
+  brandId: integer("brand_id").references(() => brands.id),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
@@ -152,8 +172,13 @@ export type InsertAnalytics = z.infer<typeof insertAnalyticsSchema>;
 export type Analytics = typeof analytics.$inferSelect;
 
 // Relations
-export const productsRelations = relations(products, ({ many }) => ({
+export const brandsRelations = relations(brands, ({ many }) => ({
+  products: many(products),
+}));
+
+export const productsRelations = relations(products, ({ many, one }) => ({
   inquiries: many(inquiries),
+  brand: one(brands, { fields: [products.brandId], references: [brands.id] }),
 }));
 
 export const inquiriesRelations = relations(inquiries, ({ one }) => ({
