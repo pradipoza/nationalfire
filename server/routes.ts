@@ -11,6 +11,7 @@ import {
   insertInquirySchema, 
   insertAboutStatsSchema,
   insertAnalyticsSchema,
+  insertBrandSchema,
   User as AppUser
 } from "@shared/schema";
 import session from "express-session";
@@ -620,6 +621,84 @@ export async function registerRoutes(app: Express): Promise<Server> {
         visitsPerPage: pageVisitCounts,
         recentVisits: pageVisits.slice(0, 10)
       });
+    } catch (error) {
+      res.status(500).json({ message: 'Server error' });
+    }
+  });
+
+  // Brand routes
+  app.get('/api/brands', async (req, res) => {
+    try {
+      const brands = await storage.getBrands();
+      res.json({ brands });
+    } catch (error) {
+      res.status(500).json({ message: 'Server error' });
+    }
+  });
+
+  app.get('/api/brands/:id', async (req, res) => {
+    try {
+      const brandId = parseInt(req.params.id);
+      const brand = await storage.getBrand(brandId);
+      if (!brand) {
+        return res.status(404).json({ message: 'Brand not found' });
+      }
+      res.json({ brand });
+    } catch (error) {
+      res.status(500).json({ message: 'Server error' });
+    }
+  });
+
+  app.get('/api/brands/:id/products', async (req, res) => {
+    try {
+      const brandId = parseInt(req.params.id);
+      const products = await storage.getProductsByBrand(brandId);
+      res.json({ products });
+    } catch (error) {
+      res.status(500).json({ message: 'Server error' });
+    }
+  });
+
+  app.post('/api/brands', isAuthenticated, async (req, res) => {
+    try {
+      const validData = insertBrandSchema.parse(req.body);
+      const brand = await storage.createBrand(validData);
+      res.status(201).json({ message: 'Brand created successfully', brand });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: 'Invalid data', errors: error.errors });
+      }
+      res.status(500).json({ message: 'Server error' });
+    }
+  });
+
+  app.put('/api/brands/:id', isAuthenticated, async (req, res) => {
+    try {
+      const brandId = parseInt(req.params.id);
+      const validData = insertBrandSchema.partial().parse(req.body);
+      
+      const updatedBrand = await storage.updateBrand(brandId, validData);
+      if (!updatedBrand) {
+        return res.status(404).json({ message: 'Brand not found' });
+      }
+      
+      res.json({ message: 'Brand updated successfully', brand: updatedBrand });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: 'Invalid data', errors: error.errors });
+      }
+      res.status(500).json({ message: 'Server error' });
+    }
+  });
+
+  app.delete('/api/brands/:id', isAuthenticated, async (req, res) => {
+    try {
+      const brandId = parseInt(req.params.id);
+      const success = await storage.deleteBrand(brandId);
+      if (!success) {
+        return res.status(404).json({ message: 'Brand not found' });
+      }
+      res.json({ message: 'Brand deleted successfully' });
     } catch (error) {
       res.status(500).json({ message: 'Server error' });
     }

@@ -18,6 +18,8 @@ import ProductDetail from "@/pages/products/[id]";
 import BlogsPage from "@/pages/blogs/index";
 import BlogDetail from "@/pages/blogs/[id]";
 import GalleryPage from "@/pages/gallery";
+import BrandsPage from "@/pages/brands/index";
+import BrandProductsPage from "@/pages/brands/[id]";
 import AboutPage from "@/pages/about";
 import ContactPage from "@/pages/contact";
 
@@ -85,6 +87,20 @@ function Router() {
         {() => (
           <MainLayout>
             <GalleryPage />
+          </MainLayout>
+        )}
+      </Route>
+      <Route path="/brands">
+        {() => (
+          <MainLayout>
+            <BrandsPage />
+          </MainLayout>
+        )}
+      </Route>
+      <Route path="/brands/:id">
+        {(params) => (
+          <MainLayout>
+            <BrandProductsPage id={params.id} />
           </MainLayout>
         )}
       </Route>

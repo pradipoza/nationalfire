@@ -51,4 +51,9 @@ export const API_ENDPOINTS = {
 
   // Analytics
   ANALYTICS: "/api/analytics",
+
+  // Brands
+  BRANDS: "/api/brands",
+  BRAND: (id: number | string) => `/api/brands/${id}`,
+  BRAND_PRODUCTS: (id: number | string) => `/api/brands/${id}/products`,
 };

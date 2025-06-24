@@ -6,7 +6,8 @@ import {
   contactInfo, type ContactInfo, type InsertContactInfo,
   inquiries, type Inquiry, type InsertInquiry,
   aboutStats, type AboutStats, type InsertAboutStats,
-  analytics, type Analytics, type InsertAnalytics
+  analytics, type Analytics, type InsertAnalytics,
+  brands, type Brand, type InsertBrand
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, sql } from "drizzle-orm";
@@ -20,9 +21,17 @@ export interface IStorage {
   updateUser(id: number, updates: Partial<InsertUser>): Promise<User | undefined>;
   updateUserPassword(id: number, hashedPassword: string): Promise<User | undefined>;
   
+  // Brands
+  getBrands(): Promise<Brand[]>;
+  getBrand(id: number): Promise<Brand | undefined>;
+  createBrand(brand: InsertBrand): Promise<Brand>;
+  updateBrand(id: number, updates: Partial<InsertBrand>): Promise<Brand | undefined>;
+  deleteBrand(id: number): Promise<boolean>;
+  
   // Products
   getProducts(): Promise<Product[]>;
   getProduct(id: number): Promise<Product | undefined>;
+  getProductsByBrand(brandId: number): Promise<Product[]>;
   createProduct(product: InsertProduct): Promise<Product>;
   updateProduct(id: number, updates: Partial<InsertProduct>): Promise<Product | undefined>;
   deleteProduct(id: number): Promise<boolean>;
