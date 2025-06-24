@@ -139,11 +139,9 @@ function Router() {
         )}
       </Route>
       <Route path="/admin/brands">
-        {() => (
-          <AdminLayout>
-            <AdminBrands />
-          </AdminLayout>
-        )}
+        <AdminLayout>
+          <AdminBrands />
+        </AdminLayout>
       </Route>
       <Route path="/admin/blogs">
         {() => (

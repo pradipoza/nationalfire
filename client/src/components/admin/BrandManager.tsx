@@ -95,7 +95,8 @@ export default function BrandManager() {
       form.reset();
       setSelectedProducts([]);
     },
-    onError: () => {
+    onError: (error) => {
+      console.error("Brand add error:", error);
       toast({ title: "Failed to add brand", variant: "destructive" });
     },
   });
@@ -117,7 +118,8 @@ export default function BrandManager() {
       form.reset();
       setSelectedProducts([]);
     },
-    onError: () => {
+    onError: (error) => {
+      console.error("Brand update error:", error);
       toast({ title: "Failed to update brand", variant: "destructive" });
     },
   });
@@ -135,7 +137,8 @@ export default function BrandManager() {
       toast({ title: "Brand deleted successfully" });
       setBrandToDelete(null);
     },
-    onError: () => {
+    onError: (error) => {
+      console.error("Brand delete error:", error);
       toast({ title: "Failed to delete brand", variant: "destructive" });
     },
   });
@@ -178,35 +181,51 @@ export default function BrandManager() {
   };
 
   const onAddSubmit = async (values: FormValues) => {
-    const brandData: InsertBrand = {
-      name: values.name,
-      logo: values.logo,
-      description: values.description,
-    };
+    try {
+      const brandData: InsertBrand = {
+        name: values.name,
+        logo: values.logo,
+        description: values.description,
+      };
 
-    const result = await addBrandMutation.mutateAsync(brandData);
-    if (result.brand && selectedProducts.length > 0) {
-      await updateProductsBrandMutation.mutateAsync({
-        brandId: result.brand.id,
-        productIds: selectedProducts,
+      addBrandMutation.mutate(brandData, {
+        onSuccess: async (result) => {
+          if (result.brand && selectedProducts.length > 0) {
+            await updateProductsBrandMutation.mutateAsync({
+              brandId: result.brand.id,
+              productIds: selectedProducts,
+            });
+          }
+        }
       });
+    } catch (error) {
+      console.error("Add submit error:", error);
+      toast({ title: "Failed to add brand", variant: "destructive" });
     }
   };
 
   const onEditSubmit = async (values: FormValues) => {
     if (!editingBrand) return;
 
-    const brandData: InsertBrand = {
-      name: values.name,
-      logo: values.logo,
-      description: values.description,
-    };
+    try {
+      const brandData: InsertBrand = {
+        name: values.name,
+        logo: values.logo,
+        description: values.description,
+      };
 
-    await editBrandMutation.mutateAsync({ id: editingBrand.id, data: brandData });
-    await updateProductsBrandMutation.mutateAsync({
-      brandId: editingBrand.id,
-      productIds: selectedProducts,
-    });
+      editBrandMutation.mutate({ id: editingBrand.id, data: brandData }, {
+        onSuccess: async () => {
+          await updateProductsBrandMutation.mutateAsync({
+            brandId: editingBrand.id,
+            productIds: selectedProducts,
+          });
+        }
+      });
+    } catch (error) {
+      console.error("Edit submit error:", error);
+      toast({ title: "Failed to update brand", variant: "destructive" });
+    }
   };
 
   const handleProductToggle = (productId: number) => {
