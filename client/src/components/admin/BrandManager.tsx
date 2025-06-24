@@ -81,13 +81,20 @@ export default function BrandManager() {
 
   const addBrandMutation = useMutation({
     mutationFn: async (data: InsertBrand) => {
+      console.log("Adding brand:", data);
       const response = await apiRequest("/api/brands", {
         method: "POST",
         body: JSON.stringify(data),
       });
+      if (!response.ok) {
+        const errorData = await response.text();
+        console.error("API Error:", response.status, errorData);
+        throw new Error(`HTTP ${response.status}: ${errorData}`);
+      }
       return response.json();
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      console.log("Brand added successfully:", data);
       queryClient.invalidateQueries({ queryKey: ["/api/brands"] });
       queryClient.invalidateQueries({ queryKey: ["/api/products"] });
       toast({ title: "Brand added successfully" });
@@ -97,19 +104,26 @@ export default function BrandManager() {
     },
     onError: (error) => {
       console.error("Brand add error:", error);
-      toast({ title: "Failed to add brand", variant: "destructive" });
+      toast({ title: `Failed to add brand: ${error.message}`, variant: "destructive" });
     },
   });
 
   const editBrandMutation = useMutation({
     mutationFn: async ({ id, data }: { id: number; data: InsertBrand }) => {
+      console.log("Updating brand:", id, data);
       const response = await apiRequest(`/api/brands/${id}`, {
         method: "PATCH",
         body: JSON.stringify(data),
       });
+      if (!response.ok) {
+        const errorData = await response.text();
+        console.error("API Error:", response.status, errorData);
+        throw new Error(`HTTP ${response.status}: ${errorData}`);
+      }
       return response.json();
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      console.log("Brand updated successfully:", data);
       queryClient.invalidateQueries({ queryKey: ["/api/brands"] });
       queryClient.invalidateQueries({ queryKey: ["/api/products"] });
       toast({ title: "Brand updated successfully" });
@@ -120,18 +134,25 @@ export default function BrandManager() {
     },
     onError: (error) => {
       console.error("Brand update error:", error);
-      toast({ title: "Failed to update brand", variant: "destructive" });
+      toast({ title: `Failed to update brand: ${error.message}`, variant: "destructive" });
     },
   });
 
   const deleteBrandMutation = useMutation({
     mutationFn: async (id: number) => {
+      console.log("Deleting brand:", id);
       const response = await apiRequest(`/api/brands/${id}`, {
         method: "DELETE",
       });
+      if (!response.ok) {
+        const errorData = await response.text();
+        console.error("API Error:", response.status, errorData);
+        throw new Error(`HTTP ${response.status}: ${errorData}`);
+      }
       return response.json();
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      console.log("Brand deleted successfully:", data);
       queryClient.invalidateQueries({ queryKey: ["/api/brands"] });
       queryClient.invalidateQueries({ queryKey: ["/api/products"] });
       toast({ title: "Brand deleted successfully" });
@@ -139,7 +160,7 @@ export default function BrandManager() {
     },
     onError: (error) => {
       console.error("Brand delete error:", error);
-      toast({ title: "Failed to delete brand", variant: "destructive" });
+      toast({ title: `Failed to delete brand: ${error.message}`, variant: "destructive" });
     },
   });
 
