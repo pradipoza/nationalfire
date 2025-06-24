@@ -82,8 +82,11 @@ export default function BrandManager() {
   const addBrandMutation = useMutation({
     mutationFn: async (data: InsertBrand) => {
       console.log("Adding brand:", data);
-      const response = await apiRequest("/api/brands", {
+      const response = await fetch("/api/brands", {
         method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify(data),
       });
       if (!response.ok) {
@@ -111,8 +114,11 @@ export default function BrandManager() {
   const editBrandMutation = useMutation({
     mutationFn: async ({ id, data }: { id: number; data: InsertBrand }) => {
       console.log("Updating brand:", id, data);
-      const response = await apiRequest(`/api/brands/${id}`, {
+      const response = await fetch(`/api/brands/${id}`, {
         method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify(data),
       });
       if (!response.ok) {
@@ -141,8 +147,11 @@ export default function BrandManager() {
   const deleteBrandMutation = useMutation({
     mutationFn: async (id: number) => {
       console.log("Deleting brand:", id);
-      const response = await apiRequest(`/api/brands/${id}`, {
+      const response = await fetch(`/api/brands/${id}`, {
         method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
       });
       if (!response.ok) {
         const errorData = await response.text();
@@ -170,13 +179,19 @@ export default function BrandManager() {
         // Remove brand from all products of this brand
         ...products
           .filter(p => p.brandId === brandId)
-          .map(p => apiRequest(`/api/products/${p.id}`, {
+          .map(p => fetch(`/api/products/${p.id}`, {
             method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+            },
             body: JSON.stringify({ brandId: null }),
           })),
         // Add brand to selected products
-        ...productIds.map(productId => apiRequest(`/api/products/${productId}`, {
+        ...productIds.map(productId => fetch(`/api/products/${productId}`, {
           method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
           body: JSON.stringify({ brandId }),
         })),
       ]);
