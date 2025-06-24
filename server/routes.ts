@@ -333,6 +333,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: 'Server error' });
     }
   });
+
+  app.patch('/api/products/:id', isAuthenticated, async (req, res) => {
+    try {
+      const productId = parseInt(req.params.id);
+      const updateSchema = insertProductSchema.partial();
+      const validData = updateSchema.parse(req.body);
+      
+      const updatedProduct = await storage.updateProduct(productId, validData);
+      if (!updatedProduct) {
+        return res.status(404).json({ message: 'Product not found' });
+      }
+      
+      res.json({ message: 'Product updated successfully', product: updatedProduct });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: 'Invalid data', errors: error.errors });
+      }
+      res.status(500).json({ message: 'Server error' });
+    }
+  });
   
   app.delete('/api/products/:id', isAuthenticated, async (req, res) => {
     try {

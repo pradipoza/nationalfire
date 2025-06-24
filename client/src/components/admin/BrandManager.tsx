@@ -175,27 +175,45 @@ export default function BrandManager() {
 
   const updateProductsBrandMutation = useMutation({
     mutationFn: async ({ brandId, productIds }: { brandId: number; productIds: number[] }) => {
-      const responses = await Promise.all([
-        // Remove brand from all products of this brand
-        ...products
-          .filter(p => p.brandId === brandId)
-          .map(p => fetch(`/api/products/${p.id}`, {
-            method: "PATCH",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ brandId: null }),
-          })),
-        // Add brand to selected products
-        ...productIds.map(productId => fetch(`/api/products/${productId}`, {
+      // First, remove brand from all current products of this brand
+      const currentBrandProducts = products.filter(p => p.brandId === brandId);
+      
+      for (const product of currentBrandProducts) {
+        const response = await fetch(`/api/products/${product.id}`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ brandId: null }),
+        });
+        if (!response.ok) {
+          throw new Error(`Failed to remove brand from product ${product.id}`);
+        }
+      }
+
+      // Then, add brand to selected products
+      for (const productId of productIds) {
+        const response = await fetch(`/api/products/${productId}`, {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({ brandId }),
-        })),
-      ]);
-      return responses;
+        });
+        if (!response.ok) {
+          throw new Error(`Failed to assign brand to product ${productId}`);
+        }
+      }
+
+      return true;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/products"] });
+      toast({ title: "Product associations updated successfully" });
+    },
+    onError: (error) => {
+      console.error("Product association error:", error);
+      toast({ title: `Failed to update product associations: ${error.message}`, variant: "destructive" });
     },
   });
 
