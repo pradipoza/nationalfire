@@ -1,5 +1,5 @@
 import React from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { API_ENDPOINTS } from "@/lib/config";
 import { useToast } from "@/hooks/use-toast";
@@ -38,9 +38,19 @@ const ContactForm: React.FC = () => {
   );
   const productId = searchParams.get("product");
   
+  // Fetch product data if productId is provided
+  const { data: productData } = useQuery({
+    queryKey: [API_ENDPOINTS.PRODUCT(productId!)],
+    enabled: !!productId,
+  });
+  
+  const product = productData?.product;
+  
   let defaultMessage = "I'd like to inquire about your products.";
   
-  if (productId) {
+  if (productId && product) {
+    defaultMessage = `I'm interested in the ${product.name}. Please provide more information.`;
+  } else if (productId && !product) {
     defaultMessage = `I'm interested in product #${productId}. Please provide more information.`;
   }
 
@@ -52,6 +62,14 @@ const ContactForm: React.FC = () => {
       message: defaultMessage,
     },
   });
+  
+  // Update form message when product data loads
+  React.useEffect(() => {
+    if (productId && product) {
+      const newMessage = `I'm interested in the ${product.name}. Please provide more information.`;
+      form.setValue("message", newMessage);
+    }
+  }, [product, productId, form]);
 
   const sendInquiryMutation = useMutation({
     mutationFn: async (data: FormValues) => {
