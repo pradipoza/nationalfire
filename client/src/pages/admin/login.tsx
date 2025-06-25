@@ -144,11 +144,6 @@ const AdminLogin: React.FC = () => {
               </form>
             </Form>
           </CardContent>
-          <CardFooter className="flex justify-center">
-            <p className="text-sm text-gray-500">
-              Default credentials: admin / admin123
-            </p>
-          </CardFooter>
         </Card>
       </div>
     </div>

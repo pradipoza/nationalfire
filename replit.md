@@ -131,6 +131,12 @@ Changelog:
   - Fixed fetch API parameter ordering issues in brand CRUD operations
   - Resolved authentication problems and double sidebar display issues
   - All brands management functionality now fully operational
+- June 25, 2025. Enhanced security and user experience improvements
+  - Removed default login credentials from admin login page for better security
+  - Fixed product inquiry form to display product names instead of IDs
+  - Updated contact form to fetch and display actual product names in auto-filled messages
+  - Improved brand deletion functionality by properly handling foreign key constraints
+  - Enhanced product-brand association workflow with better error handling
 
 ## User Preferences
 
