@@ -242,16 +242,16 @@ export default function BrandManager() {
         description: values.description,
       };
 
-      addBrandMutation.mutate(brandData, {
-        onSuccess: async (result) => {
-          if (result.brand && selectedProducts.length > 0) {
-            await updateProductsBrandMutation.mutateAsync({
-              brandId: result.brand.id,
-              productIds: selectedProducts,
-            });
-          }
-        }
-      });
+      // First create the brand
+      const result = await addBrandMutation.mutateAsync(brandData);
+      
+      // Then update product associations if any products are selected
+      if (result.brand && selectedProducts.length > 0) {
+        await updateProductsBrandMutation.mutateAsync({
+          brandId: result.brand.id,
+          productIds: selectedProducts,
+        });
+      }
     } catch (error) {
       console.error("Add submit error:", error);
       toast({ title: "Failed to add brand", variant: "destructive" });
@@ -268,13 +268,13 @@ export default function BrandManager() {
         description: values.description,
       };
 
-      editBrandMutation.mutate({ id: editingBrand.id, data: brandData }, {
-        onSuccess: async () => {
-          await updateProductsBrandMutation.mutateAsync({
-            brandId: editingBrand.id,
-            productIds: selectedProducts,
-          });
-        }
+      // First update the brand data
+      await editBrandMutation.mutateAsync({ id: editingBrand.id, data: brandData });
+      
+      // Then update product associations
+      await updateProductsBrandMutation.mutateAsync({
+        brandId: editingBrand.id,
+        productIds: selectedProducts,
       });
     } catch (error) {
       console.error("Edit submit error:", error);

@@ -157,6 +157,13 @@ export class DatabaseStorage implements IStorage {
   }
   
   async deleteBrand(id: number): Promise<boolean> {
+    // First, remove brand association from all products that reference this brand
+    await db
+      .update(products)
+      .set({ brandId: null })
+      .where(eq(products.brandId, id));
+    
+    // Then delete the brand
     const result = await db.delete(brands).where(eq(brands.id, id));
     return result.rowCount! > 0;
   }
@@ -192,9 +199,10 @@ export class DatabaseStorage implements IStorage {
     // Only update values that are provided
     const updateValues: any = { updatedAt: new Date() };
     
-    if (updates.name) updateValues.name = updates.name;
-    if (updates.description) updateValues.description = updates.description;
-    if (updates.photos) updateValues.photos = updates.photos;
+    if (updates.name !== undefined) updateValues.name = updates.name;
+    if (updates.description !== undefined) updateValues.description = updates.description;
+    if (updates.photos !== undefined) updateValues.photos = updates.photos;
+    if (updates.brandId !== undefined) updateValues.brandId = updates.brandId;
     
     const [updatedProduct] = await db
       .update(products)
