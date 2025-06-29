@@ -15,6 +15,7 @@ import {
   ChevronDown,
   ChevronUp,
   Building2,
+  Users,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -247,6 +248,13 @@ const Sidebar: React.FC = () => {
               onClick={() => isMobile && setIsOpen(false)}
             >
               Portfolio
+            </SidebarLink>
+            <SidebarLink
+              href="/admin/customers"
+              icon={<Users className="h-5 w-5" />}
+              onClick={() => isMobile && setIsOpen(false)}
+            >
+              Customers
             </SidebarLink>
             <SidebarLink
               href="/admin/contact"
