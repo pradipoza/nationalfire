@@ -742,6 +742,86 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: 'Server error' });
     }
   });
+
+  // Portfolio routes
+  app.get('/api/portfolio', async (req, res) => {
+    try {
+      const portfolioItems = await storage.getPortfolioItems();
+      res.json({ portfolioItems });
+    } catch (error) {
+      res.status(500).json({ message: 'Server error' });
+    }
+  });
+
+  app.get('/api/portfolio/category/:category', async (req, res) => {
+    try {
+      const category = req.params.category;
+      const portfolioItems = await storage.getPortfolioItemsByCategory(category);
+      res.json({ portfolioItems });
+    } catch (error) {
+      res.status(500).json({ message: 'Server error' });
+    }
+  });
+
+  app.get('/api/portfolio/:id', async (req, res) => {
+    try {
+      const portfolioId = parseInt(req.params.id);
+      const portfolioItem = await storage.getPortfolioItem(portfolioId);
+      if (!portfolioItem) {
+        return res.status(404).json({ message: 'Portfolio item not found' });
+      }
+      res.json({ portfolioItem });
+    } catch (error) {
+      res.status(500).json({ message: 'Server error' });
+    }
+  });
+
+  app.post('/api/portfolio', isAuthenticated, async (req, res) => {
+    try {
+      const { insertPortfolioSchema } = await import("@shared/schema");
+      const validData = insertPortfolioSchema.parse(req.body);
+      const portfolioItem = await storage.createPortfolioItem(validData);
+      res.status(201).json({ message: 'Portfolio item created successfully', portfolioItem });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: 'Invalid data', errors: error.errors });
+      }
+      res.status(500).json({ message: 'Server error' });
+    }
+  });
+
+  app.put('/api/portfolio/:id', isAuthenticated, async (req, res) => {
+    try {
+      const portfolioId = parseInt(req.params.id);
+      const { insertPortfolioSchema } = await import("@shared/schema");
+      const validData = insertPortfolioSchema.parse(req.body);
+      
+      const updatedPortfolioItem = await storage.updatePortfolioItem(portfolioId, validData);
+      if (!updatedPortfolioItem) {
+        return res.status(404).json({ message: 'Portfolio item not found' });
+      }
+      
+      res.json({ message: 'Portfolio item updated successfully', portfolioItem: updatedPortfolioItem });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: 'Invalid data', errors: error.errors });
+      }
+      res.status(500).json({ message: 'Server error' });
+    }
+  });
+
+  app.delete('/api/portfolio/:id', isAuthenticated, async (req, res) => {
+    try {
+      const portfolioId = parseInt(req.params.id);
+      const success = await storage.deletePortfolioItem(portfolioId);
+      if (!success) {
+        return res.status(404).json({ message: 'Portfolio item not found' });
+      }
+      res.json({ message: 'Portfolio item deleted successfully' });
+    } catch (error) {
+      res.status(500).json({ message: 'Server error' });
+    }
+  });
   
   return httpServer;
 }

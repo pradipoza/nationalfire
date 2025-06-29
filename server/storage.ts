@@ -463,6 +463,49 @@ export class DatabaseStorage implements IStorage {
       .from(analytics)
       .orderBy(desc(analytics.timestamp));
   }
+
+  // Portfolio
+  async getPortfolioItems(): Promise<Portfolio[]> {
+    return db
+      .select()
+      .from(portfolio)
+      .orderBy(desc(portfolio.createdAt));
+  }
+
+  async getPortfolioItem(id: number): Promise<Portfolio | undefined> {
+    const [item] = await db.select().from(portfolio).where(eq(portfolio.id, id));
+    return item || undefined;
+  }
+
+  async getPortfolioItemsByCategory(category: string): Promise<Portfolio[]> {
+    return db
+      .select()
+      .from(portfolio)
+      .where(eq(portfolio.category, category))
+      .orderBy(desc(portfolio.createdAt));
+  }
+
+  async createPortfolioItem(portfolioItem: InsertPortfolio): Promise<Portfolio> {
+    const [item] = await db
+      .insert(portfolio)
+      .values(portfolioItem)
+      .returning();
+    return item;
+  }
+
+  async updatePortfolioItem(id: number, updates: Partial<InsertPortfolio>): Promise<Portfolio | undefined> {
+    const [updatedItem] = await db
+      .update(portfolio)
+      .set(updates)
+      .where(eq(portfolio.id, id))
+      .returning();
+    return updatedItem || undefined;
+  }
+
+  async deletePortfolioItem(id: number): Promise<boolean> {
+    const result = await db.delete(portfolio).where(eq(portfolio.id, id));
+    return (result.rowCount || 0) > 0;
+  }
 }
 
 // Initialize seed data if needed
