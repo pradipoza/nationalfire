@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, boolean, timestamp, uuid, json } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, timestamp, uuid, json, varchar } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
@@ -170,6 +170,28 @@ export const insertAnalyticsSchema = createInsertSchema(analytics).omit({
 
 export type InsertAnalytics = z.infer<typeof insertAnalyticsSchema>;
 export type Analytics = typeof analytics.$inferSelect;
+
+// Portfolio table
+export const portfolio = pgTable("portfolio", {
+  id: serial("id").primaryKey(),
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  image: text("image").notNull(),
+  category: text("category").notNull(), // 'social' or 'government'
+  projectDetails: text("project_details").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const insertPortfolioSchema = createInsertSchema(portfolio).pick({
+  title: true,
+  description: true,
+  image: true,
+  category: true,
+  projectDetails: true,
+});
+
+export type InsertPortfolio = z.infer<typeof insertPortfolioSchema>;
+export type Portfolio = typeof portfolio.$inferSelect;
 
 // Relations
 export const brandsRelations = relations(brands, ({ many }) => ({

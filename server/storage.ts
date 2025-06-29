@@ -7,7 +7,8 @@ import {
   inquiries, type Inquiry, type InsertInquiry,
   aboutStats, type AboutStats, type InsertAboutStats,
   analytics, type Analytics, type InsertAnalytics,
-  brands, type Brand, type InsertBrand
+  brands, type Brand, type InsertBrand,
+  portfolio, type Portfolio, type InsertPortfolio
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, sql } from "drizzle-orm";
@@ -68,6 +69,14 @@ export interface IStorage {
   // Analytics
   logPageVisit(pageVisit: InsertAnalytics): Promise<Analytics>;
   getPageVisits(limit?: number): Promise<Analytics[]>;
+  
+  // Portfolio
+  getPortfolioItems(): Promise<Portfolio[]>;
+  getPortfolioItem(id: number): Promise<Portfolio | undefined>;
+  getPortfolioItemsByCategory(category: string): Promise<Portfolio[]>;
+  createPortfolioItem(portfolioItem: InsertPortfolio): Promise<Portfolio>;
+  updatePortfolioItem(id: number, updates: Partial<InsertPortfolio>): Promise<Portfolio | undefined>;
+  deletePortfolioItem(id: number): Promise<boolean>;
 }
 
 export class DatabaseStorage implements IStorage {
