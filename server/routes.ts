@@ -822,6 +822,85 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: 'Server error' });
     }
   });
+
+  // Customers routes
+  app.get('/api/customers', async (req, res) => {
+    try {
+      const customers = await storage.getCustomers();
+      res.json({ customers });
+    } catch (error) {
+      res.status(500).json({ message: 'Server error' });
+    }
+  });
+
+  app.get('/api/customers/active', async (req, res) => {
+    try {
+      const customers = await storage.getActiveCustomers();
+      res.json({ customers });
+    } catch (error) {
+      res.status(500).json({ message: 'Server error' });
+    }
+  });
+
+  app.get('/api/customers/:id', async (req, res) => {
+    try {
+      const customerId = parseInt(req.params.id);
+      const customer = await storage.getCustomer(customerId);
+      if (!customer) {
+        return res.status(404).json({ message: 'Customer not found' });
+      }
+      res.json({ customer });
+    } catch (error) {
+      res.status(500).json({ message: 'Server error' });
+    }
+  });
+
+  app.post('/api/customers', isAuthenticated, async (req, res) => {
+    try {
+      const { insertCustomerSchema } = await import("@shared/schema");
+      const validData = insertCustomerSchema.parse(req.body);
+      const customer = await storage.createCustomer(validData);
+      res.status(201).json({ message: 'Customer created successfully', customer });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: 'Invalid data', errors: error.errors });
+      }
+      res.status(500).json({ message: 'Server error' });
+    }
+  });
+
+  app.put('/api/customers/:id', isAuthenticated, async (req, res) => {
+    try {
+      const customerId = parseInt(req.params.id);
+      const { insertCustomerSchema } = await import("@shared/schema");
+      const validData = insertCustomerSchema.parse(req.body);
+      
+      const updatedCustomer = await storage.updateCustomer(customerId, validData);
+      if (!updatedCustomer) {
+        return res.status(404).json({ message: 'Customer not found' });
+      }
+      
+      res.json({ message: 'Customer updated successfully', customer: updatedCustomer });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: 'Invalid data', errors: error.errors });
+      }
+      res.status(500).json({ message: 'Server error' });
+    }
+  });
+
+  app.delete('/api/customers/:id', isAuthenticated, async (req, res) => {
+    try {
+      const customerId = parseInt(req.params.id);
+      const success = await storage.deleteCustomer(customerId);
+      if (!success) {
+        return res.status(404).json({ message: 'Customer not found' });
+      }
+      res.json({ message: 'Customer deleted successfully' });
+    } catch (error) {
+      res.status(500).json({ message: 'Server error' });
+    }
+  });
   
   return httpServer;
 }

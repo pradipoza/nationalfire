@@ -8,7 +8,8 @@ import {
   aboutStats, type AboutStats, type InsertAboutStats,
   analytics, type Analytics, type InsertAnalytics,
   brands, type Brand, type InsertBrand,
-  portfolio, type Portfolio, type InsertPortfolio
+  portfolio, type Portfolio, type InsertPortfolio,
+  customers, type Customer, type InsertCustomer
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, sql } from "drizzle-orm";
@@ -77,6 +78,14 @@ export interface IStorage {
   createPortfolioItem(portfolioItem: InsertPortfolio): Promise<Portfolio>;
   updatePortfolioItem(id: number, updates: Partial<InsertPortfolio>): Promise<Portfolio | undefined>;
   deletePortfolioItem(id: number): Promise<boolean>;
+  
+  // Customers
+  getCustomers(): Promise<Customer[]>;
+  getCustomer(id: number): Promise<Customer | undefined>;
+  getActiveCustomers(): Promise<Customer[]>;
+  createCustomer(customer: InsertCustomer): Promise<Customer>;
+  updateCustomer(id: number, updates: Partial<InsertCustomer>): Promise<Customer | undefined>;
+  deleteCustomer(id: number): Promise<boolean>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -505,6 +514,49 @@ export class DatabaseStorage implements IStorage {
   async deletePortfolioItem(id: number): Promise<boolean> {
     const result = await db.delete(portfolio).where(eq(portfolio.id, id));
     return (result.rowCount || 0) > 0;
+  }
+
+  // Customers methods
+  async getCustomers(): Promise<Customer[]> {
+    return await db.select().from(customers).orderBy(customers.displayOrder, customers.name);
+  }
+
+  async getCustomer(id: number): Promise<Customer | undefined> {
+    const [customer] = await db.select().from(customers).where(eq(customers.id, id));
+    return customer || undefined;
+  }
+
+  async getActiveCustomers(): Promise<Customer[]> {
+    return await db.select().from(customers)
+      .where(eq(customers.isActive, true))
+      .orderBy(customers.displayOrder, customers.name);
+  }
+
+  async createCustomer(customer: InsertCustomer): Promise<Customer> {
+    const [createdCustomer] = await db
+      .insert(customers)
+      .values(customer)
+      .returning();
+    return createdCustomer;
+  }
+
+  async updateCustomer(id: number, updates: Partial<InsertCustomer>): Promise<Customer | undefined> {
+    const [updatedCustomer] = await db
+      .update(customers)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(customers.id, id))
+      .returning();
+    return updatedCustomer || undefined;
+  }
+
+  async deleteCustomer(id: number): Promise<boolean> {
+    try {
+      const result = await db.delete(customers).where(eq(customers.id, id));
+      return result.rowCount !== null && result.rowCount > 0;
+    } catch (error) {
+      console.error('Error deleting customer:', error);
+      return false;
+    }
   }
 }
 
