@@ -59,7 +59,7 @@ export default function PortfolioManager() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const { data: portfolioData, isLoading } = useQuery({
+  const { data: portfolioData, isLoading } = useQuery<{ portfolioItems: Portfolio[] }>({
     queryKey: ['/api/portfolio'],
   });
 
@@ -67,7 +67,7 @@ export default function PortfolioManager() {
 
   const addMutation = useMutation({
     mutationFn: async (data: InsertPortfolio) => {
-      return apiRequest('/api/portfolio', 'POST', data);
+      return apiRequest('POST', '/api/portfolio', data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/portfolio'] });
@@ -88,7 +88,7 @@ export default function PortfolioManager() {
 
   const editMutation = useMutation({
     mutationFn: async ({ id, data }: { id: number; data: InsertPortfolio }) => {
-      return apiRequest(`/api/portfolio/${id}`, 'PUT', data);
+      return apiRequest('PUT', `/api/portfolio/${id}`, data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/portfolio'] });
@@ -109,7 +109,7 @@ export default function PortfolioManager() {
 
   const deleteMutation = useMutation({
     mutationFn: async (id: number) => {
-      return apiRequest(`/api/portfolio/${id}`, 'DELETE');
+      return apiRequest('DELETE', `/api/portfolio/${id}`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/portfolio'] });
