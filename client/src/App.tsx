@@ -20,6 +20,8 @@ import BlogDetail from "@/pages/blogs/[id]";
 import GalleryPage from "@/pages/gallery";
 import BrandsPage from "@/pages/brands/index";
 import BrandProductsPage from "@/pages/brands/[id]";
+import PortfolioPage from "@/pages/portfolio";
+import PortfolioDetailPage from "@/pages/portfolio/[id]";
 import AboutPage from "@/pages/about";
 import ContactPage from "@/pages/contact";
 
@@ -30,6 +32,7 @@ import AdminProducts from "@/pages/admin/products";
 import AdminBrands from "@/pages/admin/brands";
 import AdminBlogs from "@/pages/admin/blogs";
 import AdminGallery from "@/pages/admin/gallery";
+import AdminPortfolio from "@/pages/admin/portfolio";
 import AdminContact from "@/pages/admin/contact";
 import AdminSettings from "@/pages/admin/settings";
 
@@ -112,6 +115,20 @@ function Router() {
           </MainLayout>
         )}
       </Route>
+      <Route path="/portfolio">
+        {() => (
+          <MainLayout>
+            <PortfolioPage />
+          </MainLayout>
+        )}
+      </Route>
+      <Route path="/portfolio/:id">
+        {(params) => (
+          <MainLayout>
+            <PortfolioDetailPage id={params.id} />
+          </MainLayout>
+        )}
+      </Route>
       <Route path="/contact">
         {() => (
           <MainLayout>
@@ -154,6 +171,13 @@ function Router() {
         {() => (
           <AdminLayout>
             <AdminGallery />
+          </AdminLayout>
+        )}
+      </Route>
+      <Route path="/admin/portfolio">
+        {() => (
+          <AdminLayout>
+            <AdminPortfolio />
           </AdminLayout>
         )}
       </Route>
