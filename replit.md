@@ -145,6 +145,8 @@ Changelog:
   - Added admin portfolio management with image upload and categorization
   - Integrated portfolio navigation links in main navbar and admin sidebar
   - Portfolio system supports social work and government project categorization
+  - Fixed portfolio detail page routing to properly display individual project details
+  - Portfolio creation, editing, deletion, and viewing functionality now fully operational
 
 ## User Preferences
 

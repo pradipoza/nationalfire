@@ -10,8 +10,8 @@ export default function PortfolioDetailPage() {
   const [match, params] = useRoute('/portfolio/:id');
   const portfolioId = params?.id;
 
-  const { data, isLoading, error } = useQuery({
-    queryKey: ['/api/portfolio', portfolioId],
+  const { data, isLoading, error } = useQuery<{ portfolioItem: Portfolio }>({
+    queryKey: [`/api/portfolio/${portfolioId}`],
     enabled: !!portfolioId,
   });
 
