@@ -7,11 +7,11 @@ import { ArrowRight, Building2, Heart } from 'lucide-react';
 import type { Portfolio } from '@shared/schema';
 
 export default function PortfolioPage() {
-  const { data: socialWorks, isLoading: loadingSocial } = useQuery({
+  const { data: socialWorks, isLoading: loadingSocial } = useQuery<{ portfolioItems: Portfolio[] }>({
     queryKey: ['/api/portfolio/category/social'],
   });
 
-  const { data: governmentProjects, isLoading: loadingGov } = useQuery({
+  const { data: governmentProjects, isLoading: loadingGov } = useQuery<{ portfolioItems: Portfolio[] }>({
     queryKey: ['/api/portfolio/category/government'],
   });
 
