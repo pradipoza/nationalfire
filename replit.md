@@ -137,6 +137,14 @@ Changelog:
   - Updated contact form to fetch and display actual product names in auto-filled messages
   - Improved brand deletion functionality by properly handling foreign key constraints
   - Enhanced product-brand association workflow with better error handling
+- June 29, 2025. Added comprehensive portfolio management system
+  - Created portfolio database schema with social works and government projects categories
+  - Built complete portfolio API endpoints with CRUD operations
+  - Implemented portfolio listing page with two distinct sections
+  - Created detailed portfolio item view with project information
+  - Added admin portfolio management with image upload and categorization
+  - Integrated portfolio navigation links in main navbar and admin sidebar
+  - Portfolio system supports social work and government project categorization
 
 ## User Preferences
 

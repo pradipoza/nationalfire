@@ -242,6 +242,13 @@ const Sidebar: React.FC = () => {
               Gallery
             </SidebarLink>
             <SidebarLink
+              href="/admin/portfolio"
+              icon={<FileText className="h-5 w-5" />}
+              onClick={() => isMobile && setIsOpen(false)}
+            >
+              Portfolio
+            </SidebarLink>
+            <SidebarLink
               href="/admin/contact"
               icon={<PhoneCall className="h-5 w-5" />}
               onClick={() => isMobile && setIsOpen(false)}

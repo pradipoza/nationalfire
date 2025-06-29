@@ -125,7 +125,7 @@ function Router() {
       <Route path="/portfolio/:id">
         {(params) => (
           <MainLayout>
-            <PortfolioDetailPage id={params.id} />
+            <PortfolioDetailPage />
           </MainLayout>
         )}
       </Route>
