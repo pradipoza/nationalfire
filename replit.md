@@ -147,6 +147,11 @@ Changelog:
   - Portfolio system supports social work and government project categorization
   - Fixed portfolio detail page routing to properly display individual project details
   - Portfolio creation, editing, deletion, and viewing functionality now fully operational
+  - Added comprehensive customer management system with database schema and API endpoints
+  - Created customer admin interface for uploading logos and managing website links
+  - Integrated customer logo sections into both About Us and Home pages
+  - Customer logos display with grayscale effect and redirect to customer websites on click
+  - Customer sections appear above statistics counters on About Us page and within AboutPreview on Home page
 
 ## User Preferences
 

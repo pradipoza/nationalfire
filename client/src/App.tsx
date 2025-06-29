@@ -33,6 +33,7 @@ import AdminBrands from "@/pages/admin/brands";
 import AdminBlogs from "@/pages/admin/blogs";
 import AdminGallery from "@/pages/admin/gallery";
 import AdminPortfolio from "@/pages/admin/portfolio";
+import AdminCustomers from "@/pages/admin/customers";
 import AdminContact from "@/pages/admin/contact";
 import AdminSettings from "@/pages/admin/settings";
 
@@ -178,6 +179,13 @@ function Router() {
         {() => (
           <AdminLayout>
             <AdminPortfolio />
+          </AdminLayout>
+        )}
+      </Route>
+      <Route path="/admin/customers">
+        {() => (
+          <AdminLayout>
+            <AdminCustomers />
           </AdminLayout>
         )}
       </Route>

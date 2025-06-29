@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Check, Loader2 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "wouter";
+import CustomerSection from "@/components/CustomerSection";
 
 const AboutPage: React.FC = () => {
   const { data, isLoading } = useQuery({
@@ -194,6 +195,9 @@ const AboutPage: React.FC = () => {
           </div>
         </div>
       </section>
+
+      {/* Our Customers */}
+      <CustomerSection className="bg-gray-50" />
 
       {/* Experience & Statistics */}
       <section ref={counterRef} className="counter-section py-16 text-white">

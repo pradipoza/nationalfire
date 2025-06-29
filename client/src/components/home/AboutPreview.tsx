@@ -5,6 +5,7 @@ import { Check } from "lucide-react";
 import { API_ENDPOINTS } from "@/lib/config";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import CustomerSection from "@/components/CustomerSection";
 
 const AboutPreview: React.FC = () => {
   return (
@@ -74,6 +75,13 @@ const AboutPreview: React.FC = () => {
             />
           </div>
         </div>
+        
+        {/* Customer Section */}
+        <CustomerSection 
+          title="Trusted by Leading Organizations"
+          subtitle="Proud to serve emergency services and government agencies nationwide"
+          className="pt-16"
+        />
       </div>
     </section>
   );
