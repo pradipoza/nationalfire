@@ -73,51 +73,48 @@ const AboutPage: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h1 className="text-3xl md:text-4xl font-bold text-gray-900 font-montserrat">
-              About National Fire
+              About National Fire Safe Pvt. Ltd.
             </h1>
             <p className="mt-4 text-lg text-gray-500 max-w-3xl mx-auto">
-              Committed to excellence in emergency vehicle manufacturing since 1985
+              Safety and innovation drive everything we do - protecting lives and property across Nepal since 2009
             </p>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
-              <h3 className="text-2xl font-bold text-gray-900 font-montserrat mb-4">Our Company</h3>
-              <p className="text-gray-500 mb-4">
-                Founded in 1985, National Fire has been at the forefront of emergency vehicle manufacturing for over three decades. We specialize in designing and building high-quality fire trucks, ambulances, and modern electric buses that meet the demanding needs of emergency services and transportation providers worldwide.
-              </p>
-              <p className="text-gray-500 mb-4">
-                Our state-of-the-art manufacturing facilities combine advanced technology with skilled craftsmanship to create vehicles that are reliable, efficient, and built to last. We understand that our products are used in critical situations where performance and dependability are non-negotiable.
-              </p>
-              <p className="text-gray-500 mb-6">
-                Our commitment to innovation, quality, and reliability has made us a trusted partner for fire departments, emergency medical services, and municipal transport authorities across the country.
-              </p>
-              <ul className="space-y-3">
-                <li className="flex items-start">
-                  <div className="flex-shrink-0 h-6 w-6 rounded-full bg-primary flex items-center justify-center mt-1">
-                    <Check className="h-4 w-4 text-white" />
-                  </div>
-                  <span className="ml-3 text-gray-600">Industry-leading safety standards</span>
-                </li>
-                <li className="flex items-start">
-                  <div className="flex-shrink-0 h-6 w-6 rounded-full bg-primary flex items-center justify-center mt-1">
-                    <Check className="h-4 w-4 text-white" />
-                  </div>
-                  <span className="ml-3 text-gray-600">Custom-built to your specifications</span>
-                </li>
-                <li className="flex items-start">
-                  <div className="flex-shrink-0 h-6 w-6 rounded-full bg-primary flex items-center justify-center mt-1">
-                    <Check className="h-4 w-4 text-white" />
-                  </div>
-                  <span className="ml-3 text-gray-600">Comprehensive after-sales support</span>
-                </li>
-                <li className="flex items-start">
-                  <div className="flex-shrink-0 h-6 w-6 rounded-full bg-primary flex items-center justify-center mt-1">
-                    <Check className="h-4 w-4 text-white" />
-                  </div>
-                  <span className="ml-3 text-gray-600">Environmentally conscious manufacturing</span>
-                </li>
-              </ul>
+              <div className="mb-8">
+                <h3 className="text-2xl font-bold text-gray-900 font-montserrat mb-4">Our Company</h3>
+                <p className="text-gray-600 mb-4 leading-relaxed">
+                  At National Fire Safe Pvt. Ltd., safety and innovation drive everything we do. Since 2009, we've been dedicated to protecting lives and property across Nepal with top-tier fire safety, electric vehicles, and emergency solutions.
+                </p>
+                <p className="text-gray-600 mb-6 leading-relaxed">
+                  As a premier provider in Nepal, we supply comprehensive solutions including firefighting equipment, emergency vehicles, and eco-friendly transport options, complemented by expert consultation, professional installation, and reliable after-sales maintenance.
+                </p>
+              </div>
+
+              <div className="bg-gradient-to-r from-red-50 to-blue-50 p-6 rounded-lg mb-6">
+                <h4 className="text-lg font-semibold text-gray-900 mb-3">Our Comprehensive Offerings:</h4>
+                <ul className="space-y-2">
+                  <li className="flex items-start">
+                    <div className="flex-shrink-0 h-6 w-6 rounded-full bg-red-600 flex items-center justify-center mt-1">
+                      <Check className="h-4 w-4 text-white" />
+                    </div>
+                    <span className="ml-3 text-gray-700">Firefighting equipment: extinguishers, hydrants, suppression systems, and accessories</span>
+                  </li>
+                  <li className="flex items-start">
+                    <div className="flex-shrink-0 h-6 w-6 rounded-full bg-blue-600 flex items-center justify-center mt-1">
+                      <Check className="h-4 w-4 text-white" />
+                    </div>
+                    <span className="ml-3 text-gray-700">Emergency vehicles: fully equipped electric ambulances for rapid medical response</span>
+                  </li>
+                  <li className="flex items-start">
+                    <div className="flex-shrink-0 h-6 w-6 rounded-full bg-green-600 flex items-center justify-center mt-1">
+                      <Check className="h-4 w-4 text-white" />
+                    </div>
+                    <span className="ml-3 text-gray-700">Eco-friendly transport: electric buses for safe, sustainable transportation</span>
+                  </li>
+                </ul>
+              </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <img 
@@ -145,51 +142,95 @@ const AboutPage: React.FC = () => {
         </div>
       </section>
 
-      {/* Our Mission & Values */}
+      {/* Mission Statement */}
+      <section className="py-16 bg-gradient-to-r from-blue-900 to-red-900 text-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <h2 className="text-3xl font-bold text-white font-montserrat mb-6">Mission Statement</h2>
+            <p className="text-xl leading-relaxed max-w-4xl mx-auto">
+              To protect Nepali communities and advance public safety by supplying high-quality, reliable, and sustainable fire protection products, electric emergency vehicles, and clean transportation solutions.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Our Values */}
       <section className="py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 font-montserrat">Our Mission & Values</h2>
+            <h2 className="text-3xl font-bold text-gray-900 font-montserrat">Our Values</h2>
             <p className="mt-4 text-lg text-gray-500 max-w-3xl mx-auto">
-              Guiding principles that drive our company forward
+              Core principles that guide every decision we make
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div className="bg-white p-8 rounded-lg shadow-sm">
-              <div className="h-12 w-12 bg-blue-100 rounded-lg flex items-center justify-center mb-6">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-secondary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="m8 3 4 8 5-5 5 15H2L8 3z"/>
+            <div className="bg-white p-8 rounded-lg shadow-sm border-t-4 border-red-600">
+              <div className="h-12 w-12 bg-red-100 rounded-lg flex items-center justify-center mb-6">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-red-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M9 12l2 2 4-4"/>
+                  <path d="M12 2a3 3 0 0 0-3 3v4a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/>
+                  <path d="M12 14v8"/>
                 </svg>
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">Excellence</h3>
-              <p className="text-gray-500">
-                We strive for excellence in everything we do, from the design and manufacturing of our vehicles to our customer service and support.
+              <h3 className="text-xl font-bold text-gray-900 mb-3">Safety First</h3>
+              <p className="text-gray-600">
+                Ensuring every product and service protects lives and property
               </p>
             </div>
 
-            <div className="bg-white p-8 rounded-lg shadow-sm">
-              <div className="h-12 w-12 bg-red-100 rounded-lg flex items-center justify-center mb-6">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <div className="bg-white p-8 rounded-lg shadow-sm border-t-4 border-blue-600">
+              <div className="h-12 w-12 bg-blue-100 rounded-lg flex items-center justify-center mb-6">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                  <path d="M2 17l10 5 10-5"/>
+                  <path d="M2 12l10 5 10-5"/>
+                </svg>
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-3">Integrity</h3>
+              <p className="text-gray-600">
+                Upholding transparency, honesty, and trust in all dealings
+              </p>
+            </div>
+
+            <div className="bg-white p-8 rounded-lg shadow-sm border-t-4 border-green-600">
+              <div className="h-12 w-12 bg-green-100 rounded-lg flex items-center justify-center mb-6">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-green-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M9 12l2 2 4-4"/>
+                  <path d="M22 12c0 5.523-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2s10 4.477 10 10z"/>
+                </svg>
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-3">Quality Commitment</h3>
+              <p className="text-gray-600">
+                Delivering certified, dependable equipment and vehicles
+              </p>
+            </div>
+
+            <div className="bg-white p-8 rounded-lg shadow-sm border-t-4 border-purple-600">
+              <div className="h-12 w-12 bg-purple-100 rounded-lg flex items-center justify-center mb-6">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-purple-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                  <circle cx="8.5" cy="7" r="4"/>
+                  <path d="M20 8v6"/>
+                  <path d="M23 11h-6"/>
+                </svg>
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-3">Customer Focus</h3>
+              <p className="text-gray-600">
+                Building long-term partnerships through tailored service and support
+              </p>
+            </div>
+
+            <div className="bg-white p-8 rounded-lg shadow-sm border-t-4 border-amber-600 md:col-span-2 lg:col-span-1">
+              <div className="h-12 w-12 bg-amber-100 rounded-lg flex items-center justify-center mb-6">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-amber-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M15.58 12a3.99 3.99 0 0 1-1.59 8H8.5A6.5 6.5 0 1 1 8.5 5H12"/>
                   <path d="m17 8 4 4-4 4"/>
                 </svg>
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">Innovation</h3>
-              <p className="text-gray-500">
-                We continuously invest in research and development to create cutting-edge emergency vehicles that incorporate the latest technology and safety features.
-              </p>
-            </div>
-
-            <div className="bg-white p-8 rounded-lg shadow-sm">
-              <div className="h-12 w-12 bg-amber-100 rounded-lg flex items-center justify-center mb-6">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-amber-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
-                </svg>
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">Safety</h3>
-              <p className="text-gray-500">
-                Safety is at the core of our mission. We are committed to building vehicles that protect both emergency responders and the communities they serve.
+              <h3 className="text-xl font-bold text-gray-900 mb-3">Innovation & Sustainability</h3>
+              <p className="text-gray-600">
+                Embracing modern technology and eco-friendly solutions
               </p>
             </div>
           </div>

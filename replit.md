@@ -157,6 +157,12 @@ Changelog:
   - Converted footer's Our Products section to dynamically display all products from database
   - Footer now shows up to 6 products with "View All Products" link if more exist
   - Product listings automatically update when new products are added through admin panel
+  - Updated About Us content across the website to reflect National Fire Safe Pvt. Ltd.'s focus on Nepal
+  - Redesigned About Us page with new company description, mission statement, and values sections
+  - Enhanced styling with gradient backgrounds, color-coded value cards, and improved typography
+  - Updated AboutPreview component on Home page with new content and styling
+  - Content now accurately reflects company's establishment in 2009 and focus on Nepal market
+  - Added comprehensive product offerings: firefighting equipment, electric ambulances, and electric buses
 
 ## User Preferences
 

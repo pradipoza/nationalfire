@@ -13,10 +13,10 @@ const AboutPreview: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 font-montserrat">
-            About National Fire
+            About National Fire Safe Pvt. Ltd.
           </h2>
           <p className="mt-4 text-lg text-gray-500 max-w-3xl mx-auto">
-            Committed to excellence in emergency vehicle manufacturing
+            Safety and innovation drive everything we do - protecting lives and property across Nepal since 2009
           </p>
         </div>
 
@@ -25,32 +25,45 @@ const AboutPreview: React.FC = () => {
             <h3 className="text-2xl font-bold text-gray-900 font-montserrat mb-4">
               Our Company
             </h3>
-            <p className="text-gray-500 mb-4">
-              Founded in 1985, National Fire has been at the forefront of emergency vehicle manufacturing for over three decades. We specialize in designing and building high-quality fire trucks, ambulances, and modern electric buses that meet the demanding needs of emergency services and transportation providers worldwide.
+            <p className="text-gray-600 mb-4 leading-relaxed">
+              At National Fire Safe Pvt. Ltd., safety and innovation drive everything we do. Since 2009, we've been dedicated to protecting lives and property across Nepal with top-tier fire safety, electric vehicles, and emergency solutions.
             </p>
-            <p className="text-gray-500 mb-6">
-              Our commitment to innovation, quality, and reliability has made us a trusted partner for fire departments, emergency medical services, and municipal transport authorities across the country.
+            <p className="text-gray-600 mb-6 leading-relaxed">
+              As a premier provider in Nepal, we supply comprehensive solutions including firefighting equipment, emergency vehicles, and eco-friendly transport options, complemented by expert consultation, professional installation, and reliable after-sales maintenance.
             </p>
             <ul className="space-y-3">
               <li className="flex items-start">
-                <div className="flex-shrink-0 h-6 w-6 rounded-full bg-primary flex items-center justify-center mt-1">
+                <div className="flex-shrink-0 h-6 w-6 rounded-full bg-red-600 flex items-center justify-center mt-1">
                   <Check className="h-4 w-4 text-white" />
                 </div>
-                <span className="ml-3 text-gray-600">Industry-leading safety standards</span>
+                <span className="ml-3 text-gray-700">Firefighting equipment & suppression systems</span>
               </li>
               <li className="flex items-start">
-                <div className="flex-shrink-0 h-6 w-6 rounded-full bg-primary flex items-center justify-center mt-1">
+                <div className="flex-shrink-0 h-6 w-6 rounded-full bg-blue-600 flex items-center justify-center mt-1">
                   <Check className="h-4 w-4 text-white" />
                 </div>
-                <span className="ml-3 text-gray-600">Custom-built to your specifications</span>
+                <span className="ml-3 text-gray-700">Electric ambulances for rapid medical response</span>
               </li>
               <li className="flex items-start">
-                <div className="flex-shrink-0 h-6 w-6 rounded-full bg-primary flex items-center justify-center mt-1">
+                <div className="flex-shrink-0 h-6 w-6 rounded-full bg-green-600 flex items-center justify-center mt-1">
                   <Check className="h-4 w-4 text-white" />
                 </div>
-                <span className="ml-3 text-gray-600">Comprehensive after-sales support</span>
+                <span className="ml-3 text-gray-700">Eco-friendly electric buses & transport solutions</span>
+              </li>
+              <li className="flex items-start">
+                <div className="flex-shrink-0 h-6 w-6 rounded-full bg-purple-600 flex items-center justify-center mt-1">
+                  <Check className="h-4 w-4 text-white" />
+                </div>
+                <span className="ml-3 text-gray-700">Expert consultation & professional installation</span>
               </li>
             </ul>
+            <div className="mt-8">
+              <Link href="/about">
+                <Button className="bg-gradient-to-r from-red-600 to-blue-600 text-white hover:from-red-700 hover:to-blue-700">
+                  Learn More About Us
+                </Button>
+              </Link>
+            </div>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <img 
