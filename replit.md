@@ -152,6 +152,11 @@ Changelog:
   - Integrated customer logo sections into both About Us and Home pages
   - Customer logos display with grayscale effect and redirect to customer websites on click
   - Customer sections appear above statistics counters on About Us page and within AboutPreview on Home page
+  - Updated company name from "NATIONAL FIRE PVT LTD" to "National Fire Safe Pvt Ltd" in navbar and footer
+  - Enhanced footer Quick Links to include all navbar pages (added Brands and Portfolio)
+  - Converted footer's Our Products section to dynamically display all products from database
+  - Footer now shows up to 6 products with "View All Products" link if more exist
+  - Product listings automatically update when new products are added through admin panel
 
 ## User Preferences
 

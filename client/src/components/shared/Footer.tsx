@@ -4,14 +4,19 @@ import { useQuery } from "@tanstack/react-query";
 import { API_ENDPOINTS } from "@/lib/config";
 import { config } from "@/lib/config";
 import { Facebook, Twitter, Instagram, Linkedin, MapPin, Phone, Mail } from "lucide-react";
-import type { ContactInfo } from "@shared/schema";
+import type { ContactInfo, Product } from "@shared/schema";
 
 const Footer: React.FC = () => {
   const { data } = useQuery<{ contactInfo: ContactInfo } | undefined>({
     queryKey: [API_ENDPOINTS.CONTACT_INFO],
   });
 
+  const { data: productsData } = useQuery<{ products: Product[] }>({
+    queryKey: [API_ENDPOINTS.PRODUCTS],
+  });
+
   const contactInfo = data?.contactInfo;
+  const products = productsData?.products || [];
 
   return (
     <footer className="bg-gray-900 text-white pt-16 pb-6">
@@ -42,7 +47,7 @@ const Footer: React.FC = () => {
                 </svg>
               </div>
               <span className="text-xl font-bold text-white font-montserrat">
-                NATIONAL FIRE PVT LTD
+                National Fire Safe Pvt Ltd
               </span>
             </div>
             <p className="text-gray-400 mb-6">
@@ -110,6 +115,16 @@ const Footer: React.FC = () => {
                 </Link>
               </li>
               <li>
+                <Link href="/brands" className="text-gray-400 hover:text-white transition">
+                  Brands
+                </Link>
+              </li>
+              <li>
+                <Link href="/portfolio" className="text-gray-400 hover:text-white transition">
+                  Portfolio
+                </Link>
+              </li>
+              <li>
                 <Link href="/about" className="text-gray-400 hover:text-white transition">
                   About Us
                 </Link>
@@ -127,36 +142,25 @@ const Footer: React.FC = () => {
               Our Products
             </h4>
             <ul className="space-y-3">
-              <li>
-                <Link href="/products?category=fire-trucks" className="text-gray-400 hover:text-white transition">
-                  Fire Trucks
-                </Link>
-              </li>
-              <li>
-                <Link href="/products?category=ambulances" className="text-gray-400 hover:text-white transition">
-                  Ambulances
-                </Link>
-              </li>
-              <li>
-                <Link href="/products?category=electric-buses" className="text-gray-400 hover:text-white transition">
-                  Electric Buses
-                </Link>
-              </li>
-              <li>
-                <Link href="/products?category=rescue-equipment" className="text-gray-400 hover:text-white transition">
-                  Rescue Equipment
-                </Link>
-              </li>
-              <li>
-                <Link href="/products?category=spare-parts" className="text-gray-400 hover:text-white transition">
-                  Spare Parts
-                </Link>
-              </li>
-              <li>
-                <Link href="/products?category=custom-solutions" className="text-gray-400 hover:text-white transition">
-                  Custom Solutions
-                </Link>
-              </li>
+              {products.slice(0, 6).map((product) => (
+                <li key={product.id}>
+                  <Link href={`/products/${product.id}`} className="text-gray-400 hover:text-white transition">
+                    {product.name}
+                  </Link>
+                </li>
+              ))}
+              {products.length > 6 && (
+                <li>
+                  <Link href="/products" className="text-gray-400 hover:text-white transition font-semibold">
+                    View All Products →
+                  </Link>
+                </li>
+              )}
+              {products.length === 0 && (
+                <li className="text-gray-500 text-sm">
+                  Products will appear here once added
+                </li>
+              )}
             </ul>
           </div>
           
