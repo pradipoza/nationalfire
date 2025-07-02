@@ -163,6 +163,10 @@ Changelog:
   - Updated AboutPreview component on Home page with new content and styling
   - Content now accurately reflects company's establishment in 2009 and focus on Nepal market
   - Added comprehensive product offerings: firefighting equipment, electric ambulances, and electric buses
+  - Integrated four custom images into About Us page and Home page AboutPreview in stylish card format
+  - Enhanced image display with hover effects, overlays, and descriptive captions
+  - Images showcase: fire extinguisher in action, fire truck emergency response, electric buses, and electric ambulances
+  - Added professional styling with hover animations and gradient overlays for better visual presentation
 
 ## User Preferences
 

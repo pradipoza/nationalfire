@@ -117,26 +117,58 @@ const AboutPage: React.FC = () => {
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
-              <img 
-                src="https://images.unsplash.com/photo-1624028293340-ebe943e68e5c?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" 
-                alt="Factory floor" 
-                className="rounded-lg shadow-md w-full h-48 md:h-64 object-cover" 
-              />
-              <img 
-                src="https://images.unsplash.com/photo-1622555086398-f80213455158?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" 
-                alt="Emergency vehicle" 
-                className="rounded-lg shadow-md w-full h-48 md:h-64 object-cover" 
-              />
-              <img 
-                src="https://images.unsplash.com/photo-1617721303438-8626d6c5fb77?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" 
-                alt="Workshop" 
-                className="rounded-lg shadow-md w-full h-48 md:h-64 object-cover" 
-              />
-              <img 
-                src="https://images.unsplash.com/photo-1577201235224-78255892ef9c?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" 
-                alt="Team" 
-                className="rounded-lg shadow-md w-full h-48 md:h-64 object-cover" 
-              />
+              <div className="relative overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
+                <img 
+                  src="/attached_assets/ChatGPT Image Jul 2, 2025, 06_55_51 PM_1751461869507.png" 
+                  alt="Fire extinguisher in action - demonstrating our firefighting equipment effectiveness" 
+                  className="w-full h-48 md:h-64 object-cover hover:scale-105 transition-transform duration-300" 
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300">
+                  <div className="absolute bottom-4 left-4 text-white">
+                    <h4 className="font-semibold">Fire Safety Equipment</h4>
+                    <p className="text-sm opacity-90">Professional firefighting solutions</p>
+                  </div>
+                </div>
+              </div>
+              <div className="relative overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
+                <img 
+                  src="/attached_assets/ChatGPT Image Jul 2, 2025, 06_44_37 PM_1751461869509.png" 
+                  alt="Fire truck responding to emergency - showcasing our emergency vehicle expertise" 
+                  className="w-full h-48 md:h-64 object-cover hover:scale-105 transition-transform duration-300" 
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300">
+                  <div className="absolute bottom-4 left-4 text-white">
+                    <h4 className="font-semibold">Emergency Response</h4>
+                    <p className="text-sm opacity-90">Advanced fire trucks & equipment</p>
+                  </div>
+                </div>
+              </div>
+              <div className="relative overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
+                <img 
+                  src="/attached_assets/national fire 3_1751461869508.jpg" 
+                  alt="Electric buses - demonstrating our eco-friendly transportation solutions" 
+                  className="w-full h-48 md:h-64 object-cover hover:scale-105 transition-transform duration-300" 
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300">
+                  <div className="absolute bottom-4 left-4 text-white">
+                    <h4 className="font-semibold">Electric Buses</h4>
+                    <p className="text-sm opacity-90">Sustainable transportation solutions</p>
+                  </div>
+                </div>
+              </div>
+              <div className="relative overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
+                <img 
+                  src="/attached_assets/nationalfire2_1751461869510.webp" 
+                  alt="Electric ambulance - showcasing our medical emergency vehicle capabilities" 
+                  className="w-full h-48 md:h-64 object-cover hover:scale-105 transition-transform duration-300" 
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300">
+                  <div className="absolute bottom-4 left-4 text-white">
+                    <h4 className="font-semibold">Electric Ambulances</h4>
+                    <p className="text-sm opacity-90">Rapid medical response vehicles</p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
