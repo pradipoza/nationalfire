@@ -20,7 +20,8 @@ const AboutPreview: React.FC = () => {
             About National Fire Safe Pvt. Ltd.
           </h2>
           <p className="mt-4 text-lg text-gray-500 max-w-3xl mx-auto">
-            Safety and innovation drive everything we do - protecting lives and property across Nepal since 2009
+            Safety and innovation drive everything we do - protecting lives and
+            property across Nepal since 2009
           </p>
         </div>
 
@@ -30,35 +31,50 @@ const AboutPreview: React.FC = () => {
               Our Company
             </h3>
             <p className="text-gray-600 mb-4 leading-relaxed">
-              At National Fire Safe Pvt. Ltd., safety and innovation drive everything we do. Since 2009, we've been dedicated to protecting lives and property across Nepal with top-tier fire safety, electric vehicles, and emergency solutions.
+              At National Fire Safe Pvt. Ltd., safety and innovation drive
+              everything we do. Since 2009, we've been dedicated to protecting
+              lives and property across Nepal with top-tier fire safety,
+              electric vehicles, and emergency solutions.
             </p>
             <p className="text-gray-600 mb-6 leading-relaxed">
-              As a premier provider in Nepal, we supply comprehensive solutions including firefighting equipment, emergency vehicles, and eco-friendly transport options, complemented by expert consultation, professional installation, and reliable after-sales maintenance.
+              As a premier provider in Nepal, we supply comprehensive solutions
+              including firefighting equipment, emergency vehicles, and
+              eco-friendly transport options, complemented by expert
+              consultation, professional installation, and reliable after-sales
+              maintenance.
             </p>
             <ul className="space-y-3">
               <li className="flex items-start">
                 <div className="flex-shrink-0 h-6 w-6 rounded-full bg-red-600 flex items-center justify-center mt-1">
                   <Check className="h-4 w-4 text-white" />
                 </div>
-                <span className="ml-3 text-gray-700">Firefighting equipment & suppression systems</span>
+                <span className="ml-3 text-gray-700">
+                  Firefighting equipment & suppression systems
+                </span>
               </li>
               <li className="flex items-start">
                 <div className="flex-shrink-0 h-6 w-6 rounded-full bg-blue-600 flex items-center justify-center mt-1">
                   <Check className="h-4 w-4 text-white" />
                 </div>
-                <span className="ml-3 text-gray-700">Electric ambulances for rapid medical response</span>
+                <span className="ml-3 text-gray-700">
+                  Electric ambulances for rapid medical response
+                </span>
               </li>
               <li className="flex items-start">
                 <div className="flex-shrink-0 h-6 w-6 rounded-full bg-green-600 flex items-center justify-center mt-1">
                   <Check className="h-4 w-4 text-white" />
                 </div>
-                <span className="ml-3 text-gray-700">Eco-friendly electric buses & transport solutions</span>
+                <span className="ml-3 text-gray-700">
+                  Eco-friendly electric buses & transport solutions
+                </span>
               </li>
               <li className="flex items-start">
                 <div className="flex-shrink-0 h-6 w-6 rounded-full bg-purple-600 flex items-center justify-center mt-1">
                   <Check className="h-4 w-4 text-white" />
                 </div>
-                <span className="ml-3 text-gray-700">Expert consultation & professional installation</span>
+                <span className="ml-3 text-gray-700">
+                  Expert consultation & professional installation
+                </span>
               </li>
             </ul>
             <div className="mt-8">
@@ -71,22 +87,24 @@ const AboutPreview: React.FC = () => {
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="relative overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
-              <img 
-                src={fireExtinguisherImg} 
-                alt="Fire extinguisher in action - demonstrating our firefighting equipment effectiveness" 
-                className="w-full h-48 md:h-64 object-cover hover:scale-105 transition-transform duration-300" 
+              <img
+                src={fireExtinguisherImg}
+                alt="Fire extinguisher in action - demonstrating our firefighting equipment effectiveness"
+                className="w-full h-48 md:h-64 object-cover hover:scale-105 transition-transform duration-300"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300">
                 <div className="absolute bottom-4 left-4 text-white">
-                  <h4 className="font-semibold text-sm">Fire Safety Equipment</h4>
+                  <h4 className="font-semibold text-sm">
+                    Fire Safety Equipment
+                  </h4>
                 </div>
               </div>
             </div>
             <div className="relative overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
-              <img 
-                src={fireTruckImg} 
-                alt="Fire truck responding to emergency - showcasing our emergency vehicle expertise" 
-                className="w-full h-48 md:h-64 object-cover hover:scale-105 transition-transform duration-300" 
+              <img
+                src={fireTruckImg}
+                alt="Fire truck responding to emergency - showcasing our emergency vehicle expertise"
+                className="w-full h-48 md:h-64 object-cover hover:scale-105 transition-transform duration-300"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300">
                 <div className="absolute bottom-4 left-4 text-white">
@@ -95,10 +113,10 @@ const AboutPreview: React.FC = () => {
               </div>
             </div>
             <div className="relative overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
-              <img 
-                src={electricBusImg} 
-                alt="Electric buses - demonstrating our eco-friendly transportation solutions" 
-                className="w-full h-48 md:h-64 object-cover hover:scale-105 transition-transform duration-300" 
+              <img
+                src={electricBusImg}
+                alt="Electric buses - demonstrating our eco-friendly transportation solutions"
+                className="w-full h-48 md:h-64 object-cover hover:scale-105 transition-transform duration-300"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300">
                 <div className="absolute bottom-4 left-4 text-white">
@@ -107,22 +125,22 @@ const AboutPreview: React.FC = () => {
               </div>
             </div>
             <div className="relative overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
-              <img 
-                src={ambulanceImg} 
-                alt="Electric ambulance - showcasing our medical emergency vehicle capabilities" 
-                className="w-full h-48 md:h-64 object-cover hover:scale-105 transition-transform duration-300" 
+              <img
+                src={ambulanceImg}
+                alt="Electric ambulance - showcasing our medical emergency vehicle capabilities"
+                className="w-full h-48 md:h-64 object-cover hover:scale-105 transition-transform duration-300"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300">
                 <div className="absolute bottom-4 left-4 text-white">
-                  <h4 className="font-semibold text-sm">Electric Ambulances</h4>
+                  <h4 className="font-semibold text-sm"> Ambulances</h4>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        
+
         {/* Customer Section */}
-        <CustomerSection 
+        <CustomerSection
           title="Trusted by Leading Organizations"
           subtitle="Proud to serve emergency services and government agencies nationwide"
           className="pt-16"
