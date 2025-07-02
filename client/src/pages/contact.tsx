@@ -53,16 +53,16 @@ const ContactPage: React.FC = () => {
             </p>
           </div>
           
-          <div className="rounded-lg overflow-hidden shadow-md h-[400px] relative">
+          <div className="rounded-lg overflow-hidden shadow-md h-[450px] relative">
             <iframe
-              src={`https://www.google.com/maps/embed/v1/place?key=${import.meta.env.VITE_GOOGLE_MAPS_API_KEY || 'AIzaSyC8eVi6rG2ZrGcAjRVjqcMQEBlxT17hc0I'}&q=${encodeURIComponent(contactInfo?.address || config.contactAddress)}`}
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d429.1491423711422!2d85.3834551158536!3d27.661864516286794!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39eb1ba428e0de19%3A0xca78845c5b764d54!2sNational%20Fire%20Safe%20Pvt.Ltd!5e0!3m2!1sen!2snp!4v1751468448638!5m2!1sen!2snp"
               width="100%"
               height="100%"
               style={{ border: 0 }}
               allowFullScreen
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
-              title="Company Location"
+              title="National Fire Safe Pvt.Ltd Location"
             ></iframe>
           </div>
         </div>
