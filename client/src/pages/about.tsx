@@ -119,7 +119,7 @@ const AboutPage: React.FC = () => {
             <div className="grid grid-cols-2 gap-4">
               <div className="relative overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
                 <img 
-                  src="/attached_assets/ChatGPT Image Jul 2, 2025, 06_55_51 PM_1751461869507.png" 
+                  src="https://images.unsplash.com/photo-1584464491033-06628f3a6b7b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" 
                   alt="Fire extinguisher in action - demonstrating our firefighting equipment effectiveness" 
                   className="w-full h-48 md:h-64 object-cover hover:scale-105 transition-transform duration-300" 
                 />
@@ -132,7 +132,7 @@ const AboutPage: React.FC = () => {
               </div>
               <div className="relative overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
                 <img 
-                  src="/attached_assets/ChatGPT Image Jul 2, 2025, 06_44_37 PM_1751461869509.png" 
+                  src="https://images.unsplash.com/photo-1581578017426-c5a1ca5e8a4a?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" 
                   alt="Fire truck responding to emergency - showcasing our emergency vehicle expertise" 
                   className="w-full h-48 md:h-64 object-cover hover:scale-105 transition-transform duration-300" 
                 />
@@ -145,7 +145,7 @@ const AboutPage: React.FC = () => {
               </div>
               <div className="relative overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
                 <img 
-                  src="/attached_assets/national fire 3_1751461869508.jpg" 
+                  src="https://images.unsplash.com/photo-1570125909232-eb263c188f7e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" 
                   alt="Electric buses - demonstrating our eco-friendly transportation solutions" 
                   className="w-full h-48 md:h-64 object-cover hover:scale-105 transition-transform duration-300" 
                 />
@@ -158,7 +158,7 @@ const AboutPage: React.FC = () => {
               </div>
               <div className="relative overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
                 <img 
-                  src="/attached_assets/nationalfire2_1751461869510.webp" 
+                  src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" 
                   alt="Electric ambulance - showcasing our medical emergency vehicle capabilities" 
                   className="w-full h-48 md:h-64 object-cover hover:scale-105 transition-transform duration-300" 
                 />
