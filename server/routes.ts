@@ -390,7 +390,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const subProducts = await storage.getSubProductsByIds(ids);
       res.json({ subProducts });
     } catch (error) {
-      res.status(500).json({ message: 'Server error' });
+      console.error('Error in /api/sub-products/by-ids:', error);
+      res.status(500).json({ message: 'Server error', error: error instanceof Error ? error.message : 'Unknown error' });
     }
   });
   

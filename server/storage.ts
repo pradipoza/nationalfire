@@ -13,7 +13,7 @@ import {
   customers, type Customer, type InsertCustomer
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, desc, sql } from "drizzle-orm";
+import { eq, desc, sql, inArray } from "drizzle-orm";
 import bcrypt from "bcrypt";
 
 export interface IStorage {
@@ -207,7 +207,10 @@ export class DatabaseStorage implements IStorage {
   
   async getSubProductsByIds(ids: number[]): Promise<SubProduct[]> {
     if (ids.length === 0) return [];
-    return db.select().from(subProducts).where(sql`${subProducts.id} = ANY(${ids})`);
+    
+    // Simple approach: fetch all sub-products and filter by IDs
+    const allSubProducts = await db.select().from(subProducts);
+    return allSubProducts.filter(sp => ids.includes(sp.id));
   }
   
   async createSubProduct(subProduct: InsertSubProduct): Promise<SubProduct> {
