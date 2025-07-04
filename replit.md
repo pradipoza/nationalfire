@@ -167,6 +167,15 @@ Changelog:
   - Enhanced image display with hover effects, overlays, and descriptive captions
   - Images showcase: fire extinguisher in action, fire truck emergency response, electric buses, and electric ambulances
   - Added professional styling with hover animations and gradient overlays for better visual presentation
+- July 2, 2025. Major product system restructuring to support sub-products
+  - Created sub-products database schema with name, description, content, and photo fields
+  - Updated products schema to remove content field and add subProductIds array
+  - Added comprehensive sub-products API endpoints with full CRUD operations
+  - Created admin sub-products management interface for adding/editing sub-products
+  - Updated product creation flow to associate products with sub-products instead of content
+  - Product detail pages now display sub-products instead of text content
+  - Sub-product detail pages show individual sub-product information
+  - This allows products like "Fire Trucks" to contain multiple sub-product types
 
 ## User Preferences
 

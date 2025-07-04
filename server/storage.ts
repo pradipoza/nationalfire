@@ -1,6 +1,7 @@
 import { 
   users, type User, type InsertUser,
   products, type Product, type InsertProduct,
+  subProducts, type SubProduct, type InsertSubProduct,
   blogs, type Blog, type InsertBlog,
   gallery, type Gallery, type InsertGallery,
   contactInfo, type ContactInfo, type InsertContactInfo,
@@ -29,6 +30,14 @@ export interface IStorage {
   createBrand(brand: InsertBrand): Promise<Brand>;
   updateBrand(id: number, updates: Partial<InsertBrand>): Promise<Brand | undefined>;
   deleteBrand(id: number): Promise<boolean>;
+  
+  // Sub-products
+  getSubProducts(): Promise<SubProduct[]>;
+  getSubProduct(id: number): Promise<SubProduct | undefined>;
+  getSubProductsByIds(ids: number[]): Promise<SubProduct[]>;
+  createSubProduct(subProduct: InsertSubProduct): Promise<SubProduct>;
+  updateSubProduct(id: number, updates: Partial<InsertSubProduct>): Promise<SubProduct | undefined>;
+  deleteSubProduct(id: number): Promise<boolean>;
   
   // Products
   getProducts(): Promise<Product[]>;
@@ -186,6 +195,57 @@ export class DatabaseStorage implements IStorage {
     return result.rowCount! > 0;
   }
 
+  // Sub-products
+  async getSubProducts(): Promise<SubProduct[]> {
+    return db.select().from(subProducts).orderBy(desc(subProducts.createdAt));
+  }
+  
+  async getSubProduct(id: number): Promise<SubProduct | undefined> {
+    const [subProduct] = await db.select().from(subProducts).where(eq(subProducts.id, id));
+    return subProduct;
+  }
+  
+  async getSubProductsByIds(ids: number[]): Promise<SubProduct[]> {
+    if (ids.length === 0) return [];
+    return db.select().from(subProducts).where(sql`${subProducts.id} = ANY(${ids})`);
+  }
+  
+  async createSubProduct(subProduct: InsertSubProduct): Promise<SubProduct> {
+    const [newSubProduct] = await db
+      .insert(subProducts)
+      .values(subProduct)
+      .returning();
+    return newSubProduct;
+  }
+  
+  async updateSubProduct(id: number, updates: Partial<InsertSubProduct>): Promise<SubProduct | undefined> {
+    const [updatedSubProduct] = await db
+      .update(subProducts)
+      .set(updates)
+      .where(eq(subProducts.id, id))
+      .returning();
+    return updatedSubProduct;
+  }
+  
+  async deleteSubProduct(id: number): Promise<boolean> {
+    // First, remove sub-product association from all products that reference this sub-product
+    const allProducts = await db.select().from(products);
+    for (const product of allProducts) {
+      const subProductIds = product.subProductIds || [];
+      if (subProductIds.includes(id)) {
+        const newSubProductIds = subProductIds.filter(subId => subId !== id);
+        await db
+          .update(products)
+          .set({ subProductIds: newSubProductIds })
+          .where(eq(products.id, product.id));
+      }
+    }
+    
+    // Then delete the sub-product
+    const result = await db.delete(subProducts).where(eq(subProducts.id, id));
+    return result.rowCount! > 0;
+  }
+
   // Products
   async getProducts(): Promise<Product[]> {
     return db.select().from(products);
@@ -203,12 +263,7 @@ export class DatabaseStorage implements IStorage {
   async createProduct(product: InsertProduct): Promise<Product> {
     const [newProduct] = await db
       .insert(products)
-      .values({
-        name: product.name,
-        description: product.description,
-        photos: product.photos || [],
-        brandId: product.brandId
-      })
+      .values(product)
       .returning();
     return newProduct;
   }
@@ -221,6 +276,7 @@ export class DatabaseStorage implements IStorage {
     if (updates.description !== undefined) updateValues.description = updates.description;
     if (updates.photos !== undefined) updateValues.photos = updates.photos;
     if (updates.brandId !== undefined) updateValues.brandId = updates.brandId;
+    if (updates.subProductIds !== undefined) updateValues.subProductIds = updates.subProductIds;
     
     const [updatedProduct] = await db
       .update(products)

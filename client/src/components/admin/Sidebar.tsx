@@ -222,6 +222,13 @@ const Sidebar: React.FC = () => {
               Products
             </SidebarLink>
             <SidebarLink
+              href="/admin/sub-products"
+              icon={<ShoppingCart className="h-5 w-5" />}
+              onClick={() => isMobile && setIsOpen(false)}
+            >
+              Sub-Products
+            </SidebarLink>
+            <SidebarLink
               href="/admin/brands"
               icon={<Building2 className="h-5 w-5" />}
               onClick={() => isMobile && setIsOpen(false)}

@@ -4,7 +4,8 @@ import { storage } from "./storage";
 import { z } from "zod";
 import { 
   insertUserSchema, 
-  insertProductSchema, 
+  insertProductSchema,
+  insertSubProductSchema, 
   insertBlogSchema, 
   insertGallerySchema, 
   insertContactInfoSchema, 
@@ -364,6 +365,79 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       res.json({ message: 'Product deleted successfully' });
+    } catch (error) {
+      res.status(500).json({ message: 'Server error' });
+    }
+  });
+  
+  // Sub-products routes
+  app.get('/api/sub-products', async (req, res) => {
+    try {
+      const subProducts = await storage.getSubProducts();
+      res.json({ subProducts });
+    } catch (error) {
+      res.status(500).json({ message: 'Server error' });
+    }
+  });
+  
+  app.get('/api/sub-products/:id', async (req, res) => {
+    try {
+      const subProductId = parseInt(req.params.id);
+      const subProduct = await storage.getSubProduct(subProductId);
+      
+      if (!subProduct) {
+        return res.status(404).json({ message: 'Sub-product not found' });
+      }
+      
+      res.json({ subProduct });
+    } catch (error) {
+      res.status(500).json({ message: 'Server error' });
+    }
+  });
+  
+  app.post('/api/sub-products', isAuthenticated, async (req, res) => {
+    try {
+      const validData = insertSubProductSchema.parse(req.body);
+      const subProduct = await storage.createSubProduct(validData);
+      res.status(201).json({ message: 'Sub-product created successfully', subProduct });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: 'Invalid data', errors: error.errors });
+      }
+      res.status(500).json({ message: 'Server error' });
+    }
+  });
+  
+  app.put('/api/sub-products/:id', isAuthenticated, async (req, res) => {
+    try {
+      const subProductId = parseInt(req.params.id);
+      const updateSchema = insertSubProductSchema.partial();
+      const validData = updateSchema.parse(req.body);
+      
+      const updatedSubProduct = await storage.updateSubProduct(subProductId, validData);
+      if (!updatedSubProduct) {
+        return res.status(404).json({ message: 'Sub-product not found' });
+      }
+      
+      res.json({ message: 'Sub-product updated successfully', subProduct: updatedSubProduct });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: 'Invalid data', errors: error.errors });
+      }
+      res.status(500).json({ message: 'Server error' });
+    }
+  });
+  
+  app.delete('/api/sub-products/:id', isAuthenticated, async (req, res) => {
+    try {
+      const subProductId = parseInt(req.params.id);
+      const deleted = await storage.deleteSubProduct(subProductId);
+      
+      if (!deleted) {
+        return res.status(404).json({ message: 'Sub-product not found' });
+      }
+      
+      res.json({ message: 'Sub-product deleted successfully' });
     } catch (error) {
       res.status(500).json({ message: 'Server error' });
     }

@@ -41,12 +41,33 @@ export const insertBrandSchema = createInsertSchema(brands).omit({
 export type InsertBrand = z.infer<typeof insertBrandSchema>;
 export type Brand = typeof brands.$inferSelect;
 
-// Products schema
+// Sub-products schema
+export const subProducts = pgTable("sub_products", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  description: text("description").notNull(),
+  content: text("content").notNull(),
+  photo: text("photo").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const insertSubProductSchema = createInsertSchema(subProducts).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export type InsertSubProduct = z.infer<typeof insertSubProductSchema>;
+export type SubProduct = typeof subProducts.$inferSelect;
+
+// Products schema (updated to remove content and use sub-products)
 export const products = pgTable("products", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
   description: text("description").notNull(),
   photos: json("photos").$type<string[]>().notNull().default([]),
+  subProductIds: json("sub_product_ids").$type<number[]>().notNull().default([]),
   brandId: integer("brand_id").references(() => brands.id),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),

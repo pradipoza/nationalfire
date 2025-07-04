@@ -31,6 +31,10 @@ export const API_ENDPOINTS = {
   // Products
   PRODUCTS: "/api/products",
   PRODUCT: (id: number | string) => `/api/products/${id}`,
+  
+  // Sub-products
+  SUB_PRODUCTS: "/api/sub-products",
+  SUB_PRODUCT: (id: number | string) => `/api/sub-products/${id}`,
 
   // Blogs
   BLOGS: "/api/blogs",
