@@ -2,11 +2,13 @@ import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link, useLocation } from "wouter";
 import { API_ENDPOINTS } from "@/lib/config";
-import { ChevronLeft, Share2 } from "lucide-react";
+import { ChevronLeft, Share2, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import ProductInquiry from "./ProductInquiry";
+import type { SubProduct } from "@shared/schema";
 
 interface ProductDetailProps {
   id: string;
@@ -23,6 +25,33 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ id }) => {
   });
 
   const product = data?.product;
+
+  // Fetch sub-products if product has subProductIds  
+  const { data: subProductsData, isLoading: subProductsLoading } = useQuery({
+    queryKey: ["/api/sub-products/by-ids", product?.subProductIds],
+    queryFn: async () => {
+      if (!product?.subProductIds || product.subProductIds.length === 0) {
+        return { subProducts: [] };
+      }
+      
+      const response = await fetch("/api/sub-products/by-ids", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ ids: product.subProductIds }),
+      });
+      
+      if (!response.ok) {
+        throw new Error("Failed to fetch sub-products");
+      }
+      
+      return response.json();
+    },
+    enabled: !!product?.subProductIds && product.subProductIds.length > 0,
+  });
+
+  const subProducts: SubProduct[] = subProductsData?.subProducts || [];
 
   const shareProduct = () => {
     if (navigator.share) {
@@ -154,11 +183,51 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ id }) => {
             {product.name}
           </h1>
           
-          <div className="prose max-w-none">
+          <div className="prose max-w-none mb-6">
             <p className="text-gray-600 whitespace-pre-line">
               {product.description}
             </p>
           </div>
+
+          {/* Sub-Products Section */}
+          {subProducts.length > 0 && (
+            <div className="mb-8">
+              <h2 className="text-2xl font-semibold text-gray-900 mb-4 font-montserrat">
+                Available Models
+              </h2>
+              <div className="space-y-4">
+                {subProducts.map((subProduct) => (
+                  <Card key={subProduct.id} className="hover:shadow-md transition-shadow">
+                    <CardContent className="p-4">
+                      <div className="flex gap-4">
+                        <img
+                          src={subProduct.photo}
+                          alt={subProduct.name}
+                          className="w-24 h-24 object-cover rounded-lg flex-shrink-0"
+                        />
+                        <div className="flex-1">
+                          <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                            {subProduct.name}
+                          </h3>
+                          <p className="text-gray-600 text-sm mb-3 line-clamp-2">
+                            {subProduct.description}
+                          </p>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setLocation(`/sub-products/${subProduct.id}`)}
+                          >
+                            <ExternalLink className="w-4 h-4 mr-2" />
+                            View Details
+                          </Button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          )}
           
           <div className="flex space-x-4 mt-8">
             <Button

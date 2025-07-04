@@ -652,11 +652,41 @@ async function initializeSeedData() {
         description: "American manufacturer of custom fire apparatus and emergency vehicles"
       });
 
-      // Create initial products
+      // Create initial sub-products
+      const fireTruckModel1 = await storage.createSubProduct({
+        name: "Rosenbauer PANTHER 6x6",
+        description: "High-performance aircraft rescue and firefighting vehicle",
+        content: "The PANTHER 6x6 is specifically designed for airport fire fighting applications. Features include advanced foam systems, high-capacity water tanks, and rapid acceleration capabilities for emergency response.",
+        photo: "https://images.unsplash.com/photo-1516550893885-985da0253db1?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80"
+      });
+
+      const fireTruckModel2 = await storage.createSubProduct({
+        name: "Rosenbauer RT Industrial",
+        description: "Multi-purpose industrial firefighting truck",
+        content: "Designed for industrial fire protection with enhanced chemical foam systems, extended reach capabilities, and specialized equipment for industrial emergencies.",
+        photo: "https://images.unsplash.com/photo-1508522670557-664ed933c05d?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80"
+      });
+
+      const ambulanceModel1 = await storage.createSubProduct({
+        name: "Pierce Quantum Emergency Ambulance",
+        description: "Advanced life support ambulance with integrated medical systems",
+        content: "Features state-of-the-art medical equipment, climate control systems, and ergonomic design for patient care during transport. Includes advanced communication systems and GPS tracking.",
+        photo: "https://images.unsplash.com/photo-1587843618590-26adcc8dfc1a?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80"
+      });
+
+      const busModel1 = await storage.createSubProduct({
+        name: "Ferrara Electric Transit Bus",
+        description: "Zero-emission electric bus for urban transportation",
+        content: "Environmentally friendly electric bus with extended range battery system, comfortable seating for 40 passengers, and advanced safety features including collision avoidance systems.",
+        photo: "https://images.unsplash.com/photo-1619252584172-a83a949b6efd?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80"
+      });
+
+      // Create initial products with sub-product associations
       await storage.createProduct({
         name: "Premium Fire Truck",
         description: "High-capacity fire truck with advanced water delivery systems and rescue equipment.",
         photos: ["https://images.unsplash.com/photo-1516550893885-985da0253db1?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80"],
+        subProductIds: [fireTruckModel1.id, fireTruckModel2.id],
         brandId: rosenbauer.id
       });
       
@@ -664,6 +694,7 @@ async function initializeSeedData() {
         name: "Advanced Ambulance", 
         description: "State-of-the-art ambulance with complete medical equipment and efficient response capabilities.",
         photos: ["https://images.unsplash.com/photo-1587843618590-26adcc8dfc1a?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80"],
+        subProductIds: [ambulanceModel1.id],
         brandId: pierce.id
       });
       
@@ -671,6 +702,7 @@ async function initializeSeedData() {
         name: "Electric Transport Bus",
         description: "Eco-friendly electric bus designed for efficient urban transportation with zero emissions.", 
         photos: ["https://images.unsplash.com/photo-1619252584172-a83a949b6efd?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80"],
+        subProductIds: [busModel1.id],
         brandId: ferrara.id
       });
       

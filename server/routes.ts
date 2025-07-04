@@ -379,6 +379,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: 'Server error' });
     }
   });
+
+  app.post('/api/sub-products/by-ids', async (req, res) => {
+    try {
+      const { ids } = req.body;
+      if (!Array.isArray(ids) || ids.length === 0) {
+        return res.status(400).json({ message: 'Invalid IDs array' });
+      }
+      
+      const subProducts = await storage.getSubProductsByIds(ids);
+      res.json({ subProducts });
+    } catch (error) {
+      res.status(500).json({ message: 'Server error' });
+    }
+  });
   
   app.get('/api/sub-products/:id', async (req, res) => {
     try {
