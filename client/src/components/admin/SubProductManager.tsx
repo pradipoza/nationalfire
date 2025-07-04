@@ -47,7 +47,7 @@ const SubProductManager: React.FC<SubProductManagerProps> = ({ onClose }) => {
   // Create sub-product mutation
   const createMutation = useMutation({
     mutationFn: async (subProductData: InsertSubProduct) => {
-      return apiRequest(API_ENDPOINTS.SUB_PRODUCTS, "POST", subProductData);
+      return apiRequest("POST", API_ENDPOINTS.SUB_PRODUCTS, subProductData);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [API_ENDPOINTS.SUB_PRODUCTS] });
@@ -70,7 +70,7 @@ const SubProductManager: React.FC<SubProductManagerProps> = ({ onClose }) => {
   // Update sub-product mutation
   const updateMutation = useMutation({
     mutationFn: async ({ id, data }: { id: number; data: Partial<InsertSubProduct> }) => {
-      return apiRequest(API_ENDPOINTS.SUB_PRODUCT(id), "PUT", data);
+      return apiRequest("PUT", API_ENDPOINTS.SUB_PRODUCT(id), data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [API_ENDPOINTS.SUB_PRODUCTS] });
@@ -94,7 +94,7 @@ const SubProductManager: React.FC<SubProductManagerProps> = ({ onClose }) => {
   // Delete sub-product mutation
   const deleteMutation = useMutation({
     mutationFn: async (id: number) => {
-      return apiRequest(API_ENDPOINTS.SUB_PRODUCT(id), "DELETE");
+      return apiRequest("DELETE", API_ENDPOINTS.SUB_PRODUCT(id));
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [API_ENDPOINTS.SUB_PRODUCTS] });

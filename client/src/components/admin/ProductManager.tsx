@@ -6,7 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { InsertProduct, Product } from "@shared/schema";
+import { InsertProduct, Product, SubProduct, Brand } from "@shared/schema";
 
 import {
   Card,
@@ -68,6 +68,8 @@ const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   description: z.string().min(10, "Description must be at least 10 characters"),
   photos: z.array(z.string().url("Must be a valid URL")).min(1, "At least one photo URL is required"),
+  subProductIds: z.array(z.number()).default([]),
+  brandId: z.number().optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -82,13 +84,26 @@ const ProductManager: React.FC = () => {
   const [photoUrls, setPhotoUrls] = useState<string[]>([]);
   const [newPhotoUrl, setNewPhotoUrl] = useState("");
   const [isUploading, setIsUploading] = useState(false);
+  const [selectedSubProducts, setSelectedSubProducts] = useState<number[]>([]);
 
   // Load products data
   const { data, isLoading, error } = useQuery<{ products: Product[] } | undefined>({
     queryKey: [API_ENDPOINTS.PRODUCTS],
   });
 
+  // Load sub-products data
+  const { data: subProductsData } = useQuery<{ subProducts: SubProduct[] } | undefined>({
+    queryKey: [API_ENDPOINTS.SUB_PRODUCTS],
+  });
+
+  // Load brands data
+  const { data: brandsData } = useQuery<{ brands: Brand[] } | undefined>({
+    queryKey: [API_ENDPOINTS.BRANDS],
+  });
+
   const products = data?.products || [];
+  const subProducts = subProductsData?.subProducts || [];
+  const brands = brandsData?.brands || [];
 
   // Form for adding/editing products
   const form = useForm<FormValues>({
@@ -97,6 +112,8 @@ const ProductManager: React.FC = () => {
       name: "",
       description: "",
       photos: [],
+      subProductIds: [],
+      brandId: undefined,
     },
   });
 
@@ -106,9 +123,12 @@ const ProductManager: React.FC = () => {
       name: "",
       description: "",
       photos: [],
+      subProductIds: [],
+      brandId: undefined,
     });
     setPhotoUrls([]);
     setNewPhotoUrl("");
+    setSelectedSubProducts([]);
     setIsAddDialogOpen(true);
   };
 
@@ -118,9 +138,12 @@ const ProductManager: React.FC = () => {
       name: product.name,
       description: product.description,
       photos: product.photos,
+      subProductIds: product.subProductIds || [],
+      brandId: product.brandId || undefined,
     });
     setPhotoUrls(product.photos);
     setNewPhotoUrl("");
+    setSelectedSubProducts(product.subProductIds || []);
     setCurrentProduct(product);
     setIsEditDialogOpen(true);
   };
@@ -462,6 +485,101 @@ const ProductManager: React.FC = () => {
                         <p className="text-sm text-gray-500">
                           No photos added yet. Add at least one photo URL.
                         </p>
+                      )}
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Brand Selection */}
+              <FormField
+                control={form.control}
+                name="brandId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Brand (Optional)</FormLabel>
+                    <FormControl>
+                      <select
+                        {...field}
+                        value={field.value || ""}
+                        onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : undefined)}
+                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                      >
+                        <option value="">Select a brand</option>
+                        {brands.map((brand) => (
+                          <option key={brand.id} value={brand.id}>
+                            {brand.name}
+                          </option>
+                        ))}
+                      </select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Sub-Product Selection */}
+              <FormField
+                control={form.control}
+                name="subProductIds"
+                render={() => (
+                  <FormItem>
+                    <FormLabel>Sub-Products</FormLabel>
+                    <div className="space-y-3">
+                      <div className="text-sm text-gray-600">
+                        Select the sub-products that belong to this main product category.
+                      </div>
+                      
+                      {subProducts.length > 0 ? (
+                        <div className="grid grid-cols-1 gap-2 max-h-48 overflow-y-auto border rounded-md p-3">
+                          {subProducts.map((subProduct) => (
+                            <label
+                              key={subProduct.id}
+                              className="flex items-center space-x-2 p-2 hover:bg-gray-50 rounded cursor-pointer"
+                            >
+                              <input
+                                type="checkbox"
+                                checked={selectedSubProducts.includes(subProduct.id)}
+                                onChange={(e) => {
+                                  const isChecked = e.target.checked;
+                                  let updatedSubProducts: number[];
+                                  
+                                  if (isChecked) {
+                                    updatedSubProducts = [...selectedSubProducts, subProduct.id];
+                                  } else {
+                                    updatedSubProducts = selectedSubProducts.filter(id => id !== subProduct.id);
+                                  }
+                                  
+                                  setSelectedSubProducts(updatedSubProducts);
+                                  form.setValue("subProductIds", updatedSubProducts, { shouldValidate: true });
+                                }}
+                                className="rounded border-gray-300 text-primary focus:ring-primary"
+                              />
+                              <div className="flex items-center space-x-3 flex-1">
+                                <img
+                                  src={subProduct.photo}
+                                  alt={subProduct.name}
+                                  className="w-8 h-8 object-cover rounded"
+                                />
+                                <div>
+                                  <div className="font-medium text-sm">{subProduct.name}</div>
+                                  <div className="text-xs text-gray-500 line-clamp-1">{subProduct.description}</div>
+                                </div>
+                              </div>
+                            </label>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="text-sm text-gray-500 border rounded-md p-4 text-center">
+                          No sub-products available. Create sub-products first in the Sub-Products section.
+                        </div>
+                      )}
+                      
+                      {selectedSubProducts.length > 0 && (
+                        <div className="text-sm text-green-600">
+                          {selectedSubProducts.length} sub-product{selectedSubProducts.length === 1 ? '' : 's'} selected
+                        </div>
                       )}
                     </div>
                     <FormMessage />
