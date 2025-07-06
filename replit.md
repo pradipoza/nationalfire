@@ -187,6 +187,12 @@ Changelog:
   - Added visual indicators (link icons) for external sub-products
   - External sub-products open in new tabs when clicked, internal ones navigate to detail pages
   - Updated both add and edit product dialogs to have identical sub-product selection interfaces
+  - Fixed admin sub-product manager to include specifications and features fields in edit dialog
+  - Implemented conditional field visibility: description, specifications, and features only show for manual content
+  - Removed "External Link" text from sub-product cards, keeping only the icon indicator
+  - Updated sub-product detail page layout: moved name and model number to left-aligned instead of right-aligned
+  - Fixed database schema conflicts and updated column types for proper JSON support
+  - Resolved TypeScript compilation errors in admin components and product detail views
 
 ## User Preferences
 

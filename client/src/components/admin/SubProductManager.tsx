@@ -52,7 +52,7 @@ const SubProductManager: React.FC<SubProductManagerProps> = ({ onClose }) => {
     queryKey: [API_ENDPOINTS.SUB_PRODUCTS],
   });
 
-  const subProducts: SubProduct[] = data?.subProducts || [];
+  const subProducts: SubProduct[] = (data as { subProducts: SubProduct[] } | undefined)?.subProducts || [];
 
   // Create sub-product mutation
   const createMutation = useMutation({
@@ -299,10 +299,13 @@ const SubProductManager: React.FC<SubProductManagerProps> = ({ onClose }) => {
                 <Label htmlFor="modelNumber">Model Number</Label>
                 <Input id="modelNumber" name="modelNumber" required placeholder="e.g., FT-2000X" />
               </div>
-              <div>
-                <Label htmlFor="description">Description</Label>
-                <Textarea id="description" name="description" required />
-              </div>
+              {/* Description - Only for Manual Content */}
+              {createContentType === "manual" && (
+                <div>
+                  <Label htmlFor="description">Description</Label>
+                  <Textarea id="description" name="description" required />
+                </div>
+              )}
               
               {/* Content Type Selection */}
               <div>
@@ -360,83 +363,87 @@ const SubProductManager: React.FC<SubProductManagerProps> = ({ onClose }) => {
                 </div>
               )}
 
-              {/* Specifications Section */}
-              <div>
-                <div className="flex justify-between items-center mb-2">
-                  <Label>Specifications</Label>
-                  <Button type="button" onClick={addCreateSpecification} size="sm" variant="outline">
-                    <Plus className="w-4 h-4 mr-1" />
-                    Add Specification
-                  </Button>
-                </div>
-                {createSpecifications.length > 0 ? (
-                  <div className="space-y-2 border rounded-md p-3">
-                    {createSpecifications.map((spec, index) => (
-                      <div key={index} className="flex gap-2 items-center">
-                        <Input
-                          placeholder="Key (e.g., Weight)"
-                          value={spec.key}
-                          onChange={(e) => updateCreateSpecification(index, 'key', e.target.value)}
-                          className="flex-1"
-                        />
-                        <Input
-                          placeholder="Value (e.g., 2500 kg)"
-                          value={spec.value}
-                          onChange={(e) => updateCreateSpecification(index, 'value', e.target.value)}
-                          className="flex-1"
-                        />
-                        <Button
-                          type="button"
-                          onClick={() => removeCreateSpecification(index)}
-                          size="sm"
-                          variant="ghost"
-                          className="text-red-500 hover:text-red-700"
-                        >
-                          <X className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    ))}
+              {/* Specifications Section - Only for Manual Content */}
+              {createContentType === "manual" && (
+                <div>
+                  <div className="flex justify-between items-center mb-2">
+                    <Label>Specifications</Label>
+                    <Button type="button" onClick={addCreateSpecification} size="sm" variant="outline">
+                      <Plus className="w-4 h-4 mr-1" />
+                      Add Specification
+                    </Button>
                   </div>
-                ) : (
-                  <p className="text-sm text-gray-500">No specifications added yet.</p>
-                )}
-              </div>
+                  {createSpecifications.length > 0 ? (
+                    <div className="space-y-2 border rounded-md p-3">
+                      {createSpecifications.map((spec, index) => (
+                        <div key={index} className="flex gap-2 items-center">
+                          <Input
+                            placeholder="Key (e.g., Weight)"
+                            value={spec.key}
+                            onChange={(e) => updateCreateSpecification(index, 'key', e.target.value)}
+                            className="flex-1"
+                          />
+                          <Input
+                            placeholder="Value (e.g., 2500 kg)"
+                            value={spec.value}
+                            onChange={(e) => updateCreateSpecification(index, 'value', e.target.value)}
+                            className="flex-1"
+                          />
+                          <Button
+                            type="button"
+                            onClick={() => removeCreateSpecification(index)}
+                            size="sm"
+                            variant="ghost"
+                            className="text-red-500 hover:text-red-700"
+                          >
+                            <X className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-gray-500">No specifications added yet.</p>
+                  )}
+                </div>
+              )}
 
-              {/* Features Section */}
-              <div>
-                <div className="flex justify-between items-center mb-2">
-                  <Label>Features</Label>
-                  <Button type="button" onClick={addCreateFeature} size="sm" variant="outline">
-                    <Plus className="w-4 h-4 mr-1" />
-                    Add Feature
-                  </Button>
-                </div>
-                {createFeatures.length > 0 ? (
-                  <div className="space-y-2 border rounded-md p-3">
-                    {createFeatures.map((feature, index) => (
-                      <div key={index} className="flex gap-2 items-center">
-                        <Input
-                          placeholder="Feature description"
-                          value={feature}
-                          onChange={(e) => updateCreateFeature(index, e.target.value)}
-                          className="flex-1"
-                        />
-                        <Button
-                          type="button"
-                          onClick={() => removeCreateFeature(index)}
-                          size="sm"
-                          variant="ghost"
-                          className="text-red-500 hover:text-red-700"
-                        >
-                          <X className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    ))}
+              {/* Features Section - Only for Manual Content */}
+              {createContentType === "manual" && (
+                <div>
+                  <div className="flex justify-between items-center mb-2">
+                    <Label>Features</Label>
+                    <Button type="button" onClick={addCreateFeature} size="sm" variant="outline">
+                      <Plus className="w-4 h-4 mr-1" />
+                      Add Feature
+                    </Button>
                   </div>
-                ) : (
-                  <p className="text-sm text-gray-500">No features added yet.</p>
-                )}
-              </div>
+                  {createFeatures.length > 0 ? (
+                    <div className="space-y-2 border rounded-md p-3">
+                      {createFeatures.map((feature, index) => (
+                        <div key={index} className="flex gap-2 items-center">
+                          <Input
+                            placeholder="Feature description"
+                            value={feature}
+                            onChange={(e) => updateCreateFeature(index, e.target.value)}
+                            className="flex-1"
+                          />
+                          <Button
+                            type="button"
+                            onClick={() => removeCreateFeature(index)}
+                            size="sm"
+                            variant="ghost"
+                            className="text-red-500 hover:text-red-700"
+                          >
+                            <X className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-gray-500">No features added yet.</p>
+                  )}
+                </div>
+              )}
               <div>
                 <Label htmlFor="photo">Photo</Label>
                 <Input
@@ -554,15 +561,18 @@ const SubProductManager: React.FC<SubProductManagerProps> = ({ onClose }) => {
                   placeholder="e.g., FT-2000X"
                 />
               </div>
-              <div>
-                <Label htmlFor="edit-description">Description</Label>
-                <Textarea
-                  id="edit-description"
-                  name="description"
-                  defaultValue={editingSubProduct.description}
-                  required
-                />
-              </div>
+              {/* Description - Only for Manual Content */}
+              {editContentType === "manual" && (
+                <div>
+                  <Label htmlFor="edit-description">Description</Label>
+                  <Textarea
+                    id="edit-description"
+                    name="description"
+                    defaultValue={editingSubProduct.description}
+                    required
+                  />
+                </div>
+              )}
               
               {/* Content Type Selection */}
               <div>
@@ -625,6 +635,99 @@ const SubProductManager: React.FC<SubProductManagerProps> = ({ onClose }) => {
                   </p>
                 </div>
               )}
+
+              {/* Specifications Section - Only for Manual Content */}
+              {editContentType === "manual" && (
+                <div>
+                  <div className="flex justify-between items-center">
+                    <Label>Specifications</Label>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={addEditSpecification}
+                    >
+                      <Plus className="w-4 h-4 mr-1" />
+                      Add Spec
+                    </Button>
+                  </div>
+                  {editSpecifications.length > 0 ? (
+                    <div className="space-y-2 mt-2">
+                      {editSpecifications.map((spec, index) => (
+                        <div key={index} className="flex space-x-2">
+                          <Input
+                            placeholder="Property (e.g., Weight)"
+                            value={spec.key}
+                            onChange={(e) => updateEditSpecification(index, 'key', e.target.value)}
+                            className="flex-1"
+                          />
+                          <Input
+                            placeholder="Value (e.g., 2.5 kg)"
+                            value={spec.value}
+                            onChange={(e) => updateEditSpecification(index, 'value', e.target.value)}
+                            className="flex-1"
+                          />
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => removeEditSpecification(index)}
+                            className="text-red-600 hover:text-red-700"
+                          >
+                            <X className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-gray-500 mt-2">No specifications added yet.</p>
+                  )}
+                </div>
+              )}
+
+              {/* Features Section - Only for Manual Content */}
+              {editContentType === "manual" && (
+                <div>
+                  <div className="flex justify-between items-center">
+                    <Label>Features</Label>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={addEditFeature}
+                    >
+                      <Plus className="w-4 h-4 mr-1" />
+                      Add Feature
+                    </Button>
+                  </div>
+                  {editFeatures.length > 0 ? (
+                    <div className="space-y-2 mt-2">
+                      {editFeatures.map((feature, index) => (
+                        <div key={index} className="flex space-x-2">
+                          <Input
+                            placeholder="Feature description"
+                            value={feature}
+                            onChange={(e) => updateEditFeature(index, e.target.value)}
+                            className="flex-1"
+                          />
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => removeEditFeature(index)}
+                            className="text-red-600 hover:text-red-700"
+                          >
+                            <X className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-gray-500 mt-2">No features added yet.</p>
+                  )}
+                </div>
+              )}
+
               <div>
                 <Label htmlFor="edit-photo">Photo</Label>
                 <Input

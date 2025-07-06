@@ -23,7 +23,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ id }) => {
     queryKey: [API_ENDPOINTS.PRODUCT(id)],
   });
 
-  const product = data?.product;
+  const product = (data as { product: any } | undefined)?.product;
 
   // Fetch sub-products if product has subProductIds  
   const { data: subProductsData, isLoading: subProductsLoading } = useQuery({
@@ -197,7 +197,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ id }) => {
                     )}
                   </div>
                   
-                  <div className="text-center">
+                  <div className="text-left">
                     <h3 className="text-xl font-semibold text-gray-900 mb-2 font-montserrat">
                       {subProduct.name}
                     </h3>
@@ -206,13 +206,6 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ id }) => {
                     <p className="text-sm text-red-600 font-medium mb-4">
                       {subProduct.modelNumber}
                     </p>
-                    
-                    {subProduct.contentType === "external" && (
-                      <p className="text-xs text-blue-600 flex items-center justify-center gap-1">
-                        <LinkIcon className="w-3 h-3" />
-                        External Link
-                      </p>
-                    )}
                   </div>
                 </CardContent>
               </Card>

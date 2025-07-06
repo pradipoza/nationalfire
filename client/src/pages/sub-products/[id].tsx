@@ -80,7 +80,7 @@ const SubProductDetail: React.FC<SubProductDetailProps> = ({ id }) => {
           </Button>
           
           {/* Product Name and Model */}
-          <div className="text-right mb-6">
+          <div className="text-left mb-6">
             <h1 className="text-3xl md:text-4xl font-bold text-black font-montserrat mb-2">
               {subProduct.name}
             </h1>
