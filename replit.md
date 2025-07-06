@@ -193,6 +193,9 @@ Changelog:
   - Updated sub-product detail page layout: moved name and model number to left-aligned instead of right-aligned
   - Fixed database schema conflicts and updated column types for proper JSON support
   - Resolved TypeScript compilation errors in admin components and product detail views
+  - Enhanced product detail page styling: made product title blue, improved font sizes and spacing
+  - Reduced padding from navbar to match other pages, optimized layout for better visual hierarchy
+  - Updated sub-product cards with better typography and improved inquiry button styling
 
 ## User Preferences
 

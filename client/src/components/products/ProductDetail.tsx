@@ -138,12 +138,12 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ id }) => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <div className="flex items-center mb-6">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="flex items-center mb-4">
         <Button
           variant="ghost"
           size="sm"
-          className="text-gray-500"
+          className="text-gray-500 hover:text-gray-700"
           onClick={() => setLocation("/products")}
         >
           <ChevronLeft className="h-4 w-4 mr-1" /> Back to Products
@@ -151,13 +151,13 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ id }) => {
       </div>
       
       {/* Product Header - Name and Description Only */}
-      <div className="mb-12">
-        <h1 className="text-4xl font-bold text-gray-900 font-montserrat mb-6">
+      <div className="mb-8">
+        <h1 className="text-3xl md:text-4xl font-bold text-blue-600 font-montserrat mb-4">
           {product.name}
         </h1>
         
-        <div className="prose max-w-none mb-8">
-          <p className="text-lg text-gray-600 whitespace-pre-line leading-relaxed">
+        <div className="max-w-none mb-6">
+          <p className="text-base md:text-lg text-gray-700 whitespace-pre-line leading-relaxed font-inter">
             {product.description}
           </p>
         </div>
@@ -165,8 +165,8 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ id }) => {
 
       {/* Available Models Section */}
       {subProducts.length > 0 ? (
-        <div className="mb-12">
-          <h2 className="text-3xl font-bold text-gray-900 mb-8 font-montserrat">
+        <div className="mb-8">
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6 font-montserrat">
             Available Models
           </h2>
           
@@ -198,12 +198,12 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ id }) => {
                   </div>
                   
                   <div className="text-left">
-                    <h3 className="text-xl font-semibold text-gray-900 mb-2 font-montserrat">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2 font-montserrat">
                       {subProduct.name}
                     </h3>
                     
                     {/* Model number in red color without "Model:" prefix */}
-                    <p className="text-sm text-red-600 font-medium mb-4">
+                    <p className="text-sm text-red-600 font-medium">
                       {subProduct.modelNumber}
                     </p>
                   </div>
@@ -213,11 +213,11 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ id }) => {
           </div>
         </div>
       ) : (
-        <div className="mb-12">
-          <h2 className="text-3xl font-bold text-gray-900 mb-8 font-montserrat">
+        <div className="mb-8">
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6 font-montserrat">
             Available Models
           </h2>
-          <div className="text-center py-12 bg-gray-50 rounded-lg">
+          <div className="text-center py-8 bg-gray-50 rounded-lg">
             <p className="text-gray-500 text-lg">
               No models available for this product yet.
             </p>
@@ -226,10 +226,10 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ id }) => {
       )}
       
       {/* Inquiry Section */}
-      <div className="flex justify-center space-x-4">
+      <div className="flex justify-center space-x-4 mt-8">
         <Button
           onClick={() => setShowInquiryForm(true)}
-          className="bg-primary hover:bg-primary/90 text-white px-12 py-3 text-lg"
+          className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 text-base font-medium"
           size="lg"
         >
           Inquiry Now
@@ -238,9 +238,9 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ id }) => {
           onClick={shareProduct}
           variant="outline"
           size="lg"
-          className="border-gray-300 px-8 py-3"
+          className="border-gray-300 hover:border-gray-400 px-6 py-3"
         >
-          <Share2 className="h-5 w-5" />
+          <Share2 className="h-4 w-4" />
         </Button>
       </div>
       
