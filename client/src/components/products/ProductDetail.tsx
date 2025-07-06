@@ -172,7 +172,11 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ id }) => {
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {subProducts.map((subProduct) => (
-              <Card key={subProduct.id} className="hover:shadow-lg transition-all duration-300 border border-gray-200">
+              <Card 
+                key={subProduct.id} 
+                className="hover:shadow-lg transition-all duration-300 border border-gray-200 cursor-pointer"
+                onClick={() => setLocation(`/sub-products/${subProduct.id}`)}
+              >
                 <CardContent className="p-6">
                   <div className="mb-4">
                     <img
@@ -187,20 +191,10 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ id }) => {
                       {subProduct.name}
                     </h3>
                     
-                    {/* Model number extraction from description or name */}
-                    <p className="text-sm text-gray-500 mb-4">
-                      Model: {subProduct.name}
+                    {/* Model number in red color without "Model:" prefix */}
+                    <p className="text-sm text-red-600 font-medium mb-4">
+                      {subProduct.name}
                     </p>
-                    
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setLocation(`/sub-products/${subProduct.id}`)}
-                      className="w-full border-primary text-primary hover:bg-primary hover:text-white transition-colors"
-                    >
-                      <ExternalLink className="w-4 h-4 mr-2" />
-                      View Details
-                    </Button>
                   </div>
                 </CardContent>
               </Card>
