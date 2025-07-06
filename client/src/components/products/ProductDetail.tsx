@@ -17,7 +17,6 @@ interface ProductDetailProps {
 const ProductDetail: React.FC<ProductDetailProps> = ({ id }) => {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
-  const [activeImage, setActiveImage] = useState(0);
   const [showInquiryForm, setShowInquiryForm] = useState(false);
 
   const { data, isLoading, error } = useQuery({
