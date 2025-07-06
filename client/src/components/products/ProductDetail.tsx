@@ -88,27 +88,33 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ id }) => {
           </Button>
         </div>
         
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-          <div>
-            <Skeleton className="w-full aspect-[4/3] rounded-lg" />
-            <div className="mt-4 grid grid-cols-4 gap-2">
-              {[...Array(4)].map((_, i) => (
-                <Skeleton key={i} className="aspect-square rounded-md" />
-              ))}
-            </div>
+        {/* Product Header Loading */}
+        <div className="mb-12">
+          <Skeleton className="h-12 w-2/3 mb-6" />
+          <Skeleton className="h-6 w-full mb-2" />
+          <Skeleton className="h-6 w-full mb-2" />
+          <Skeleton className="h-6 w-3/4 mb-8" />
+        </div>
+
+        {/* Available Models Loading */}
+        <div className="mb-12">
+          <Skeleton className="h-10 w-1/3 mb-8" />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[...Array(3)].map((_, i) => (
+              <div key={i} className="border border-gray-200 rounded-lg p-6">
+                <Skeleton className="w-full h-48 rounded-lg mb-4" />
+                <Skeleton className="h-6 w-3/4 mb-2 mx-auto" />
+                <Skeleton className="h-4 w-1/2 mb-4 mx-auto" />
+                <Skeleton className="h-10 w-full" />
+              </div>
+            ))}
           </div>
-          
-          <div>
-            <Skeleton className="h-10 w-3/4 mb-3" />
-            <Skeleton className="h-5 w-full mb-2" />
-            <Skeleton className="h-5 w-full mb-2" />
-            <Skeleton className="h-5 w-3/4 mb-6" />
-            
-            <div className="flex space-x-4 mt-8">
-              <Skeleton className="h-12 w-full" />
-              <Skeleton className="h-12 w-14" />
-            </div>
-          </div>
+        </div>
+        
+        {/* Inquiry Section Loading */}
+        <div className="flex justify-center space-x-4">
+          <Skeleton className="h-12 w-32" />
+          <Skeleton className="h-12 w-12" />
         </div>
       </div>
     );
@@ -145,108 +151,93 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ id }) => {
         </Button>
       </div>
       
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-        <div>
-          <div className="overflow-hidden rounded-lg bg-gray-100">
-            <img
-              src={product.photos[activeImage] || product.photos[0]}
-              alt={product.name}
-              className="w-full object-cover aspect-[4/3]"
-            />
-          </div>
-          
-          {product.photos.length > 1 && (
-            <div className="mt-4 grid grid-cols-4 gap-2">
-              {product.photos.map((photo, index) => (
-                <div
-                  key={index}
-                  className={`overflow-hidden rounded-md cursor-pointer border-2 ${
-                    activeImage === index
-                      ? "border-primary"
-                      : "border-transparent"
-                  }`}
-                  onClick={() => setActiveImage(index)}
-                >
-                  <img
-                    src={photo}
-                    alt={`${product.name} - view ${index + 1}`}
-                    className="w-full h-full object-cover aspect-square"
-                  />
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+      {/* Product Header - Name and Description Only */}
+      <div className="mb-12">
+        <h1 className="text-4xl font-bold text-gray-900 font-montserrat mb-6">
+          {product.name}
+        </h1>
         
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900 font-montserrat mb-4">
-            {product.name}
-          </h1>
+        <div className="prose max-w-none mb-8">
+          <p className="text-lg text-gray-600 whitespace-pre-line leading-relaxed">
+            {product.description}
+          </p>
+        </div>
+      </div>
+
+      {/* Available Models Section */}
+      {subProducts.length > 0 ? (
+        <div className="mb-12">
+          <h2 className="text-3xl font-bold text-gray-900 mb-8 font-montserrat">
+            Available Models
+          </h2>
           
-          <div className="prose max-w-none mb-6">
-            <p className="text-gray-600 whitespace-pre-line">
-              {product.description}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {subProducts.map((subProduct) => (
+              <Card key={subProduct.id} className="hover:shadow-lg transition-all duration-300 border border-gray-200">
+                <CardContent className="p-6">
+                  <div className="mb-4">
+                    <img
+                      src={subProduct.photo}
+                      alt={subProduct.name}
+                      className="w-full h-48 object-cover rounded-lg"
+                    />
+                  </div>
+                  
+                  <div className="text-center">
+                    <h3 className="text-xl font-semibold text-gray-900 mb-2 font-montserrat">
+                      {subProduct.name}
+                    </h3>
+                    
+                    {/* Model number extraction from description or name */}
+                    <p className="text-sm text-gray-500 mb-4">
+                      Model: {subProduct.name}
+                    </p>
+                    
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setLocation(`/sub-products/${subProduct.id}`)}
+                      className="w-full border-primary text-primary hover:bg-primary hover:text-white transition-colors"
+                    >
+                      <ExternalLink className="w-4 h-4 mr-2" />
+                      View Details
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      ) : (
+        <div className="mb-12">
+          <h2 className="text-3xl font-bold text-gray-900 mb-8 font-montserrat">
+            Available Models
+          </h2>
+          <div className="text-center py-12 bg-gray-50 rounded-lg">
+            <p className="text-gray-500 text-lg">
+              No models available for this product yet.
             </p>
           </div>
-
-          {/* Sub-Products Section */}
-          {subProducts.length > 0 && (
-            <div className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4 font-montserrat">
-                Available Models
-              </h2>
-              <div className="space-y-4">
-                {subProducts.map((subProduct) => (
-                  <Card key={subProduct.id} className="hover:shadow-md transition-shadow">
-                    <CardContent className="p-4">
-                      <div className="flex gap-4">
-                        <img
-                          src={subProduct.photo}
-                          alt={subProduct.name}
-                          className="w-24 h-24 object-cover rounded-lg flex-shrink-0"
-                        />
-                        <div className="flex-1">
-                          <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                            {subProduct.name}
-                          </h3>
-                          <p className="text-gray-600 text-sm mb-3 line-clamp-2">
-                            {subProduct.description}
-                          </p>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setLocation(`/sub-products/${subProduct.id}`)}
-                          >
-                            <ExternalLink className="w-4 h-4 mr-2" />
-                            View Details
-                          </Button>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </div>
-          )}
-          
-          <div className="flex space-x-4 mt-8">
-            <Button
-              onClick={() => setShowInquiryForm(true)}
-              className="flex-1 bg-primary hover:bg-primary/90 text-white"
-              size="lg"
-            >
-              Inquiry Now
-            </Button>
-            <Button
-              onClick={shareProduct}
-              variant="outline"
-              size="lg"
-              className="border-gray-300"
-            >
-              <Share2 className="h-5 w-5" />
-            </Button>
-          </div>
         </div>
+      )}
+      
+      {/* Inquiry Section */}
+      <div className="flex justify-center space-x-4">
+        <Button
+          onClick={() => setShowInquiryForm(true)}
+          className="bg-primary hover:bg-primary/90 text-white px-12 py-3 text-lg"
+          size="lg"
+        >
+          Inquiry Now
+        </Button>
+        <Button
+          onClick={shareProduct}
+          variant="outline"
+          size="lg"
+          className="border-gray-300 px-8 py-3"
+        >
+          <Share2 className="h-5 w-5" />
+        </Button>
       </div>
       
       {showInquiryForm && (

@@ -74,9 +74,9 @@ const ContactInfo: React.FC = () => {
           <div className="ml-4">
             <h4 className="text-lg font-medium text-gray-900">Business Hours</h4>
             <p className="text-gray-500 mt-1">
-              Monday - Friday: {config.businessHours.weekdays}<br />
-              Saturday: {config.businessHours.saturday}<br />
-              Sunday: {config.businessHours.sunday}
+              Sunday - Friday: {config.businessHours.weekdays}<br />
+        
+              Saturday: {config.businessHours.sunday}
             </p>
           </div>
         </div>
