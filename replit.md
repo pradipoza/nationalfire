@@ -176,6 +176,17 @@ Changelog:
   - Product detail pages now display sub-products instead of text content
   - Sub-product detail pages show individual sub-product information
   - This allows products like "Fire Trucks" to contain multiple sub-product types
+- July 6, 2025. Enhanced sub-product system with external link support and UI improvements
+  - Updated sub-products schema to support both manual content and external URLs
+  - Added contentType field ("manual" or "external") to distinguish between content types
+  - Enhanced admin sub-product interface with radio button selection for content type
+  - Sub-products can now redirect to external websites or display internal content pages
+  - Updated product detail page layout: removed product photos, simplified to show name/description only
+  - Sub-product cards now display in clean grid format with photo, name, and model number
+  - Made entire sub-product cards clickable instead of requiring "View Details" button
+  - Added visual indicators (link icons) for external sub-products
+  - External sub-products open in new tabs when clicked, internal ones navigate to detail pages
+  - Updated both add and edit product dialogs to have identical sub-product selection interfaces
 
 ## User Preferences
 

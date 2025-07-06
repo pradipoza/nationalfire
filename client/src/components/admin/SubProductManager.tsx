@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { API_ENDPOINTS } from "@/lib/config";
 import { apiRequest } from "@/lib/queryClient";
@@ -34,6 +34,8 @@ const SubProductManager: React.FC<SubProductManagerProps> = ({ onClose }) => {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [imagePreview, setImagePreview] = useState<string>("");
+  const [createContentType, setCreateContentType] = useState<string>("manual");
+  const [editContentType, setEditContentType] = useState<string>("manual");
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -127,11 +129,14 @@ const SubProductManager: React.FC<SubProductManagerProps> = ({ onClose }) => {
   const handleCreateSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
+    const contentType = formData.get("contentType") as string;
     
     const subProductData: InsertSubProduct = {
       name: formData.get("name") as string,
       description: formData.get("description") as string,
-      content: formData.get("content") as string,
+      contentType: contentType || "manual",
+      content: contentType === "manual" ? (formData.get("content") as string) : null,
+      externalUrl: contentType === "external" ? (formData.get("externalUrl") as string) : null,
       photo: imagePreview || "https://via.placeholder.com/400x300",
     };
 
@@ -143,11 +148,14 @@ const SubProductManager: React.FC<SubProductManagerProps> = ({ onClose }) => {
     if (!editingSubProduct) return;
     
     const formData = new FormData(event.currentTarget);
+    const contentType = formData.get("contentType") as string;
     
     const subProductData: Partial<InsertSubProduct> = {
       name: formData.get("name") as string,
       description: formData.get("description") as string,
-      content: formData.get("content") as string,
+      contentType: contentType || "manual",
+      content: contentType === "manual" ? (formData.get("content") as string) : null,
+      externalUrl: contentType === "external" ? (formData.get("externalUrl") as string) : null,
       photo: imagePreview || editingSubProduct.photo,
     };
 
@@ -157,6 +165,7 @@ const SubProductManager: React.FC<SubProductManagerProps> = ({ onClose }) => {
   const handleEdit = (subProduct: SubProduct) => {
     setEditingSubProduct(subProduct);
     setImagePreview(subProduct.photo);
+    setEditContentType(subProduct.contentType || "manual");
     setIsEditDialogOpen(true);
   };
 
@@ -216,10 +225,62 @@ const SubProductManager: React.FC<SubProductManagerProps> = ({ onClose }) => {
                 <Label htmlFor="description">Description</Label>
                 <Textarea id="description" name="description" required />
               </div>
+              
+              {/* Content Type Selection */}
               <div>
-                <Label htmlFor="content">Content</Label>
-                <Textarea id="content" name="content" rows={4} required />
+                <Label>Content Type</Label>
+                <div className="flex space-x-4 mt-2">
+                  <label className="flex items-center space-x-2">
+                    <input
+                      type="radio"
+                      name="contentType"
+                      value="manual"
+                      checked={createContentType === "manual"}
+                      onChange={(e) => setCreateContentType(e.target.value)}
+                      className="text-primary"
+                    />
+                    <span>Manual Content</span>
+                  </label>
+                  <label className="flex items-center space-x-2">
+                    <input
+                      type="radio"
+                      name="contentType"
+                      value="external"
+                      checked={createContentType === "external"}
+                      onChange={(e) => setCreateContentType(e.target.value)}
+                      className="text-primary"
+                    />
+                    <span>External Link</span>
+                  </label>
+                </div>
               </div>
+
+              {/* Manual Content Field */}
+              {createContentType === "manual" && (
+                <div>
+                  <Label htmlFor="content">Content</Label>
+                  <Textarea id="content" name="content" rows={4} />
+                  <p className="text-sm text-gray-500 mt-1">
+                    Add detailed content that will be shown on the sub-product page
+                  </p>
+                </div>
+              )}
+
+              {/* External URL Field */}
+              {createContentType === "external" && (
+                <div>
+                  <Label htmlFor="externalUrl">External URL</Label>
+                  <Input 
+                    id="externalUrl" 
+                    name="externalUrl" 
+                    type="url" 
+                    placeholder="https://example.com/product-details"
+                  />
+                  <p className="text-sm text-gray-500 mt-1">
+                    Users will be redirected to this external page when they click on the sub-product
+                  </p>
+                </div>
+              )}
               <div>
                 <Label htmlFor="photo">Photo</Label>
                 <Input
@@ -336,16 +397,68 @@ const SubProductManager: React.FC<SubProductManagerProps> = ({ onClose }) => {
                   required
                 />
               </div>
+              
+              {/* Content Type Selection */}
               <div>
-                <Label htmlFor="edit-content">Content</Label>
-                <Textarea
-                  id="edit-content"
-                  name="content"
-                  rows={4}
-                  defaultValue={editingSubProduct.content}
-                  required
-                />
+                <Label>Content Type</Label>
+                <div className="flex space-x-4 mt-2">
+                  <label className="flex items-center space-x-2">
+                    <input
+                      type="radio"
+                      name="contentType"
+                      value="manual"
+                      checked={editContentType === "manual"}
+                      onChange={(e) => setEditContentType(e.target.value)}
+                      className="text-primary"
+                    />
+                    <span>Manual Content</span>
+                  </label>
+                  <label className="flex items-center space-x-2">
+                    <input
+                      type="radio"
+                      name="contentType"
+                      value="external"
+                      checked={editContentType === "external"}
+                      onChange={(e) => setEditContentType(e.target.value)}
+                      className="text-primary"
+                    />
+                    <span>External Link</span>
+                  </label>
+                </div>
               </div>
+
+              {/* Manual Content Field */}
+              {editContentType === "manual" && (
+                <div>
+                  <Label htmlFor="edit-content">Content</Label>
+                  <Textarea
+                    id="edit-content"
+                    name="content"
+                    rows={4}
+                    defaultValue={editingSubProduct.content || ""}
+                  />
+                  <p className="text-sm text-gray-500 mt-1">
+                    Add detailed content that will be shown on the sub-product page
+                  </p>
+                </div>
+              )}
+
+              {/* External URL Field */}
+              {editContentType === "external" && (
+                <div>
+                  <Label htmlFor="edit-externalUrl">External URL</Label>
+                  <Input 
+                    id="edit-externalUrl" 
+                    name="externalUrl" 
+                    type="url" 
+                    placeholder="https://example.com/product-details"
+                    defaultValue={editingSubProduct.externalUrl || ""}
+                  />
+                  <p className="text-sm text-gray-500 mt-1">
+                    Users will be redirected to this external page when they click on the sub-product
+                  </p>
+                </div>
+              )}
               <div>
                 <Label htmlFor="edit-photo">Photo</Label>
                 <Input

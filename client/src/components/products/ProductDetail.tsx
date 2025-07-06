@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link, useLocation } from "wouter";
 import { API_ENDPOINTS } from "@/lib/config";
-import { ChevronLeft, Share2, ExternalLink } from "lucide-react";
+import { ChevronLeft, Share2, ExternalLink, LinkIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -175,15 +175,26 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ id }) => {
               <Card 
                 key={subProduct.id} 
                 className="hover:shadow-lg transition-all duration-300 border border-gray-200 cursor-pointer"
-                onClick={() => setLocation(`/sub-products/${subProduct.id}`)}
+                onClick={() => {
+                  if (subProduct.contentType === "external" && subProduct.externalUrl) {
+                    window.open(subProduct.externalUrl, '_blank');
+                  } else {
+                    setLocation(`/sub-products/${subProduct.id}`);
+                  }
+                }}
               >
                 <CardContent className="p-6">
-                  <div className="mb-4">
+                  <div className="mb-4 relative">
                     <img
                       src={subProduct.photo}
                       alt={subProduct.name}
                       className="w-full h-48 object-cover rounded-lg"
                     />
+                    {subProduct.contentType === "external" && (
+                      <div className="absolute top-2 right-2 bg-blue-500 text-white p-1 rounded-full">
+                        <LinkIcon className="w-4 h-4" />
+                      </div>
+                    )}
                   </div>
                   
                   <div className="text-center">
@@ -195,6 +206,13 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ id }) => {
                     <p className="text-sm text-red-600 font-medium mb-4">
                       {subProduct.name}
                     </p>
+                    
+                    {subProduct.contentType === "external" && (
+                      <p className="text-xs text-blue-600 flex items-center justify-center gap-1">
+                        <LinkIcon className="w-3 h-3" />
+                        External Link
+                      </p>
+                    )}
                   </div>
                 </CardContent>
               </Card>
