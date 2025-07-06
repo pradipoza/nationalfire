@@ -204,7 +204,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ id }) => {
                     
                     {/* Model number in red color without "Model:" prefix */}
                     <p className="text-sm text-red-600 font-medium mb-4">
-                      {subProduct.name}
+                      {subProduct.modelNumber}
                     </p>
                     
                     {subProduct.contentType === "external" && (

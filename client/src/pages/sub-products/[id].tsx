@@ -67,7 +67,7 @@ const SubProductDetail: React.FC<SubProductDetailProps> = ({ id }) => {
 
   return (
     <div className="min-h-screen bg-gray-50 py-12">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Back Button */}
         <div className="mb-8">
           <Button
@@ -79,18 +79,21 @@ const SubProductDetail: React.FC<SubProductDetailProps> = ({ id }) => {
             Back
           </Button>
           
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 font-montserrat">
-            {subProduct.name}
-          </h1>
-          <p className="mt-2 text-lg text-gray-600">
-            {subProduct.description}
-          </p>
+          {/* Product Name and Model */}
+          <div className="text-right mb-6">
+            <h1 className="text-3xl md:text-4xl font-bold text-black font-montserrat mb-2">
+              {subProduct.name}
+            </h1>
+            <p className="text-lg text-red-600 font-medium">
+              {subProduct.modelNumber}
+            </p>
+          </div>
         </div>
 
-        {/* Main Content */}
+        {/* Main Content - Image and Specifications */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
           {/* Image */}
-          <div className="space-y-4">
+          <div>
             <Card className="overflow-hidden">
               <CardContent className="p-0">
                 <img
@@ -102,61 +105,103 @@ const SubProductDetail: React.FC<SubProductDetailProps> = ({ id }) => {
             </Card>
           </div>
 
-          {/* Content */}
-          <div className="space-y-6">
-            <Card>
-              <CardContent className="p-6">
-                <h2 className="text-2xl font-semibold text-gray-900 mb-4 font-montserrat">
-                  Product Details
-                </h2>
-                <div className="prose prose-gray max-w-none">
-                  <div className="whitespace-pre-wrap text-gray-700 leading-relaxed">
-                    {subProduct.content}
+          {/* Specifications Table */}
+          <div>
+            {subProduct.specifications && subProduct.specifications.length > 0 ? (
+              <Card>
+                <CardContent className="p-6">
+                  <h2 className="text-2xl font-semibold text-gray-900 mb-4 font-montserrat">
+                    Specifications
+                  </h2>
+                  <div className="overflow-x-auto">
+                    <table className="w-full border-collapse border border-gray-300">
+                      <tbody>
+                        {subProduct.specifications.map((spec, index) => (
+                          <tr key={index} className={index % 2 === 0 ? "bg-gray-50" : "bg-white"}>
+                            <td className="border border-gray-300 px-4 py-3 font-medium text-gray-900">
+                              {spec.key}
+                            </td>
+                            <td className="border border-gray-300 px-4 py-3 text-gray-700">
+                              {spec.value}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Additional Info */}
-            <Card>
-              <CardContent className="p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                  Need More Information?
-                </h3>
-                <p className="text-gray-600 mb-4">
-                  Contact our experts for detailed specifications, pricing, and availability.
-                </p>
-                <Button 
-                  onClick={() => setLocation("/contact")}
-                  className="w-full"
-                >
-                  Get Quote & More Info
-                </Button>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            ) : (
+              <Card>
+                <CardContent className="p-6 text-center">
+                  <p className="text-gray-500">No specifications available for this product.</p>
+                </CardContent>
+              </Card>
+            )}
           </div>
         </div>
 
-        {/* Related Actions */}
-        <Card className="bg-gray-100">
-          <CardContent className="p-6 text-center">
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">
-              Interested in Our Complete Range?
+        {/* Description Section - Full Width */}
+        <div className="mb-12">
+          <Card>
+            <CardContent className="p-8">
+              <h2 className="text-2xl font-semibold text-gray-900 mb-6 font-montserrat">
+                Description
+              </h2>
+              <div className="prose prose-gray max-w-none">
+                <div className="whitespace-pre-wrap text-gray-700 leading-relaxed text-lg">
+                  {subProduct.description}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Features Section - Full Width */}
+        {subProduct.features && subProduct.features.length > 0 && (
+          <div className="mb-12">
+            <Card>
+              <CardContent className="p-8">
+                <h2 className="text-2xl font-semibold text-gray-900 mb-6 font-montserrat">
+                  Features
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {subProduct.features.map((feature, index) => (
+                    <div key={index} className="flex items-start space-x-3">
+                      <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0"></div>
+                      <p className="text-gray-700 leading-relaxed">{feature}</p>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+
+        {/* Contact Section */}
+        <Card className="bg-primary/5">
+          <CardContent className="p-8 text-center">
+            <h3 className="text-2xl font-semibold text-gray-900 mb-4 font-montserrat">
+              Need More Information?
             </h3>
-            <p className="text-gray-600 mb-4">
-              Explore our full catalog of emergency vehicles and safety equipment.
+            <p className="text-gray-600 mb-6 text-lg">
+              Contact our experts for detailed specifications, pricing, and availability.
             </p>
             <div className="space-x-4">
               <Button 
-                variant="outline"
-                onClick={() => setLocation("/products")}
+                onClick={() => setLocation("/contact")}
+                size="lg"
+                className="px-8"
               >
-                View All Products
+                Get Quote & More Info
               </Button>
               <Button 
-                onClick={() => setLocation("/contact")}
+                variant="outline"
+                onClick={() => setLocation("/products")}
+                size="lg"
+                className="px-8"
               >
-                Contact Sales Team
+                View All Products
               </Button>
             </div>
           </CardContent>

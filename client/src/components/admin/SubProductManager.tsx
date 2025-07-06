@@ -20,7 +20,8 @@ import {
   Edit2, 
   Trash2, 
   Package,
-  AlertCircle
+  AlertCircle,
+  X
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import type { SubProduct, InsertSubProduct } from "@shared/schema";
@@ -36,6 +37,13 @@ const SubProductManager: React.FC<SubProductManagerProps> = ({ onClose }) => {
   const [imagePreview, setImagePreview] = useState<string>("");
   const [createContentType, setCreateContentType] = useState<string>("manual");
   const [editContentType, setEditContentType] = useState<string>("manual");
+  
+  // State for specifications and features
+  const [createSpecifications, setCreateSpecifications] = useState<{key: string, value: string}[]>([]);
+  const [createFeatures, setCreateFeatures] = useState<string[]>([]);
+  const [editSpecifications, setEditSpecifications] = useState<{key: string, value: string}[]>([]);
+  const [editFeatures, setEditFeatures] = useState<string[]>([]);
+  
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -133,10 +141,13 @@ const SubProductManager: React.FC<SubProductManagerProps> = ({ onClose }) => {
     
     const subProductData: InsertSubProduct = {
       name: formData.get("name") as string,
+      modelNumber: formData.get("modelNumber") as string,
       description: formData.get("description") as string,
       contentType: contentType || "manual",
       content: contentType === "manual" ? (formData.get("content") as string) : null,
       externalUrl: contentType === "external" ? (formData.get("externalUrl") as string) : null,
+      specifications: createSpecifications,
+      features: createFeatures,
       photo: imagePreview || "https://via.placeholder.com/400x300",
     };
 
@@ -152,10 +163,13 @@ const SubProductManager: React.FC<SubProductManagerProps> = ({ onClose }) => {
     
     const subProductData: Partial<InsertSubProduct> = {
       name: formData.get("name") as string,
+      modelNumber: formData.get("modelNumber") as string,
       description: formData.get("description") as string,
       contentType: contentType || "manual",
       content: contentType === "manual" ? (formData.get("content") as string) : null,
       externalUrl: contentType === "external" ? (formData.get("externalUrl") as string) : null,
+      specifications: editSpecifications,
+      features: editFeatures,
       photo: imagePreview || editingSubProduct.photo,
     };
 
@@ -166,7 +180,67 @@ const SubProductManager: React.FC<SubProductManagerProps> = ({ onClose }) => {
     setEditingSubProduct(subProduct);
     setImagePreview(subProduct.photo);
     setEditContentType(subProduct.contentType || "manual");
+    setEditSpecifications(subProduct.specifications || []);
+    setEditFeatures(subProduct.features || []);
     setIsEditDialogOpen(true);
+  };
+
+  // Helper functions for specifications
+  const addCreateSpecification = () => {
+    setCreateSpecifications([...createSpecifications, { key: "", value: "" }]);
+  };
+
+  const updateCreateSpecification = (index: number, field: 'key' | 'value', value: string) => {
+    const updated = [...createSpecifications];
+    updated[index][field] = value;
+    setCreateSpecifications(updated);
+  };
+
+  const removeCreateSpecification = (index: number) => {
+    setCreateSpecifications(createSpecifications.filter((_, i) => i !== index));
+  };
+
+  const addEditSpecification = () => {
+    setEditSpecifications([...editSpecifications, { key: "", value: "" }]);
+  };
+
+  const updateEditSpecification = (index: number, field: 'key' | 'value', value: string) => {
+    const updated = [...editSpecifications];
+    updated[index][field] = value;
+    setEditSpecifications(updated);
+  };
+
+  const removeEditSpecification = (index: number) => {
+    setEditSpecifications(editSpecifications.filter((_, i) => i !== index));
+  };
+
+  // Helper functions for features
+  const addCreateFeature = () => {
+    setCreateFeatures([...createFeatures, ""]);
+  };
+
+  const updateCreateFeature = (index: number, value: string) => {
+    const updated = [...createFeatures];
+    updated[index] = value;
+    setCreateFeatures(updated);
+  };
+
+  const removeCreateFeature = (index: number) => {
+    setCreateFeatures(createFeatures.filter((_, i) => i !== index));
+  };
+
+  const addEditFeature = () => {
+    setEditFeatures([...editFeatures, ""]);
+  };
+
+  const updateEditFeature = (index: number, value: string) => {
+    const updated = [...editFeatures];
+    updated[index] = value;
+    setEditFeatures(updated);
+  };
+
+  const removeEditFeature = (index: number) => {
+    setEditFeatures(editFeatures.filter((_, i) => i !== index));
   };
 
   const handleDelete = (id: number) => {
@@ -220,6 +294,10 @@ const SubProductManager: React.FC<SubProductManagerProps> = ({ onClose }) => {
               <div>
                 <Label htmlFor="name">Name</Label>
                 <Input id="name" name="name" required />
+              </div>
+              <div>
+                <Label htmlFor="modelNumber">Model Number</Label>
+                <Input id="modelNumber" name="modelNumber" required placeholder="e.g., FT-2000X" />
               </div>
               <div>
                 <Label htmlFor="description">Description</Label>
@@ -281,6 +359,84 @@ const SubProductManager: React.FC<SubProductManagerProps> = ({ onClose }) => {
                   </p>
                 </div>
               )}
+
+              {/* Specifications Section */}
+              <div>
+                <div className="flex justify-between items-center mb-2">
+                  <Label>Specifications</Label>
+                  <Button type="button" onClick={addCreateSpecification} size="sm" variant="outline">
+                    <Plus className="w-4 h-4 mr-1" />
+                    Add Specification
+                  </Button>
+                </div>
+                {createSpecifications.length > 0 ? (
+                  <div className="space-y-2 border rounded-md p-3">
+                    {createSpecifications.map((spec, index) => (
+                      <div key={index} className="flex gap-2 items-center">
+                        <Input
+                          placeholder="Key (e.g., Weight)"
+                          value={spec.key}
+                          onChange={(e) => updateCreateSpecification(index, 'key', e.target.value)}
+                          className="flex-1"
+                        />
+                        <Input
+                          placeholder="Value (e.g., 2500 kg)"
+                          value={spec.value}
+                          onChange={(e) => updateCreateSpecification(index, 'value', e.target.value)}
+                          className="flex-1"
+                        />
+                        <Button
+                          type="button"
+                          onClick={() => removeCreateSpecification(index)}
+                          size="sm"
+                          variant="ghost"
+                          className="text-red-500 hover:text-red-700"
+                        >
+                          <X className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm text-gray-500">No specifications added yet.</p>
+                )}
+              </div>
+
+              {/* Features Section */}
+              <div>
+                <div className="flex justify-between items-center mb-2">
+                  <Label>Features</Label>
+                  <Button type="button" onClick={addCreateFeature} size="sm" variant="outline">
+                    <Plus className="w-4 h-4 mr-1" />
+                    Add Feature
+                  </Button>
+                </div>
+                {createFeatures.length > 0 ? (
+                  <div className="space-y-2 border rounded-md p-3">
+                    {createFeatures.map((feature, index) => (
+                      <div key={index} className="flex gap-2 items-center">
+                        <Input
+                          placeholder="Feature description"
+                          value={feature}
+                          onChange={(e) => updateCreateFeature(index, e.target.value)}
+                          className="flex-1"
+                        />
+                        <Button
+                          type="button"
+                          onClick={() => removeCreateFeature(index)}
+                          size="sm"
+                          variant="ghost"
+                          className="text-red-500 hover:text-red-700"
+                        >
+                          <X className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm text-gray-500">No features added yet.</p>
+                )}
+              </div>
               <div>
                 <Label htmlFor="photo">Photo</Label>
                 <Input
@@ -386,6 +542,16 @@ const SubProductManager: React.FC<SubProductManagerProps> = ({ onClose }) => {
                   name="name"
                   defaultValue={editingSubProduct.name}
                   required
+                />
+              </div>
+              <div>
+                <Label htmlFor="edit-modelNumber">Model Number</Label>
+                <Input
+                  id="edit-modelNumber"
+                  name="modelNumber"
+                  defaultValue={editingSubProduct.modelNumber}
+                  required
+                  placeholder="e.g., FT-2000X"
                 />
               </div>
               <div>
