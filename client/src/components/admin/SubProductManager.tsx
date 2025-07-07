@@ -299,13 +299,11 @@ const SubProductManager: React.FC<SubProductManagerProps> = ({ onClose }) => {
                 <Label htmlFor="modelNumber">Model Number</Label>
                 <Input id="modelNumber" name="modelNumber" required placeholder="e.g., FT-2000X" />
               </div>
-              {/* Description - Only for Manual Content */}
-              {createContentType === "manual" && (
-                <div>
-                  <Label htmlFor="description">Description</Label>
-                  <Textarea id="description" name="description" required />
-                </div>
-              )}
+              {/* Description - Always required */}
+              <div>
+                <Label htmlFor="description">Description</Label>
+                <Textarea id="description" name="description" required />
+              </div>
               
               {/* Content Type Selection */}
               <div>
@@ -561,18 +559,16 @@ const SubProductManager: React.FC<SubProductManagerProps> = ({ onClose }) => {
                   placeholder="e.g., FT-2000X"
                 />
               </div>
-              {/* Description - Only for Manual Content */}
-              {editContentType === "manual" && (
-                <div>
-                  <Label htmlFor="edit-description">Description</Label>
-                  <Textarea
-                    id="edit-description"
-                    name="description"
-                    defaultValue={editingSubProduct.description}
-                    required
-                  />
-                </div>
-              )}
+              {/* Description - Always required */}
+              <div>
+                <Label htmlFor="edit-description">Description</Label>
+                <Textarea
+                  id="edit-description"
+                  name="description"
+                  defaultValue={editingSubProduct.description}
+                  required
+                />
+              </div>
               
               {/* Content Type Selection */}
               <div>
