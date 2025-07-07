@@ -168,7 +168,7 @@ const AboutPage: React.FC = () => {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300">
                   <div className="absolute bottom-4 left-4 text-white">
-                    <h4 className="font-semibold">Electric Ambulances</h4>
+                    <h4 className="font-semibold"> Ambulances</h4>
                     <p className="text-sm opacity-90">Rapid medical response vehicles</p>
                   </div>
                 </div>
