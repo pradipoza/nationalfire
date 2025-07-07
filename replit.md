@@ -196,8 +196,10 @@ Changelog:
   - Enhanced product detail page styling: made product title blue, improved font sizes and spacing
   - Reduced padding from navbar to match other pages, optimized layout for better visual hierarchy
   - Updated sub-product cards with better typography and improved inquiry button styling
-  - Fixed sub-product creation error by making description field always visible and required
-  - Description field is now required for both manual content and external link sub-products
+  - Fixed sub-product creation by making description field conditional and nullable
+  - Description field is now only shown and required for manual content type sub-products
+  - External link sub-products no longer require description field, making the form cleaner and more intuitive
+  - Updated database schema to make description nullable for external link compatibility
 
 ## User Preferences
 
