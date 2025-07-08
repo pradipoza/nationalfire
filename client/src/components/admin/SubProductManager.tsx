@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { API_ENDPOINTS } from "@/lib/config";
 import { apiRequest } from "@/lib/queryClient";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Dialog,
@@ -20,49 +19,33 @@ import {
   Edit2, 
   Trash2, 
   Package,
-  AlertCircle,
-  X
+  AlertCircle
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import type { SubProduct, InsertSubProduct } from "@shared/schema";
 
-interface SubProductManagerProps {
-  onClose?: () => void;
-}
-
-const SubProductManager: React.FC<SubProductManagerProps> = ({ onClose }) => {
-  const [editingSubProduct, setEditingSubProduct] = useState<SubProduct | null>(null);
+const SubProductManager: React.FC = () => {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [imagePreview, setImagePreview] = useState<string>("");
-  const [createContentType, setCreateContentType] = useState<string>("manual");
-  const [editContentType, setEditContentType] = useState<string>("manual");
-  
-  // State for specifications and features
-  const [createSpecifications, setCreateSpecifications] = useState<{key: string, value: string}[]>([]);
-  const [createFeatures, setCreateFeatures] = useState<string[]>([]);
-  const [editSpecifications, setEditSpecifications] = useState<{key: string, value: string}[]>([]);
-  const [editFeatures, setEditFeatures] = useState<string[]>([]);
-  
+  const [editingSubProduct, setEditingSubProduct] = useState<SubProduct | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
   // Fetch sub-products
-  const { data, isLoading, error } = useQuery({
+  const { data: subProducts, isLoading, error } = useQuery<{ subProducts: SubProduct[] }>({
     queryKey: [API_ENDPOINTS.SUB_PRODUCTS],
   });
 
-  const subProducts: SubProduct[] = (data as { subProducts: SubProduct[] } | undefined)?.subProducts || [];
-
   // Create sub-product mutation
   const createMutation = useMutation({
-    mutationFn: async (subProductData: InsertSubProduct) => {
-      return apiRequest("POST", API_ENDPOINTS.SUB_PRODUCTS, subProductData);
+    mutationFn: async (data: InsertSubProduct) => {
+      return apiRequest("POST", API_ENDPOINTS.SUB_PRODUCTS, data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [API_ENDPOINTS.SUB_PRODUCTS] });
       setIsCreateDialogOpen(false);
-      setImagePreview("");
+      setImagePreview(null);
       toast({
         title: "Success",
         description: "Sub-product created successfully",
@@ -80,13 +63,13 @@ const SubProductManager: React.FC<SubProductManagerProps> = ({ onClose }) => {
   // Update sub-product mutation
   const updateMutation = useMutation({
     mutationFn: async ({ id, data }: { id: number; data: Partial<InsertSubProduct> }) => {
-      return apiRequest("PUT", API_ENDPOINTS.SUB_PRODUCT(id), data);
+      return apiRequest("PATCH", API_ENDPOINTS.SUB_PRODUCT(id), data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [API_ENDPOINTS.SUB_PRODUCTS] });
       setIsEditDialogOpen(false);
       setEditingSubProduct(null);
-      setImagePreview("");
+      setImagePreview(null);
       toast({
         title: "Success",
         description: "Sub-product updated successfully",
@@ -137,17 +120,10 @@ const SubProductManager: React.FC<SubProductManagerProps> = ({ onClose }) => {
   const handleCreateSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
-    const contentType = formData.get("contentType") as string;
     
     const subProductData: InsertSubProduct = {
       name: formData.get("name") as string,
-      modelNumber: formData.get("modelNumber") as string,
-      description: contentType === "manual" ? (formData.get("description") as string) : null,
-      contentType: contentType || "manual",
-      content: contentType === "manual" ? (formData.get("content") as string) : null,
-      externalUrl: contentType === "external" ? (formData.get("externalUrl") as string) : null,
-      specifications: createSpecifications,
-      features: createFeatures,
+      modelNumber: formData.get("modelNumber") as string || null,
       photo: imagePreview || "https://via.placeholder.com/400x300",
     };
 
@@ -159,17 +135,10 @@ const SubProductManager: React.FC<SubProductManagerProps> = ({ onClose }) => {
     if (!editingSubProduct) return;
     
     const formData = new FormData(event.currentTarget);
-    const contentType = formData.get("contentType") as string;
     
     const subProductData: Partial<InsertSubProduct> = {
       name: formData.get("name") as string,
-      modelNumber: formData.get("modelNumber") as string,
-      description: contentType === "manual" ? (formData.get("description") as string) : null,
-      contentType: contentType || "manual",
-      content: contentType === "manual" ? (formData.get("content") as string) : null,
-      externalUrl: contentType === "external" ? (formData.get("externalUrl") as string) : null,
-      specifications: editSpecifications,
-      features: editFeatures,
+      modelNumber: formData.get("modelNumber") as string || null,
       photo: imagePreview || editingSubProduct.photo,
     };
 
@@ -179,68 +148,7 @@ const SubProductManager: React.FC<SubProductManagerProps> = ({ onClose }) => {
   const handleEdit = (subProduct: SubProduct) => {
     setEditingSubProduct(subProduct);
     setImagePreview(subProduct.photo);
-    setEditContentType(subProduct.contentType || "manual");
-    setEditSpecifications(subProduct.specifications || []);
-    setEditFeatures(subProduct.features || []);
     setIsEditDialogOpen(true);
-  };
-
-  // Helper functions for specifications
-  const addCreateSpecification = () => {
-    setCreateSpecifications([...createSpecifications, { key: "", value: "" }]);
-  };
-
-  const updateCreateSpecification = (index: number, field: 'key' | 'value', value: string) => {
-    const updated = [...createSpecifications];
-    updated[index][field] = value;
-    setCreateSpecifications(updated);
-  };
-
-  const removeCreateSpecification = (index: number) => {
-    setCreateSpecifications(createSpecifications.filter((_, i) => i !== index));
-  };
-
-  const addEditSpecification = () => {
-    setEditSpecifications([...editSpecifications, { key: "", value: "" }]);
-  };
-
-  const updateEditSpecification = (index: number, field: 'key' | 'value', value: string) => {
-    const updated = [...editSpecifications];
-    updated[index][field] = value;
-    setEditSpecifications(updated);
-  };
-
-  const removeEditSpecification = (index: number) => {
-    setEditSpecifications(editSpecifications.filter((_, i) => i !== index));
-  };
-
-  // Helper functions for features
-  const addCreateFeature = () => {
-    setCreateFeatures([...createFeatures, ""]);
-  };
-
-  const updateCreateFeature = (index: number, value: string) => {
-    const updated = [...createFeatures];
-    updated[index] = value;
-    setCreateFeatures(updated);
-  };
-
-  const removeCreateFeature = (index: number) => {
-    setCreateFeatures(createFeatures.filter((_, i) => i !== index));
-  };
-
-  const addEditFeature = () => {
-    setEditFeatures([...editFeatures, ""]);
-  };
-
-  const updateEditFeature = (index: number, value: string) => {
-    const updated = [...editFeatures];
-    updated[index] = value;
-    setEditFeatures(updated);
-  };
-
-  const removeEditFeature = (index: number) => {
-    setEditFeatures(editFeatures.filter((_, i) => i !== index));
   };
 
   const handleDelete = (id: number) => {
@@ -286,7 +194,7 @@ const SubProductManager: React.FC<SubProductManagerProps> = ({ onClose }) => {
               Add Sub-Product
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-2xl">
+          <DialogContent className="max-w-md">
             <DialogHeader>
               <DialogTitle>Create New Sub-Product</DialogTitle>
             </DialogHeader>
@@ -296,161 +204,18 @@ const SubProductManager: React.FC<SubProductManagerProps> = ({ onClose }) => {
                 <Input id="name" name="name" required />
               </div>
               <div>
-                <Label htmlFor="modelNumber">Model Number</Label>
-                <Input id="modelNumber" name="modelNumber" required placeholder="e.g., FT-2000X" />
+                <Label htmlFor="modelNumber">Model Number (Optional)</Label>
+                <Input id="modelNumber" name="modelNumber" placeholder="e.g., FT-2000X" />
               </div>
-              {/* Description - Only for Manual Content */}
-              {createContentType === "manual" && (
-                <div>
-                  <Label htmlFor="description">Description</Label>
-                  <Textarea id="description" name="description" required />
-                </div>
-              )}
               
-              {/* Content Type Selection */}
-              <div>
-                <Label>Content Type</Label>
-                <div className="flex space-x-4 mt-2">
-                  <label className="flex items-center space-x-2">
-                    <input
-                      type="radio"
-                      name="contentType"
-                      value="manual"
-                      checked={createContentType === "manual"}
-                      onChange={(e) => setCreateContentType(e.target.value)}
-                      className="text-primary"
-                    />
-                    <span>Manual Content</span>
-                  </label>
-                  <label className="flex items-center space-x-2">
-                    <input
-                      type="radio"
-                      name="contentType"
-                      value="external"
-                      checked={createContentType === "external"}
-                      onChange={(e) => setCreateContentType(e.target.value)}
-                      className="text-primary"
-                    />
-                    <span>External Link</span>
-                  </label>
-                </div>
-              </div>
-
-              {/* Manual Content Field */}
-              {createContentType === "manual" && (
-                <div>
-                  <Label htmlFor="content">Content</Label>
-                  <Textarea id="content" name="content" rows={4} />
-                  <p className="text-sm text-gray-500 mt-1">
-                    Add detailed content that will be shown on the sub-product page
-                  </p>
-                </div>
-              )}
-
-              {/* External URL Field */}
-              {createContentType === "external" && (
-                <div>
-                  <Label htmlFor="externalUrl">External URL</Label>
-                  <Input 
-                    id="externalUrl" 
-                    name="externalUrl" 
-                    type="url" 
-                    placeholder="https://example.com/product-details"
-                  />
-                  <p className="text-sm text-gray-500 mt-1">
-                    Users will be redirected to this external page when they click on the sub-product
-                  </p>
-                </div>
-              )}
-
-              {/* Specifications Section - Only for Manual Content */}
-              {createContentType === "manual" && (
-                <div>
-                  <div className="flex justify-between items-center mb-2">
-                    <Label>Specifications</Label>
-                    <Button type="button" onClick={addCreateSpecification} size="sm" variant="outline">
-                      <Plus className="w-4 h-4 mr-1" />
-                      Add Specification
-                    </Button>
-                  </div>
-                  {createSpecifications.length > 0 ? (
-                    <div className="space-y-2 border rounded-md p-3">
-                      {createSpecifications.map((spec, index) => (
-                        <div key={index} className="flex gap-2 items-center">
-                          <Input
-                            placeholder="Key (e.g., Weight)"
-                            value={spec.key}
-                            onChange={(e) => updateCreateSpecification(index, 'key', e.target.value)}
-                            className="flex-1"
-                          />
-                          <Input
-                            placeholder="Value (e.g., 2500 kg)"
-                            value={spec.value}
-                            onChange={(e) => updateCreateSpecification(index, 'value', e.target.value)}
-                            className="flex-1"
-                          />
-                          <Button
-                            type="button"
-                            onClick={() => removeCreateSpecification(index)}
-                            size="sm"
-                            variant="ghost"
-                            className="text-red-500 hover:text-red-700"
-                          >
-                            <X className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <p className="text-sm text-gray-500">No specifications added yet.</p>
-                  )}
-                </div>
-              )}
-
-              {/* Features Section - Only for Manual Content */}
-              {createContentType === "manual" && (
-                <div>
-                  <div className="flex justify-between items-center mb-2">
-                    <Label>Features</Label>
-                    <Button type="button" onClick={addCreateFeature} size="sm" variant="outline">
-                      <Plus className="w-4 h-4 mr-1" />
-                      Add Feature
-                    </Button>
-                  </div>
-                  {createFeatures.length > 0 ? (
-                    <div className="space-y-2 border rounded-md p-3">
-                      {createFeatures.map((feature, index) => (
-                        <div key={index} className="flex gap-2 items-center">
-                          <Input
-                            placeholder="Feature description"
-                            value={feature}
-                            onChange={(e) => updateCreateFeature(index, e.target.value)}
-                            className="flex-1"
-                          />
-                          <Button
-                            type="button"
-                            onClick={() => removeCreateFeature(index)}
-                            size="sm"
-                            variant="ghost"
-                            className="text-red-500 hover:text-red-700"
-                          >
-                            <X className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <p className="text-sm text-gray-500">No features added yet.</p>
-                  )}
-                </div>
-              )}
               <div>
                 <Label htmlFor="photo">Photo</Label>
-                <Input
-                  id="photo"
+                <input
                   type="file"
+                  id="photo"
                   accept="image/*"
                   onChange={handleImageUpload}
+                  className="w-full"
                 />
                 {imagePreview && (
                   <img
@@ -460,15 +225,9 @@ const SubProductManager: React.FC<SubProductManagerProps> = ({ onClose }) => {
                   />
                 )}
               </div>
-              <div className="flex justify-end space-x-2">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => {
-                    setIsCreateDialogOpen(false);
-                    setImagePreview("");
-                  }}
-                >
+              
+              <div className="flex justify-end space-x-2 pt-4">
+                <Button type="button" variant="outline" onClick={() => setIsCreateDialogOpen(false)}>
                   Cancel
                 </Button>
                 <Button type="submit" disabled={createMutation.isPending}>
@@ -480,53 +239,50 @@ const SubProductManager: React.FC<SubProductManagerProps> = ({ onClose }) => {
         </Dialog>
       </div>
 
-      {/* Sub-Products Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {subProducts.map((subProduct) => (
-          <Card key={subProduct.id} className="overflow-hidden">
-            <div className="aspect-video bg-gray-100">
-              <img
-                src={subProduct.photo}
-                alt={subProduct.name}
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <CardHeader>
-              <CardTitle className="text-lg">{subProduct.name}</CardTitle>
-              <p className="text-sm text-gray-600 line-clamp-2">
-                {subProduct.description}
-              </p>
-            </CardHeader>
-            <CardContent>
-              <div className="flex justify-end space-x-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleEdit(subProduct)}
-                >
-                  <Edit2 className="w-4 h-4" />
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleDelete(subProduct.id)}
-                  className="text-red-600 hover:text-red-700"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-
-      {subProducts.length === 0 && (
-        <div className="text-center py-12">
+      {subProducts?.subProducts && subProducts.subProducts.length > 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {subProducts.subProducts.map((subProduct) => (
+            <Card key={subProduct.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+              <CardHeader className="p-0">
+                <img
+                  src={subProduct.photo}
+                  alt={subProduct.name}
+                  className="w-full h-48 object-cover"
+                />
+              </CardHeader>
+              <CardContent className="p-4">
+                <CardTitle className="text-lg mb-2">{subProduct.name}</CardTitle>
+                {subProduct.modelNumber && (
+                  <p className="text-sm text-gray-600 mb-3">Model: {subProduct.modelNumber}</p>
+                )}
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleEdit(subProduct)}
+                    className="flex-1"
+                  >
+                    <Edit2 className="w-4 h-4 mr-1" />
+                    Edit
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleDelete(subProduct.id)}
+                    className="text-red-600 hover:text-red-800"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      ) : (
+        <div className="text-center py-12 bg-gray-50 rounded-lg">
           <Package className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-lg font-semibold mb-2">No sub-products found</h3>
-          <p className="text-gray-600 mb-4">
-            Start by creating your first sub-product
-          </p>
+          <h3 className="text-lg font-semibold mb-2">No Sub-Products Found</h3>
+          <p className="text-gray-600 mb-4">Create your first sub-product to get started.</p>
           <Button onClick={() => setIsCreateDialogOpen(true)}>
             <Plus className="w-4 h-4 mr-2" />
             Add Sub-Product
@@ -536,7 +292,7 @@ const SubProductManager: React.FC<SubProductManagerProps> = ({ onClose }) => {
 
       {/* Edit Dialog */}
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle>Edit Sub-Product</DialogTitle>
           </DialogHeader>
@@ -552,189 +308,23 @@ const SubProductManager: React.FC<SubProductManagerProps> = ({ onClose }) => {
                 />
               </div>
               <div>
-                <Label htmlFor="edit-modelNumber">Model Number</Label>
+                <Label htmlFor="edit-modelNumber">Model Number (Optional)</Label>
                 <Input
                   id="edit-modelNumber"
                   name="modelNumber"
-                  defaultValue={editingSubProduct.modelNumber}
-                  required
+                  defaultValue={editingSubProduct.modelNumber || ""}
                   placeholder="e.g., FT-2000X"
                 />
               </div>
-              {/* Description - Only for Manual Content */}
-              {editContentType === "manual" && (
-                <div>
-                  <Label htmlFor="edit-description">Description</Label>
-                  <Textarea
-                    id="edit-description"
-                    name="description"
-                    defaultValue={editingSubProduct.description}
-                    required
-                  />
-                </div>
-              )}
               
-              {/* Content Type Selection */}
-              <div>
-                <Label>Content Type</Label>
-                <div className="flex space-x-4 mt-2">
-                  <label className="flex items-center space-x-2">
-                    <input
-                      type="radio"
-                      name="contentType"
-                      value="manual"
-                      checked={editContentType === "manual"}
-                      onChange={(e) => setEditContentType(e.target.value)}
-                      className="text-primary"
-                    />
-                    <span>Manual Content</span>
-                  </label>
-                  <label className="flex items-center space-x-2">
-                    <input
-                      type="radio"
-                      name="contentType"
-                      value="external"
-                      checked={editContentType === "external"}
-                      onChange={(e) => setEditContentType(e.target.value)}
-                      className="text-primary"
-                    />
-                    <span>External Link</span>
-                  </label>
-                </div>
-              </div>
-
-              {/* Manual Content Field */}
-              {editContentType === "manual" && (
-                <div>
-                  <Label htmlFor="edit-content">Content</Label>
-                  <Textarea
-                    id="edit-content"
-                    name="content"
-                    rows={4}
-                    defaultValue={editingSubProduct.content || ""}
-                  />
-                  <p className="text-sm text-gray-500 mt-1">
-                    Add detailed content that will be shown on the sub-product page
-                  </p>
-                </div>
-              )}
-
-              {/* External URL Field */}
-              {editContentType === "external" && (
-                <div>
-                  <Label htmlFor="edit-externalUrl">External URL</Label>
-                  <Input 
-                    id="edit-externalUrl" 
-                    name="externalUrl" 
-                    type="url" 
-                    placeholder="https://example.com/product-details"
-                    defaultValue={editingSubProduct.externalUrl || ""}
-                  />
-                  <p className="text-sm text-gray-500 mt-1">
-                    Users will be redirected to this external page when they click on the sub-product
-                  </p>
-                </div>
-              )}
-
-              {/* Specifications Section - Only for Manual Content */}
-              {editContentType === "manual" && (
-                <div>
-                  <div className="flex justify-between items-center">
-                    <Label>Specifications</Label>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={addEditSpecification}
-                    >
-                      <Plus className="w-4 h-4 mr-1" />
-                      Add Spec
-                    </Button>
-                  </div>
-                  {editSpecifications.length > 0 ? (
-                    <div className="space-y-2 mt-2">
-                      {editSpecifications.map((spec, index) => (
-                        <div key={index} className="flex space-x-2">
-                          <Input
-                            placeholder="Property (e.g., Weight)"
-                            value={spec.key}
-                            onChange={(e) => updateEditSpecification(index, 'key', e.target.value)}
-                            className="flex-1"
-                          />
-                          <Input
-                            placeholder="Value (e.g., 2.5 kg)"
-                            value={spec.value}
-                            onChange={(e) => updateEditSpecification(index, 'value', e.target.value)}
-                            className="flex-1"
-                          />
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            onClick={() => removeEditSpecification(index)}
-                            className="text-red-600 hover:text-red-700"
-                          >
-                            <X className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <p className="text-sm text-gray-500 mt-2">No specifications added yet.</p>
-                  )}
-                </div>
-              )}
-
-              {/* Features Section - Only for Manual Content */}
-              {editContentType === "manual" && (
-                <div>
-                  <div className="flex justify-between items-center">
-                    <Label>Features</Label>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={addEditFeature}
-                    >
-                      <Plus className="w-4 h-4 mr-1" />
-                      Add Feature
-                    </Button>
-                  </div>
-                  {editFeatures.length > 0 ? (
-                    <div className="space-y-2 mt-2">
-                      {editFeatures.map((feature, index) => (
-                        <div key={index} className="flex space-x-2">
-                          <Input
-                            placeholder="Feature description"
-                            value={feature}
-                            onChange={(e) => updateEditFeature(index, e.target.value)}
-                            className="flex-1"
-                          />
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            onClick={() => removeEditFeature(index)}
-                            className="text-red-600 hover:text-red-700"
-                          >
-                            <X className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <p className="text-sm text-gray-500 mt-2">No features added yet.</p>
-                  )}
-                </div>
-              )}
-
               <div>
                 <Label htmlFor="edit-photo">Photo</Label>
-                <Input
-                  id="edit-photo"
+                <input
                   type="file"
+                  id="edit-photo"
                   accept="image/*"
                   onChange={handleImageUpload}
+                  className="w-full"
                 />
                 {imagePreview && (
                   <img
@@ -744,16 +334,9 @@ const SubProductManager: React.FC<SubProductManagerProps> = ({ onClose }) => {
                   />
                 )}
               </div>
-              <div className="flex justify-end space-x-2">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => {
-                    setIsEditDialogOpen(false);
-                    setEditingSubProduct(null);
-                    setImagePreview("");
-                  }}
-                >
+              
+              <div className="flex justify-end space-x-2 pt-4">
+                <Button type="button" variant="outline" onClick={() => setIsEditDialogOpen(false)}>
                   Cancel
                 </Button>
                 <Button type="submit" disabled={updateMutation.isPending}>

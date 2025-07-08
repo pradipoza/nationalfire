@@ -30,7 +30,7 @@ import AdminLogin from "@/pages/admin/login";
 import AdminDashboard from "@/pages/admin/dashboard";
 import AdminProducts from "@/pages/admin/products";
 import AdminSubProducts from "@/pages/admin/sub-products";
-import SubProductDetail from "@/pages/sub-products/[id]";
+import SubProductDetail from "@/pages/sub-products/[name]";
 import AdminBrands from "@/pages/admin/brands";
 import AdminBlogs from "@/pages/admin/blogs";
 import AdminGallery from "@/pages/admin/gallery";
@@ -76,10 +76,10 @@ function Router() {
           </MainLayout>
         )}
       </Route>
-      <Route path="/sub-products/:id">
-        {(params) => (
+      <Route path="/sub-products/:name">
+        {() => (
           <MainLayout>
-            <SubProductDetail id={params.id} />
+            <SubProductDetail />
           </MainLayout>
         )}
       </Route>

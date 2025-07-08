@@ -176,30 +176,18 @@ Changelog:
   - Product detail pages now display sub-products instead of text content
   - Sub-product detail pages show individual sub-product information
   - This allows products like "Fire Trucks" to contain multiple sub-product types
-- July 6, 2025. Enhanced sub-product system with external link support and UI improvements
-  - Updated sub-products schema to support both manual content and external URLs
-  - Added contentType field ("manual" or "external") to distinguish between content types
-  - Enhanced admin sub-product interface with radio button selection for content type
-  - Sub-products can now redirect to external websites or display internal content pages
-  - Updated product detail page layout: removed product photos, simplified to show name/description only
-  - Sub-product cards now display in clean grid format with photo, name, and model number
-  - Made entire sub-product cards clickable instead of requiring "View Details" button
-  - Added visual indicators (link icons) for external sub-products
-  - External sub-products open in new tabs when clicked, internal ones navigate to detail pages
-  - Updated both add and edit product dialogs to have identical sub-product selection interfaces
-  - Fixed admin sub-product manager to include specifications and features fields in edit dialog
-  - Implemented conditional field visibility: description, specifications, and features only show for manual content
-  - Removed "External Link" text from sub-product cards, keeping only the icon indicator
-  - Updated sub-product detail page layout: moved name and model number to left-aligned instead of right-aligned
-  - Fixed database schema conflicts and updated column types for proper JSON support
-  - Resolved TypeScript compilation errors in admin components and product detail views
-  - Enhanced product detail page styling: made product title blue, improved font sizes and spacing
-  - Reduced padding from navbar to match other pages, optimized layout for better visual hierarchy
-  - Updated sub-product cards with better typography and improved inquiry button styling
-  - Fixed sub-product creation by making description field conditional and nullable
-  - Description field is now only shown and required for manual content type sub-products
-  - External link sub-products no longer require description field, making the form cleaner and more intuitive
-  - Updated database schema to make description nullable for external link compatibility
+- July 8, 2025. Major simplification of sub-product system to basic management only
+  - Simplified sub-product database schema to only include: name (unique), modelNumber (optional), photo, id, createdAt
+  - Removed complex content management fields: description, contentType, externalUrl, specifications, features
+  - Added unique constraint to sub-product names for data integrity
+  - Updated sub-product routing from numeric IDs to name-based URLs (/sub-products/:name)
+  - Created new simplified sub-product detail page using name-based routing with blank content area
+  - Sub-product detail pages now show just name, model number, and image with placeholder for manual hardcoding
+  - Simplified admin interface to only manage name, model number (optional), and image upload
+  - Updated API endpoints to support name-based lookup with new getSubProductByName method
+  - Fixed sub-product cards to use name-based navigation instead of ID-based
+  - Removed external link functionality and complex content type management
+  - Sub-product system now optimized for basic catalog management with manual content development
 
 ## User Preferences
 

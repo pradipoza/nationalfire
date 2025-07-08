@@ -44,14 +44,8 @@ export type Brand = typeof brands.$inferSelect;
 // Sub-products schema
 export const subProducts = pgTable("sub_products", {
   id: serial("id").primaryKey(),
-  name: text("name").notNull(),
-  modelNumber: text("model_number").notNull(),
-  description: text("description"), // nullable for external links
-  contentType: text("content_type").notNull().default("manual"), // "manual" or "external"
-  content: text("content"), // optional for manual content
-  externalUrl: text("external_url"), // optional for external links
-  specifications: json("specifications").$type<{key: string, value: string}[]>().notNull().default([]),
-  features: json("features").$type<string[]>().notNull().default([]),
+  name: text("name").notNull().unique(), // name will be used for routing
+  modelNumber: text("model_number"), // optional
   photo: text("photo").notNull(),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),

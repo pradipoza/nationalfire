@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link, useLocation } from "wouter";
 import { API_ENDPOINTS } from "@/lib/config";
-import { ChevronLeft, Share2, ExternalLink, LinkIcon } from "lucide-react";
+import { ChevronLeft, Share2, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -176,25 +176,16 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ id }) => {
                 key={subProduct.id} 
                 className="hover:shadow-lg transition-all duration-300 border border-gray-200 cursor-pointer"
                 onClick={() => {
-                  if (subProduct.contentType === "external" && subProduct.externalUrl) {
-                    window.open(subProduct.externalUrl, '_blank');
-                  } else {
-                    setLocation(`/sub-products/${subProduct.id}`);
-                  }
+                  setLocation(`/sub-products/${encodeURIComponent(subProduct.name)}`);
                 }}
               >
                 <CardContent className="p-6">
-                  <div className="mb-4 relative">
+                  <div className="mb-4">
                     <img
                       src={subProduct.photo}
                       alt={subProduct.name}
                       className="w-full h-48 object-cover rounded-lg"
                     />
-                    {subProduct.contentType === "external" && (
-                      <div className="absolute top-2 right-2 bg-blue-500 text-white p-1 rounded-full">
-                        <LinkIcon className="w-4 h-4" />
-                      </div>
-                    )}
                   </div>
                   
                   <div className="text-left">

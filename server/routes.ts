@@ -409,6 +409,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: 'Server error' });
     }
   });
+
+  app.get('/api/sub-products/by-name/:name', async (req, res) => {
+    try {
+      const name = decodeURIComponent(req.params.name);
+      const subProduct = await storage.getSubProductByName(name);
+      
+      if (!subProduct) {
+        return res.status(404).json({ message: 'Sub-product not found' });
+      }
+      
+      res.json({ subProduct });
+    } catch (error) {
+      res.status(500).json({ message: 'Server error' });
+    }
+  });
   
   app.post('/api/sub-products', isAuthenticated, async (req, res) => {
     try {

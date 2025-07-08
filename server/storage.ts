@@ -34,6 +34,7 @@ export interface IStorage {
   // Sub-products
   getSubProducts(): Promise<SubProduct[]>;
   getSubProduct(id: number): Promise<SubProduct | undefined>;
+  getSubProductByName(name: string): Promise<SubProduct | undefined>;
   getSubProductsByIds(ids: number[]): Promise<SubProduct[]>;
   createSubProduct(subProduct: InsertSubProduct): Promise<SubProduct>;
   updateSubProduct(id: number, updates: Partial<InsertSubProduct>): Promise<SubProduct | undefined>;
@@ -202,6 +203,11 @@ export class DatabaseStorage implements IStorage {
   
   async getSubProduct(id: number): Promise<SubProduct | undefined> {
     const [subProduct] = await db.select().from(subProducts).where(eq(subProducts.id, id));
+    return subProduct;
+  }
+
+  async getSubProductByName(name: string): Promise<SubProduct | undefined> {
+    const [subProduct] = await db.select().from(subProducts).where(eq(subProducts.name, name));
     return subProduct;
   }
   
