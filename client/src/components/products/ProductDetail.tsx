@@ -176,7 +176,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ id }) => {
                 key={subProduct.id} 
                 className="hover:shadow-lg transition-all duration-300 border border-gray-200 cursor-pointer"
                 onClick={() => {
-                  setLocation(`/sub-products/${encodeURIComponent(subProduct.name)}`);
+                  setLocation(`/sub-products/${subProduct.id}`);
                 }}
               >
                 <CardContent className="p-6">

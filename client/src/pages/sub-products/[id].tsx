@@ -1,22 +1,21 @@
 import React from "react";
-import { useRoute } from "wouter";
 import { useQuery } from "@tanstack/react-query";
-import { API_ENDPOINTS } from "@/lib/config";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Button } from "@/components/ui/button";
-import { ChevronLeft, AlertCircle } from "lucide-react";
 import { useLocation } from "wouter";
+import { API_ENDPOINTS } from "@/lib/config";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { ChevronLeft, AlertCircle } from "lucide-react";
 import type { SubProduct } from "@shared/schema";
 
-const SubProductDetail: React.FC = () => {
-  const [, params] = useRoute("/sub-products/:name");
-  const [, setLocation] = useLocation();
-  const name = params?.name ? decodeURIComponent(params.name) : "";
+interface SubProductDetailProps {
+  id: string;
+}
 
-  // Fetch sub-product by name
+const SubProductDetail: React.FC<SubProductDetailProps> = ({ id }) => {
+  const [, setLocation] = useLocation();
+
   const { data, isLoading, error } = useQuery<{ subProduct: SubProduct }>({
-    queryKey: [`${API_ENDPOINTS.SUB_PRODUCTS}/by-name/${name}`],
-    enabled: !!name,
+    queryKey: [API_ENDPOINTS.SUB_PRODUCT(id)],
   });
 
   const subProduct = data?.subProduct;

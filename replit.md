@@ -177,17 +177,15 @@ Changelog:
   - Sub-product detail pages show individual sub-product information
   - This allows products like "Fire Trucks" to contain multiple sub-product types
 - July 8, 2025. Major simplification of sub-product system to basic management only
-  - Simplified sub-product database schema to only include: name (unique), modelNumber (optional), photo, id, createdAt
+  - Simplified sub-product database schema to only include: name, modelNumber (optional), photo, id, createdAt
   - Removed complex content management fields: description, contentType, externalUrl, specifications, features
-  - Added unique constraint to sub-product names for data integrity
-  - Updated sub-product routing from numeric IDs to name-based URLs (/sub-products/:name)
-  - Created new simplified sub-product detail page using name-based routing with blank content area
-  - Sub-product detail pages now show just name, model number, and image with placeholder for manual hardcoding
+  - Reverted to numeric ID-based routing (/sub-products/:id) for reliability and simplicity
+  - Created simplified sub-product detail page with blank content area ready for manual hardcoding
+  - Sub-product detail pages now show just name, model number, and image with placeholder content section
   - Simplified admin interface to only manage name, model number (optional), and image upload
-  - Updated API endpoints to support name-based lookup with new getSubProductByName method
-  - Fixed sub-product cards to use name-based navigation instead of ID-based
   - Removed external link functionality and complex content type management
   - Sub-product system now optimized for basic catalog management with manual content development
+  - Admin interface supports simple three-field management: name (required), model number (optional), image (required)
 
 ## User Preferences
 
