@@ -208,9 +208,8 @@ export class DatabaseStorage implements IStorage {
   async getSubProductsByIds(ids: number[]): Promise<SubProduct[]> {
     if (ids.length === 0) return [];
     
-    // Simple approach: fetch all sub-products and filter by IDs
-    const allSubProducts = await db.select().from(subProducts);
-    return allSubProducts.filter(sp => ids.includes(sp.id));
+    // Optimized approach: use SQL IN clause for better performance
+    return db.select().from(subProducts).where(inArray(subProducts.id, ids));
   }
   
   async createSubProduct(subProduct: InsertSubProduct): Promise<SubProduct> {

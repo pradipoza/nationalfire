@@ -402,7 +402,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const subProductId = parseInt(req.params.id);
       
-      // Get all products and find which one contains this sub-product
+      // Optimized: Get all products and find which one contains this sub-product
       const products = await storage.getProducts();
       const parentProduct = products.find(product => 
         product.subProductIds && product.subProductIds.includes(subProductId)
