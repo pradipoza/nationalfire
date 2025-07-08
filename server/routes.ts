@@ -380,6 +380,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+
+
   app.post('/api/sub-products/by-ids', async (req, res) => {
     try {
       const { ids } = req.body;
@@ -395,6 +397,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
+  // Get parent product of a sub-product
+  app.get('/api/sub-products/:id/parent-product', async (req, res) => {
+    try {
+      const subProductId = parseInt(req.params.id);
+      
+      // Get all products and find which one contains this sub-product
+      const products = await storage.getProducts();
+      const parentProduct = products.find(product => 
+        product.subProductIds && product.subProductIds.includes(subProductId)
+      );
+      
+      if (!parentProduct) {
+        return res.status(404).json({ message: 'Parent product not found' });
+      }
+      
+      res.json({ product: parentProduct });
+    } catch (error) {
+      res.status(500).json({ message: 'Server error' });
+    }
+  });
+
   app.get('/api/sub-products/:id', async (req, res) => {
     try {
       const subProductId = parseInt(req.params.id);

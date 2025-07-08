@@ -18,7 +18,14 @@ const SubProductDetail: React.FC<SubProductDetailProps> = ({ id }) => {
     queryKey: [API_ENDPOINTS.SUB_PRODUCT(id)],
   });
 
+  // Get parent product for proper back navigation
+  const { data: parentProductData } = useQuery({
+    queryKey: [`/api/sub-products/${id}/parent-product`],
+    enabled: !!id,
+  });
+
   const subProduct = data?.subProduct;
+  const parentProduct = parentProductData?.product;
 
   if (isLoading) {
     return (
@@ -40,7 +47,7 @@ const SubProductDetail: React.FC<SubProductDetailProps> = ({ id }) => {
             variant="ghost"
             size="sm"
             className="text-gray-500 hover:text-gray-700"
-            onClick={() => setLocation(-1)}
+            onClick={() => setLocation('/products')}
           >
             <ChevronLeft className="h-4 w-4 mr-1" /> Back
           </Button>
@@ -61,7 +68,13 @@ const SubProductDetail: React.FC<SubProductDetailProps> = ({ id }) => {
           variant="ghost"
           size="sm"
           className="text-gray-500 hover:text-gray-700"
-          onClick={() => setLocation(-1)}
+          onClick={() => {
+            if (parentProduct) {
+              setLocation(`/products/${parentProduct.id}`);
+            } else {
+              setLocation('/products');
+            }
+          }}
         >
           <ChevronLeft className="h-4 w-4 mr-1" /> Back
         </Button>
