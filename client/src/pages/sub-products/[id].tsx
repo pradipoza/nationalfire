@@ -157,48 +157,20 @@ const SubProductDetail: React.FC<SubProductDetailProps> = ({ id }) => {
             </div>
           </div>
 
-          {/* Product Details */}
+          {/* Custom Content Area - Full Width WYSIWYG Design */}
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-lg shadow-sm">
-              {/* Header */}
-              <div className="p-6 border-b">
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                  {subProduct.name}
-                </h1>
-                {subProduct.modelNumber && (
-                  <p className="text-gray-600 text-lg">
-                    Model: {subProduct.modelNumber}
-                  </p>
-                )}
+            {subProduct.content && subProduct.content.trim() !== '' && subProduct.content !== '<p></p>' ? (
+              // Show ONLY the custom-designed editor content - no titles, no headers, no default styling
+              <div 
+                className="rich-content bg-white rounded-lg shadow-sm"
+                dangerouslySetInnerHTML={{ __html: subProduct.content }}
+              />
+            ) : (
+              // Completely blank page if no content designed in editor - full creative control
+              <div className="bg-white rounded-lg shadow-sm min-h-[600px]">
+                {/* Intentionally completely blank - user has full design control via editor */}
               </div>
-
-              {/* Content */}
-              <div className="p-6">
-                <h2 className="text-xl font-semibold text-gray-900 mb-4">
-                  Product Details & Specifications
-                </h2>
-                <Separator className="mb-6" />
-                
-                <div className="prose-container">
-                  <RichTextDisplay 
-                    content={subProduct.content || ""} 
-                    className="max-w-none"
-                  />
-                </div>
-
-                {(!subProduct.content || subProduct.content.trim() === "") && (
-                  <div className="text-center py-12 bg-gray-50 rounded-lg">
-                    <Package className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">
-                      No Details Available
-                    </h3>
-                    <p className="text-gray-600">
-                      Detailed product specifications and information will be added soon.
-                    </p>
-                  </div>
-                )}
-              </div>
-            </div>
+            )}
           </div>
         </div>
       </div>

@@ -23,7 +23,7 @@ import {
   FileText
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { RichTextEditor } from "@/components/RichTextEditor";
+import { AdvancedRichTextEditor } from "@/components/AdvancedRichTextEditor";
 import type { SubProduct, InsertSubProduct } from "@shared/schema";
 
 const SubProductManager: React.FC = () => {
@@ -206,7 +206,7 @@ const SubProductManager: React.FC = () => {
               Add Sub-Product
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogContent className="max-w-7xl max-h-[95vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>Create New Sub-Product</DialogTitle>
             </DialogHeader>
@@ -243,14 +243,14 @@ const SubProductManager: React.FC = () => {
               </div>
               
               <div>
-                <Label htmlFor="content">Product Description & Details</Label>
+                <Label htmlFor="content">Custom Page Designer</Label>
                 <p className="text-sm text-gray-600 mb-2">
-                  Create detailed product documentation with rich formatting, images, tables, and more.
+                  Design your complete sub-product page with drag-and-drop editor, advanced layouts, and professional templates.
                 </p>
-                <RichTextEditor
+                <AdvancedRichTextEditor
                   content={content}
                   onChange={setContent}
-                  placeholder="Describe the product features, specifications, benefits, and any other relevant details..."
+                  placeholder="Design your custom sub-product page with advanced drag-and-drop tools..."
                 />
               </div>
               
@@ -321,7 +321,7 @@ const SubProductManager: React.FC = () => {
 
       {/* Edit Dialog */}
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-7xl max-h-[95vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Edit Sub-Product</DialogTitle>
           </DialogHeader>
@@ -370,14 +370,14 @@ const SubProductManager: React.FC = () => {
               </div>
               
               <div>
-                <Label htmlFor="edit-content">Product Description & Details</Label>
+                <Label htmlFor="edit-content">Custom Page Designer</Label>
                 <p className="text-sm text-gray-600 mb-2">
-                  Update detailed product documentation with rich formatting, images, tables, and more.
+                  Design your complete sub-product page with drag-and-drop editor, advanced layouts, and professional templates.
                 </p>
-                <RichTextEditor
+                <AdvancedRichTextEditor
                   content={content}
                   onChange={setContent}
-                  placeholder="Describe the product features, specifications, benefits, and any other relevant details..."
+                  placeholder="Design your custom sub-product page with advanced drag-and-drop tools..."
                 />
               </div>
               
