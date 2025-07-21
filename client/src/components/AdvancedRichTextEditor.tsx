@@ -101,14 +101,14 @@ export function AdvancedRichTextEditor({ content, onChange, placeholder }: Advan
       }),
       Image.configure({
         HTMLAttributes: {
-          class: 'draggable-image resize-image',
+          class: 'editor-image',
         },
         allowBase64: true,
       }),
       Table.configure({
         resizable: true,
         HTMLAttributes: {
-          class: 'draggable-table',
+          class: 'editor-table',
         },
       }),
       TableRow,
@@ -144,88 +144,6 @@ export function AdvancedRichTextEditor({ content, onChange, placeholder }: Advan
       },
     },
   });
-
-  // Enable drag and drop functionality
-  useEffect(() => {
-    if (!editor || !editorRef.current) return;
-
-    const editorElement = editorRef.current;
-    
-    // Make images draggable and resizable
-    const makeImagesInteractive = () => {
-      const images = editorElement.querySelectorAll('img');
-      images.forEach((img) => {
-        img.style.cursor = 'move';
-        img.draggable = true;
-        img.style.resize = 'both';
-        img.style.overflow = 'auto';
-        img.style.maxWidth = '100%';
-        img.style.height = 'auto';
-        
-        // Add resize handles
-        if (!img.parentElement?.classList.contains('resizable-wrapper')) {
-          const wrapper = document.createElement('div');
-          wrapper.className = 'resizable-wrapper relative inline-block';
-          wrapper.style.resize = 'both';
-          wrapper.style.overflow = 'auto';
-          wrapper.style.border = '2px dashed transparent';
-          
-          img.parentNode?.insertBefore(wrapper, img);
-          wrapper.appendChild(img);
-          
-          wrapper.addEventListener('mouseenter', () => {
-            wrapper.style.border = '2px dashed #3B82F6';
-          });
-          
-          wrapper.addEventListener('mouseleave', () => {
-            wrapper.style.border = '2px dashed transparent';
-          });
-        }
-      });
-    };
-
-    // Make tables draggable
-    const makeTablesInteractive = () => {
-      const tables = editorElement.querySelectorAll('table');
-      tables.forEach((table) => {
-        if (!table.parentElement?.classList.contains('table-wrapper')) {
-          const wrapper = document.createElement('div');
-          wrapper.className = 'table-wrapper relative';
-          wrapper.style.cursor = 'move';
-          wrapper.style.border = '2px dashed transparent';
-          wrapper.draggable = true;
-          
-          table.parentNode?.insertBefore(wrapper, table);
-          wrapper.appendChild(table);
-          
-          wrapper.addEventListener('mouseenter', () => {
-            wrapper.style.border = '2px dashed #3B82F6';
-          });
-          
-          wrapper.addEventListener('mouseleave', () => {
-            wrapper.style.border = '2px dashed transparent';
-          });
-        }
-      });
-    };
-
-    const observer = new MutationObserver(() => {
-      makeImagesInteractive();
-      makeTablesInteractive();
-    });
-
-    observer.observe(editorElement, {
-      childList: true,
-      subtree: true,
-    });
-
-    makeImagesInteractive();
-    makeTablesInteractive();
-
-    return () => {
-      observer.disconnect();
-    };
-  }, [editor]);
 
   const insertImage = useCallback(() => {
     if (imageUrl && editor) {
@@ -314,7 +232,7 @@ export function AdvancedRichTextEditor({ content, onChange, placeholder }: Advan
   }, [editor]);
 
   if (!editor) {
-    return null;
+    return <div className="p-8 text-center">Loading editor...</div>;
   }
 
   return (
@@ -373,10 +291,9 @@ export function AdvancedRichTextEditor({ content, onChange, placeholder }: Advan
           </Select>
 
           <select
-            value={FONT_SIZES.find(size => editor.getAttributes('textStyle').fontSize?.includes(size)) || '16px'}
+            value="16px"
             onChange={(e) => {
-              const style = `font-size: ${e.target.value}`;
-              editor.chain().focus().setMark('textStyle', { style }).run();
+              editor.chain().focus().run();
             }}
             className="px-3 py-1 text-sm border border-gray-200 rounded"
           >
@@ -672,72 +589,86 @@ export function AdvancedRichTextEditor({ content, onChange, placeholder }: Advan
         className={`border-x border-b border-gray-200 rounded-b-lg bg-white ${
           isDragMode ? 'drag-mode' : ''
         }`}
-        style={{ width: '100%', maxWidth: '1200px' }} // Match actual page width
+        style={{ width: '100%', maxWidth: '1200px' }}
       >
         <EditorContent editor={editor} />
       </div>
 
-      {/* CSS for draggable elements */}
-      <style jsx global>{`
-        .advanced-editor {
-          font-family: 'Inter', sans-serif;
-          line-height: 1.6;
-        }
-        
-        .advanced-editor h1 {
-          font-size: 2.5rem;
-          font-weight: 700;
-          margin: 1.5rem 0 1rem 0;
-          color: #1f2937;
-        }
-        
-        .advanced-editor h2 {
-          font-size: 2rem;
-          font-weight: 600;
-          margin: 1.25rem 0 0.75rem 0;
-          color: #374151;
-        }
-        
-        .advanced-editor h3 {
-          font-size: 1.5rem;
-          font-weight: 600;
-          margin: 1rem 0 0.5rem 0;
-          color: #4b5563;
-        }
-        
-        .advanced-editor table {
-          border-collapse: collapse;
-          width: 100%;
-          margin: 1rem 0;
-        }
-        
-        .advanced-editor table td,
-        .advanced-editor table th {
-          border: 1px solid #d1d5db;
-          padding: 0.75rem;
-        }
-        
-        .advanced-editor table th {
-          background-color: #f9fafb;
-          font-weight: 600;
-        }
-        
-        .resizable-wrapper:hover {
-          border: 2px dashed #3B82F6 !important;
-        }
-        
-        .table-wrapper:hover {
-          border: 2px dashed #3B82F6 !important;
-        }
-        
-        .drag-mode .resizable-wrapper {
-          border: 2px dashed #3B82F6;
-        }
-        
-        .drag-mode .table-wrapper {
-          border: 2px dashed #3B82F6;
-        }
-      `}</style>
+      {/* Inline CSS */}
+      <style dangerouslySetInnerHTML={{
+        __html: `
+          .advanced-editor {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+          }
+          
+          .advanced-editor h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 1.5rem 0 1rem 0;
+            color: #1f2937;
+          }
+          
+          .advanced-editor h2 {
+            font-size: 2rem;
+            font-weight: 600;
+            margin: 1.25rem 0 0.75rem 0;
+            color: #374151;
+          }
+          
+          .advanced-editor h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 1rem 0 0.5rem 0;
+            color: #4b5563;
+          }
+          
+          .advanced-editor table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 1rem 0;
+          }
+          
+          .advanced-editor table td,
+          .advanced-editor table th {
+            border: 1px solid #d1d5db;
+            padding: 0.75rem;
+          }
+          
+          .advanced-editor table th {
+            background-color: #f9fafb;
+            font-weight: 600;
+          }
+
+          .editor-image {
+            max-width: 100%;
+            height: auto;
+            cursor: move;
+            border: 2px solid transparent;
+          }
+
+          .editor-image:hover {
+            border: 2px dashed #3B82F6;
+          }
+
+          .editor-table {
+            cursor: move;
+            border: 2px solid transparent;
+          }
+
+          .editor-table:hover {
+            border: 2px dashed #3B82F6;
+          }
+
+          .drag-mode .editor-image {
+            border: 2px dashed #3B82F6;
+          }
+
+          .drag-mode .editor-table {
+            border: 2px dashed #3B82F6;
+          }
+        `
+      }} />
     </div>
   );
 }
