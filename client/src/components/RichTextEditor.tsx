@@ -12,6 +12,11 @@ import { TextStyle } from '@tiptap/extension-text-style';
 import Highlight from '@tiptap/extension-highlight';
 import { FontFamily } from '@tiptap/extension-font-family';
 import Underline from '@tiptap/extension-underline';
+import GapCursor from '@tiptap/extension-gapcursor';
+import ListItem from '@tiptap/extension-list-item';
+import TaskList from '@tiptap/extension-task-list';
+import TaskItem from '@tiptap/extension-task-item';
+import HorizontalRule from '@tiptap/extension-horizontal-rule';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -45,7 +50,28 @@ import {
   SplitSquareHorizontal,
   Trash2,
   Settings,
-  ChevronDown
+  ChevronDown,
+  Heading1,
+  Heading2,
+  Heading3,
+  Heading4,
+  Heading5,
+  Heading6,
+  CheckSquare,
+  Square,
+  Minus as DividerIcon,
+  Layout,
+  Columns,
+  Grid3X3,
+  Badge,
+  Star,
+  Award,
+  Shield,
+  Zap,
+  Wrench,
+  Info,
+  AlertCircle,
+  CheckCircle
 } from 'lucide-react';
 import { useState, useCallback } from 'react';
 
@@ -99,9 +125,30 @@ export function RichTextEditor({ content, onChange, placeholder }: RichTextEdito
         },
       }),
       Underline,
+      GapCursor,
+      ListItem,
+      TaskList.configure({
+        HTMLAttributes: {
+          class: 'task-list',
+        },
+      }),
+      TaskItem.configure({
+        nested: true,
+        HTMLAttributes: {
+          class: 'task-item',
+        },
+      }),
+      HorizontalRule.configure({
+        HTMLAttributes: {
+          class: 'my-4 border-t-2 border-gray-200',
+        },
+      }),
       Image.configure({
-        inline: true,
+        inline: false,
         allowBase64: true,
+        HTMLAttributes: {
+          class: 'max-w-full h-auto rounded-lg shadow-lg',
+        },
       }),
       Link.configure({
         openOnClick: false,
@@ -119,12 +166,12 @@ export function RichTextEditor({ content, onChange, placeholder }: RichTextEdito
       TableRow,
       TableHeader.configure({
         HTMLAttributes: {
-          class: 'bg-gray-100 font-semibold',
+          class: 'bg-gray-100 font-semibold border border-gray-300 p-3',
         },
       }),
       TableCell.configure({
         HTMLAttributes: {
-          class: 'border border-gray-300 p-2 min-w-[50px]',
+          class: 'border border-gray-300 p-3 min-w-[100px] vertical-align-top',
         },
       }),
       TextAlign.configure({
@@ -148,7 +195,7 @@ export function RichTextEditor({ content, onChange, placeholder }: RichTextEdito
     },
     editorProps: {
       attributes: {
-        class: 'prose prose-lg max-w-none min-h-[300px] p-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-fire-red focus:border-fire-red',
+        class: 'prose prose-lg max-w-none min-h-[300px] p-4 focus:outline-none',
       },
     },
   });
@@ -205,14 +252,179 @@ export function RichTextEditor({ content, onChange, placeholder }: RichTextEdito
     }
   }, [editor]);
 
+  // Advanced layout insertion functions
+  const insertSpecificationTable = useCallback(() => {
+    if (editor) {
+      const tableContent = `
+<table class="w-full border-collapse border border-gray-300 my-6">
+  <thead>
+    <tr class="bg-fire-red text-white">
+      <th class="border border-gray-300 p-3 text-left font-semibold">Specification</th>
+      <th class="border border-gray-300 p-3 text-left font-semibold">Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="border border-gray-300 p-3 font-medium">Dimensions</td>
+      <td class="border border-gray-300 p-3">Enter dimensions</td>
+    </tr>
+    <tr class="bg-gray-50">
+      <td class="border border-gray-300 p-3 font-medium">Weight</td>
+      <td class="border border-gray-300 p-3">Enter weight</td>
+    </tr>
+    <tr>
+      <td class="border border-gray-300 p-3 font-medium">Capacity</td>
+      <td class="border border-gray-300 p-3">Enter capacity</td>
+    </tr>
+  </tbody>
+</table>`;
+      editor.chain().focus().insertContent(tableContent).run();
+    }
+  }, [editor]);
+
+  const insertFeatureGrid = useCallback(() => {
+    if (editor) {
+      const gridContent = `
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 my-8">
+  <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-lg">
+    <div class="flex items-center mb-4">
+      <div class="w-12 h-12 bg-fire-red rounded-full flex items-center justify-center mr-4">
+        <span class="text-white text-xl">🔥</span>
+      </div>
+      <h3 class="text-lg font-semibold text-gray-800">Fire Resistance</h3>
+    </div>
+    <p class="text-gray-600">Advanced fire-resistant materials provide superior protection in extreme conditions.</p>
+  </div>
+  <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-lg">
+    <div class="flex items-center mb-4">
+      <div class="w-12 h-12 bg-emergency-blue rounded-full flex items-center justify-center mr-4">
+        <span class="text-white text-xl">⚡</span>
+      </div>
+      <h3 class="text-lg font-semibold text-gray-800">High Performance</h3>
+    </div>
+    <p class="text-gray-600">Engineered for maximum efficiency and reliability in emergency situations.</p>
+  </div>
+  <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-lg">
+    <div class="flex items-center mb-4">
+      <div class="w-12 h-12 bg-warning-amber rounded-full flex items-center justify-center mr-4">
+        <span class="text-white text-xl">🛡️</span>
+      </div>
+      <h3 class="text-lg font-semibold text-gray-800">Safety Certified</h3>
+    </div>
+    <p class="text-gray-600">Meets all international safety standards and certifications.</p>
+  </div>
+</div>`;
+      editor.chain().focus().insertContent(gridContent).run();
+    }
+  }, [editor]);
+
+  const insertProductHeader = useCallback(() => {
+    if (editor) {
+      const headerContent = `
+<div class="bg-gradient-to-r from-fire-red to-emergency-blue text-white p-8 rounded-lg my-6">
+  <div class="flex flex-col md:flex-row items-center gap-6">
+    <div class="flex-1">
+      <h1 class="text-3xl md:text-4xl font-bold mb-4">Product Name</h1>
+      <p class="text-lg opacity-90 mb-4">Professional fire safety equipment designed for maximum performance and reliability.</p>
+      <div class="flex flex-wrap gap-2">
+        <span class="bg-white/20 px-3 py-1 rounded-full text-sm">Certified</span>
+        <span class="bg-white/20 px-3 py-1 rounded-full text-sm">Professional</span>
+        <span class="bg-white/20 px-3 py-1 rounded-full text-sm">High Quality</span>
+      </div>
+    </div>
+    <div class="flex-shrink-0">
+      <img src="https://via.placeholder.com/300x200/dc2626/ffffff?text=Product+Image" alt="Product" class="rounded-lg shadow-lg" />
+    </div>
+  </div>
+</div>`;
+      editor.chain().focus().insertContent(headerContent).run();
+    }
+  }, [editor]);
+
+  const insertCertificationBadges = useCallback(() => {
+    if (editor) {
+      const badgesContent = `
+<div class="flex flex-wrap justify-center gap-4 my-8 p-6 bg-gray-50 rounded-lg">
+  <div class="flex flex-col items-center p-4 bg-white rounded-lg shadow">
+    <div class="w-16 h-16 bg-fire-red rounded-full flex items-center justify-center mb-2">
+      <span class="text-white text-2xl">🏆</span>
+    </div>
+    <span class="text-sm font-medium text-gray-700">ISO 9001</span>
+  </div>
+  <div class="flex flex-col items-center p-4 bg-white rounded-lg shadow">
+    <div class="w-16 h-16 bg-emergency-blue rounded-full flex items-center justify-center mb-2">
+      <span class="text-white text-2xl">✓</span>
+    </div>
+    <span class="text-sm font-medium text-gray-700">CE Certified</span>
+  </div>
+  <div class="flex flex-col items-center p-4 bg-white rounded-lg shadow">
+    <div class="w-16 h-16 bg-warning-amber rounded-full flex items-center justify-center mb-2">
+      <span class="text-white text-2xl">🛡️</span>
+    </div>
+    <span class="text-sm font-medium text-gray-700">Safety Tested</span>
+  </div>
+  <div class="flex flex-col items-center p-4 bg-white rounded-lg shadow">
+    <div class="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mb-2">
+      <span class="text-white text-2xl">🌿</span>
+    </div>
+    <span class="text-sm font-medium text-gray-700">Eco Friendly</span>
+  </div>
+</div>`;
+      editor.chain().focus().insertContent(badgesContent).run();
+    }
+  }, [editor]);
+
+  const insertTwoColumnLayout = useCallback(() => {
+    if (editor) {
+      const layoutContent = `
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8 my-8">
+  <div class="space-y-4">
+    <h3 class="text-xl font-semibold text-gray-800 border-l-4 border-fire-red pl-4">Key Features</h3>
+    <ul class="space-y-2">
+      <li class="flex items-start">
+        <span class="text-fire-red mr-2">•</span>
+        <span>Advanced fire suppression technology</span>
+      </li>
+      <li class="flex items-start">
+        <span class="text-fire-red mr-2">•</span>
+        <span>Lightweight and portable design</span>
+      </li>
+      <li class="flex items-start">
+        <span class="text-fire-red mr-2">•</span>
+        <span>Professional-grade construction</span>
+      </li>
+    </ul>
+  </div>
+  <div class="space-y-4">
+    <h3 class="text-xl font-semibold text-gray-800 border-l-4 border-emergency-blue pl-4">Applications</h3>
+    <ul class="space-y-2">
+      <li class="flex items-start">
+        <span class="text-emergency-blue mr-2">•</span>
+        <span>Industrial fire protection</span>
+      </li>
+      <li class="flex items-start">
+        <span class="text-emergency-blue mr-2">•</span>
+        <span>Emergency response vehicles</span>
+      </li>
+      <li class="flex items-start">
+        <span class="text-emergency-blue mr-2">•</span>
+        <span>Commercial safety systems</span>
+      </li>
+    </ul>
+  </div>
+</div>`;
+      editor.chain().focus().insertContent(layoutContent).run();
+    }
+  }, [editor]);
+
   if (!editor) {
     return <div className="h-32 bg-gray-100 animate-pulse rounded-md"></div>;
   }
 
   return (
-    <div className="border border-gray-300 rounded-md">
+    <div className="border-0 rounded-md overflow-hidden shadow-lg">
       {/* Toolbar */}
-      <div className="border-b border-gray-200 p-3 bg-gray-50 rounded-t-md">
+      <div className="border-b border-gray-200 p-3 bg-gray-50">
         <div className="flex flex-wrap items-center gap-1">
           {/* Undo/Redo */}
           <Button
@@ -410,7 +622,108 @@ export function RichTextEditor({ content, onChange, placeholder }: RichTextEdito
           </Button>
         </div>
 
-        {/* Second Row - Table and Media Tools */}
+        {/* Second Row - Headings */}
+        <div className="flex flex-wrap items-center gap-1 mt-2 pt-2 border-t border-gray-200">
+          {/* Headings */}
+          <Button
+            variant={editor.isActive('heading', { level: 1 }) ? 'default' : 'ghost'}
+            size="sm"
+            onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
+          >
+            <Heading1 className="h-4 w-4" />
+          </Button>
+          <Button
+            variant={editor.isActive('heading', { level: 2 }) ? 'default' : 'ghost'}
+            size="sm"
+            onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+          >
+            <Heading2 className="h-4 w-4" />
+          </Button>
+          <Button
+            variant={editor.isActive('heading', { level: 3 }) ? 'default' : 'ghost'}
+            size="sm"
+            onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
+          >
+            <Heading3 className="h-4 w-4" />
+          </Button>
+
+          <Separator orientation="vertical" className="mx-1 h-6" />
+
+          {/* Task Lists */}
+          <Button
+            variant={editor.isActive('taskList') ? 'default' : 'ghost'}
+            size="sm"
+            onClick={() => editor.chain().focus().toggleTaskList().run()}
+          >
+            <CheckSquare className="h-4 w-4" />
+          </Button>
+
+          <Separator orientation="vertical" className="mx-1 h-6" />
+
+          {/* Horizontal Rule */}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => editor.chain().focus().setHorizontalRule().run()}
+          >
+            <DividerIcon className="h-4 w-4 mr-1" />
+            Divider
+          </Button>
+        </div>
+
+        {/* Third Row - Advanced Layouts */}
+        <div className="flex flex-wrap items-center gap-1 mt-2 pt-2 border-t border-gray-200">
+          {/* Professional Layout Templates */}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={insertProductHeader}
+            className="text-fire-red hover:text-fire-red"
+          >
+            <Layout className="h-4 w-4 mr-1" />
+            Product Header
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={insertFeatureGrid}
+            className="text-emergency-blue hover:text-emergency-blue"
+          >
+            <Grid3X3 className="h-4 w-4 mr-1" />
+            Feature Grid
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={insertSpecificationTable}
+            className="text-warning-amber hover:text-warning-amber"
+          >
+            <TableIcon className="h-4 w-4 mr-1" />
+            Specs Table
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={insertTwoColumnLayout}
+            className="text-green-600 hover:text-green-600"
+          >
+            <Columns className="h-4 w-4 mr-1" />
+            Two Columns
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={insertCertificationBadges}
+            className="text-purple-600 hover:text-purple-600"
+          >
+            <Badge className="h-4 w-4 mr-1" />
+            Certifications
+          </Button>
+
+          <Separator orientation="vertical" className="mx-1 h-6" />
+        </div>
+
+        {/* Fourth Row - Table and Media Tools */}
         <div className="flex flex-wrap items-center gap-1 mt-2 pt-2 border-t border-gray-200">
           {/* Table Operations */}
           <div className="flex items-center gap-1">
@@ -574,11 +887,13 @@ export function RichTextEditor({ content, onChange, placeholder }: RichTextEdito
       </div>
 
       {/* Editor Content */}
-      <EditorContent 
-        editor={editor}
-        className="min-h-[300px] max-h-[600px] overflow-y-auto"
-        placeholder={placeholder || "Start writing your content..."}
-      />
+      <div className="border border-gray-300 rounded-b-md">
+        <EditorContent 
+          editor={editor}
+          className="min-h-[400px] max-h-[800px] overflow-y-auto p-4 focus-within:ring-2 focus-within:ring-fire-red focus-within:border-fire-red"
+          placeholder={placeholder || "Start writing your content..."}
+        />
+      </div>
     </div>
   );
 }

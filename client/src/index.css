@@ -69,6 +69,90 @@
     @apply font-bold;
   }
 
+  /* Rich Text Editor Styles */
+  .ProseMirror {
+    outline: none;
+  }
+
+  .ProseMirror table {
+    border-collapse: collapse;
+    margin: 1rem 0;
+    overflow: hidden;
+  }
+
+  .ProseMirror th, .ProseMirror td {
+    border: 1px solid #cbd5e1;
+    padding: 0.5rem;
+    vertical-align: top;
+    position: relative;
+  }
+
+  .ProseMirror th {
+    background-color: #f1f5f9;
+    font-weight: bold;
+  }
+
+  .ProseMirror .tableWrapper {
+    overflow-x: auto;
+  }
+
+  .ProseMirror hr {
+    border: none;
+    border-top: 2px solid #e2e8f0;
+    margin: 2rem 0;
+  }
+
+  .ProseMirror .task-list {
+    list-style: none;
+    padding: 0;
+  }
+
+  .ProseMirror .task-item {
+    display: flex;
+    align-items: flex-start;
+  }
+
+  .ProseMirror .task-item > label {
+    flex: 0 0 auto;
+    margin-right: 0.5rem;
+    user-select: none;
+  }
+
+  .ProseMirror .task-item > div {
+    flex: 1 1 auto;
+  }
+
+  /* Fire safety theme colors */
+  .fire-red { color: theme('colors.red.600'); }
+  .emergency-blue { color: theme('colors.blue.600'); }
+  .warning-amber { color: theme('colors.amber.500'); }
+
+  .bg-fire-red { background-color: theme('colors.red.600'); }
+  .bg-emergency-blue { background-color: theme('colors.blue.600'); }
+  .bg-warning-amber { background-color: theme('colors.amber.500'); }
+
+  /* Advanced layout support */
+  .ProseMirror img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 0.5rem;
+  }
+
+  .ProseMirror blockquote {
+    border-left: 4px solid theme('colors.gray.300');
+    margin: 1.5rem 0;
+    padding-left: 1rem;
+    color: theme('colors.gray.600');
+  }
+
+  .ProseMirror code {
+    background-color: theme('colors.gray.100');
+    border-radius: 0.25rem;
+    padding: 0.125rem 0.25rem;
+    font-family: 'Courier New', monospace;
+    font-size: 0.875em;
+  }
+
   .hero-section {
     background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.7)), url('https://media.istockphoto.com/id/901429536/id/foto/truk-pemadam-kebakaran-new-york.jpg?s=2048x2048&w=is&k=20&c=hrs5L8-WdX4PaypMCniPx1HZdhRua7iU3Oc7VPtFmDw=');
     background-size: cover;
