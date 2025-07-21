@@ -47,6 +47,7 @@ export const subProducts = pgTable("sub_products", {
   name: text("name").notNull().unique(), // name will be used for routing
   modelNumber: text("model_number"), // optional
   photo: text("photo").notNull(),
+  content: text("content").default(""), // Rich text content for detailed descriptions
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });

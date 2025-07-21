@@ -19,9 +19,11 @@ import {
   Edit2, 
   Trash2, 
   Package,
-  AlertCircle
+  AlertCircle,
+  FileText
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { RichTextEditor } from "@/components/RichTextEditor";
 import type { SubProduct, InsertSubProduct } from "@shared/schema";
 
 const SubProductManager: React.FC = () => {
@@ -29,6 +31,7 @@ const SubProductManager: React.FC = () => {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [editingSubProduct, setEditingSubProduct] = useState<SubProduct | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [content, setContent] = useState<string>("");
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -125,6 +128,7 @@ const SubProductManager: React.FC = () => {
       name: formData.get("name") as string,
       modelNumber: formData.get("modelNumber") as string || null,
       photo: imagePreview || "https://via.placeholder.com/400x300",
+      content: content,
     };
 
     createMutation.mutate(subProductData);
@@ -140,6 +144,7 @@ const SubProductManager: React.FC = () => {
       name: formData.get("name") as string,
       modelNumber: formData.get("modelNumber") as string || null,
       photo: imagePreview || editingSubProduct.photo,
+      content: content,
     };
 
     updateMutation.mutate({ id: editingSubProduct.id, data: subProductData });
@@ -148,7 +153,14 @@ const SubProductManager: React.FC = () => {
   const handleEdit = (subProduct: SubProduct) => {
     setEditingSubProduct(subProduct);
     setImagePreview(subProduct.photo);
+    setContent(subProduct.content || "");
     setIsEditDialogOpen(true);
+  };
+
+  const handleOpenCreateDialog = () => {
+    setContent("");
+    setImagePreview(null);
+    setIsCreateDialogOpen(true);
   };
 
   const handleDelete = (id: number) => {
@@ -189,49 +201,66 @@ const SubProductManager: React.FC = () => {
         </div>
         <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
           <DialogTrigger asChild>
-            <Button>
+            <Button onClick={handleOpenCreateDialog}>
               <Plus className="w-4 h-4 mr-2" />
               Add Sub-Product
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-md">
+          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>Create New Sub-Product</DialogTitle>
             </DialogHeader>
-            <form onSubmit={handleCreateSubmit} className="space-y-4">
-              <div>
-                <Label htmlFor="name">Name</Label>
-                <Input id="name" name="name" required />
-              </div>
-              <div>
-                <Label htmlFor="modelNumber">Model Number (Optional)</Label>
-                <Input id="modelNumber" name="modelNumber" placeholder="e.g., FT-2000X" />
+            <form onSubmit={handleCreateSubmit} className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="name">Product Name</Label>
+                  <Input id="name" name="name" required placeholder="Enter product name" />
+                </div>
+                <div>
+                  <Label htmlFor="modelNumber">Model Number (Optional)</Label>
+                  <Input id="modelNumber" name="modelNumber" placeholder="e.g., FT-2000X" />
+                </div>
               </div>
               
               <div>
-                <Label htmlFor="photo">Photo</Label>
+                <Label htmlFor="photo">Product Photo</Label>
                 <input
                   type="file"
                   id="photo"
                   accept="image/*"
                   onChange={handleImageUpload}
-                  className="w-full"
+                  className="w-full file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-fire-red file:text-white hover:file:bg-fire-red/90"
                 />
                 {imagePreview && (
-                  <img
-                    src={imagePreview}
-                    alt="Preview"
-                    className="mt-2 w-32 h-32 object-cover rounded"
-                  />
+                  <div className="mt-3">
+                    <img
+                      src={imagePreview}
+                      alt="Preview"
+                      className="w-48 h-32 object-cover rounded border"
+                    />
+                  </div>
                 )}
               </div>
               
-              <div className="flex justify-end space-x-2 pt-4">
+              <div>
+                <Label htmlFor="content">Product Description & Details</Label>
+                <p className="text-sm text-gray-600 mb-2">
+                  Create detailed product documentation with rich formatting, images, tables, and more.
+                </p>
+                <RichTextEditor
+                  content={content}
+                  onChange={setContent}
+                  placeholder="Describe the product features, specifications, benefits, and any other relevant details..."
+                />
+              </div>
+              
+              <div className="flex justify-end space-x-2 pt-6 border-t">
                 <Button type="button" variant="outline" onClick={() => setIsCreateDialogOpen(false)}>
                   Cancel
                 </Button>
                 <Button type="submit" disabled={createMutation.isPending}>
-                  {createMutation.isPending ? "Creating..." : "Create"}
+                  <FileText className="w-4 h-4 mr-2" />
+                  {createMutation.isPending ? "Creating..." : "Create Sub-Product"}
                 </Button>
               </div>
             </form>
@@ -283,7 +312,7 @@ const SubProductManager: React.FC = () => {
           <Package className="h-12 w-12 text-gray-400 mx-auto mb-4" />
           <h3 className="text-lg font-semibold mb-2">No Sub-Products Found</h3>
           <p className="text-gray-600 mb-4">Create your first sub-product to get started.</p>
-          <Button onClick={() => setIsCreateDialogOpen(true)}>
+          <Button onClick={handleOpenCreateDialog}>
             <Plus className="w-4 h-4 mr-2" />
             Add Sub-Product
           </Button>
@@ -292,55 +321,73 @@ const SubProductManager: React.FC = () => {
 
       {/* Edit Dialog */}
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Edit Sub-Product</DialogTitle>
           </DialogHeader>
           {editingSubProduct && (
-            <form onSubmit={handleEditSubmit} className="space-y-4">
-              <div>
-                <Label htmlFor="edit-name">Name</Label>
-                <Input
-                  id="edit-name"
-                  name="name"
-                  defaultValue={editingSubProduct.name}
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="edit-modelNumber">Model Number (Optional)</Label>
-                <Input
-                  id="edit-modelNumber"
-                  name="modelNumber"
-                  defaultValue={editingSubProduct.modelNumber || ""}
-                  placeholder="e.g., FT-2000X"
-                />
+            <form onSubmit={handleEditSubmit} className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="edit-name">Product Name</Label>
+                  <Input
+                    id="edit-name"
+                    name="name"
+                    defaultValue={editingSubProduct.name}
+                    required
+                    placeholder="Enter product name"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="edit-modelNumber">Model Number (Optional)</Label>
+                  <Input
+                    id="edit-modelNumber"
+                    name="modelNumber"
+                    defaultValue={editingSubProduct.modelNumber || ""}
+                    placeholder="e.g., FT-2000X"
+                  />
+                </div>
               </div>
               
               <div>
-                <Label htmlFor="edit-photo">Photo</Label>
+                <Label htmlFor="edit-photo">Product Photo</Label>
                 <input
                   type="file"
                   id="edit-photo"
                   accept="image/*"
                   onChange={handleImageUpload}
-                  className="w-full"
+                  className="w-full file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-fire-red file:text-white hover:file:bg-fire-red/90"
                 />
                 {imagePreview && (
-                  <img
-                    src={imagePreview}
-                    alt="Preview"
-                    className="mt-2 w-32 h-32 object-cover rounded"
-                  />
+                  <div className="mt-3">
+                    <img
+                      src={imagePreview}
+                      alt="Preview"
+                      className="w-48 h-32 object-cover rounded border"
+                    />
+                  </div>
                 )}
               </div>
               
-              <div className="flex justify-end space-x-2 pt-4">
+              <div>
+                <Label htmlFor="edit-content">Product Description & Details</Label>
+                <p className="text-sm text-gray-600 mb-2">
+                  Update detailed product documentation with rich formatting, images, tables, and more.
+                </p>
+                <RichTextEditor
+                  content={content}
+                  onChange={setContent}
+                  placeholder="Describe the product features, specifications, benefits, and any other relevant details..."
+                />
+              </div>
+              
+              <div className="flex justify-end space-x-2 pt-6 border-t">
                 <Button type="button" variant="outline" onClick={() => setIsEditDialogOpen(false)}>
                   Cancel
                 </Button>
                 <Button type="submit" disabled={updateMutation.isPending}>
-                  {updateMutation.isPending ? "Updating..." : "Update"}
+                  <FileText className="w-4 h-4 mr-2" />
+                  {updateMutation.isPending ? "Updating..." : "Update Sub-Product"}
                 </Button>
               </div>
             </form>
