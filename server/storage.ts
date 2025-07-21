@@ -265,7 +265,7 @@ export class DatabaseStorage implements IStorage {
   async createProduct(product: InsertProduct): Promise<Product> {
     const [newProduct] = await db
       .insert(products)
-      .values(product)
+      .values([product])
       .returning();
     return newProduct;
   }
@@ -309,11 +309,7 @@ export class DatabaseStorage implements IStorage {
   async createBlog(blog: InsertBlog): Promise<Blog> {
     const [newBlog] = await db
       .insert(blogs)
-      .values({
-        title: blog.title,
-        content: blog.content,
-        photos: blog.photos || []
-      })
+      .values([blog])
       .returning();
     return newBlog;
   }
@@ -478,12 +474,7 @@ export class DatabaseStorage implements IStorage {
       // Create if doesn't exist
       const [newStats] = await db
         .insert(aboutStats)
-        .values({
-          yearsExperience: updates.yearsExperience || 35,
-          customersServed: updates.customersServed || 500,
-          productsSupplied: updates.productsSupplied || 1200,
-          customersTestimonials: updates.customersTestimonials || []
-        })
+        .values([updates])
         .returning();
       return newStats;
     }
@@ -657,29 +648,25 @@ async function initializeSeedData() {
       // Create initial sub-products
       const fireTruckModel1 = await storage.createSubProduct({
         name: "Rosenbauer PANTHER 6x6",
-        description: "High-performance aircraft rescue and firefighting vehicle",
-        content: "The PANTHER 6x6 is specifically designed for airport fire fighting applications. Features include advanced foam systems, high-capacity water tanks, and rapid acceleration capabilities for emergency response.",
+        modelNumber: "PANTHER-6X6-001",
         photo: "https://images.unsplash.com/photo-1516550893885-985da0253db1?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80"
       });
 
       const fireTruckModel2 = await storage.createSubProduct({
         name: "Rosenbauer RT Industrial",
-        description: "Multi-purpose industrial firefighting truck",
-        content: "Designed for industrial fire protection with enhanced chemical foam systems, extended reach capabilities, and specialized equipment for industrial emergencies.",
+        modelNumber: "RT-IND-002",
         photo: "https://images.unsplash.com/photo-1508522670557-664ed933c05d?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80"
       });
 
       const ambulanceModel1 = await storage.createSubProduct({
         name: "Pierce Quantum Emergency Ambulance",
-        description: "Advanced life support ambulance with integrated medical systems",
-        content: "Features state-of-the-art medical equipment, climate control systems, and ergonomic design for patient care during transport. Includes advanced communication systems and GPS tracking.",
+        modelNumber: "QUANTUM-AMB-003",
         photo: "https://images.unsplash.com/photo-1587843618590-26adcc8dfc1a?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80"
       });
 
       const busModel1 = await storage.createSubProduct({
         name: "Ferrara Electric Transit Bus",
-        description: "Zero-emission electric bus for urban transportation",
-        content: "Environmentally friendly electric bus with extended range battery system, comfortable seating for 40 passengers, and advanced safety features including collision avoidance systems.",
+        modelNumber: "ELECTRIC-BUS-004",
         photo: "https://images.unsplash.com/photo-1619252584172-a83a949b6efd?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80"
       });
 
