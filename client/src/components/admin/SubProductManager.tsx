@@ -54,10 +54,14 @@ const SubProductManager: React.FC = () => {
         description: "Sub-product created successfully",
       });
     },
-    onError: () => {
+    onError: (error: any) => {
+      const errorMessage = error?.error === 'duplicate_name' 
+        ? "A sub-product with this name already exists. Please choose a different name."
+        : "Failed to create sub-product. Please try again.";
+      
       toast({
         title: "Error",
-        description: "Failed to create sub-product",
+        description: errorMessage,
         variant: "destructive",
       });
     },
@@ -206,10 +210,13 @@ const SubProductManager: React.FC = () => {
               Add Sub-Product
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-7xl max-h-[95vh] overflow-y-auto">
+          <DialogContent className="max-w-7xl max-h-[95vh] overflow-y-auto" aria-describedby="create-sub-product-description">
             <DialogHeader>
               <DialogTitle>Create New Sub-Product</DialogTitle>
             </DialogHeader>
+            <div id="create-sub-product-description" className="sr-only">
+              Create a new sub-product with name, model number, photo, and custom content design
+            </div>
             <form onSubmit={handleCreateSubmit} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
@@ -321,10 +328,13 @@ const SubProductManager: React.FC = () => {
 
       {/* Edit Dialog */}
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent className="max-w-7xl max-h-[95vh] overflow-y-auto">
+        <DialogContent className="max-w-7xl max-h-[95vh] overflow-y-auto" aria-describedby="edit-sub-product-description">
           <DialogHeader>
             <DialogTitle>Edit Sub-Product</DialogTitle>
           </DialogHeader>
+          <div id="edit-sub-product-description" className="sr-only">
+            Edit sub-product details including name, model number, photo, and custom content design
+          </div>
           {editingSubProduct && (
             <form onSubmit={handleEditSubmit} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

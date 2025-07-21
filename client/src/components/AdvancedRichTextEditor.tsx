@@ -14,7 +14,6 @@ import { FontFamily } from '@tiptap/extension-font-family';
 import Underline from '@tiptap/extension-underline';
 import TaskList from '@tiptap/extension-task-list';
 import TaskItem from '@tiptap/extension-task-item';
-import HorizontalRule from '@tiptap/extension-horizontal-rule';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -132,7 +131,6 @@ export function AdvancedRichTextEditor({ content, onChange, placeholder }: Advan
       TaskItem.configure({
         nested: true,
       }),
-      HorizontalRule,
     ],
     content,
     onUpdate: ({ editor }) => {
@@ -416,7 +414,7 @@ export function AdvancedRichTextEditor({ content, onChange, placeholder }: Advan
           <Button
             variant="outline"
             size="sm"
-            onClick={() => editor.chain().focus().setHorizontalRule().run()}
+            onClick={() => editor.chain().focus().insertContent('<hr>').run()}
           >
             <DividerIcon className="h-4 w-4 mr-2" />
             Divider

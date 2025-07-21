@@ -523,6 +523,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.error('Sub-product validation error:', error.errors);
         return res.status(400).json({ message: 'Invalid data', errors: error.errors });
       }
+      
+      // Handle duplicate key constraint specifically
+      if (error instanceof Error && error.message.includes('duplicate key value violates unique constraint')) {
+        if (error.message.includes('sub_products_name_unique')) {
+          return res.status(400).json({ 
+            message: 'A sub-product with this name already exists. Please choose a different name.',
+            error: 'duplicate_name'
+          });
+        }
+      }
+      
       console.error('Sub-product creation error:', error);
       res.status(500).json({ message: 'Server error', error: error instanceof Error ? error.message : 'Unknown error' });
     }
