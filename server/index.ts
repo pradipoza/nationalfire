@@ -4,9 +4,18 @@ import { setupVite, serveStatic, log } from "./vite";
 
 const app = express();
 
-// Add CORS headers for cross-origin requests
+// Add CORS headers for cross-origin requests - SECURE CONFIGURATION
 app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
+  // In production, restrict origins to specific domains
+  const allowedOrigins = process.env.NODE_ENV === 'production' 
+    ? [process.env.FRONTEND_URL || 'https://your-domain.com']
+    : ['http://localhost:5000', 'http://127.0.0.1:5000'];
+    
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin as string)) {
+    res.header('Access-Control-Allow-Origin', origin);
+  }
+  
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
   res.header('Access-Control-Allow-Credentials', 'true');

@@ -265,7 +265,7 @@ export class DatabaseStorage implements IStorage {
   async createProduct(product: InsertProduct): Promise<Product> {
     const [newProduct] = await db
       .insert(products)
-      .values([product])
+      .values(product)
       .returning();
     return newProduct;
   }
@@ -309,7 +309,7 @@ export class DatabaseStorage implements IStorage {
   async createBlog(blog: InsertBlog): Promise<Blog> {
     const [newBlog] = await db
       .insert(blogs)
-      .values([blog])
+      .values(blog)
       .returning();
     return newBlog;
   }
@@ -474,7 +474,7 @@ export class DatabaseStorage implements IStorage {
       // Create if doesn't exist
       const [newStats] = await db
         .insert(aboutStats)
-        .values([updates])
+        .values(updates as InsertAboutStats)
         .returning();
       return newStats;
     }

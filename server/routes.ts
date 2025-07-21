@@ -57,16 +57,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   }
 
+  // Secure session configuration with proper secret handling
+  const sessionSecret = process.env.SESSION_SECRET || 
+    (process.env.NODE_ENV === 'production' ? null : 'dev-national-fire-secret-temp');
+    
+  if (process.env.NODE_ENV === 'production' && !process.env.SESSION_SECRET) {
+    console.error('SECURITY WARNING: SESSION_SECRET is required in production!');
+    process.exit(1);
+  }
+
   app.use(session({
-    secret: process.env.SESSION_SECRET || 'national-fire-secret',
+    secret: sessionSecret!,
     resave: false,
     saveUninitialized: false,
     store: sessionStore,
     cookie: {
       maxAge: 24 * 60 * 60 * 1000, // 24 hours
-      secure: false,
-      httpOnly: true,
-      sameSite: 'lax'
+      secure: process.env.NODE_ENV === 'production', // HTTPS only in production
+      httpOnly: true, // Prevent XSS attacks
+      sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax' // CSRF protection
     }
   }));
   
@@ -290,6 +299,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get('/api/products/:id', async (req, res) => {
     try {
       const productId = parseInt(req.params.id);
+      
+      // Input validation for security
+      if (isNaN(productId) || productId < 1) {
+        return res.status(400).json({ message: 'Invalid product ID' });
+      }
+      
       const product = await storage.getProduct(productId);
       
       if (!product) {
@@ -298,20 +313,54 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       res.json({ product });
     } catch (error) {
+      console.error('Get product error:', error);
       res.status(500).json({ message: 'Server error' });
     }
   });
   
   app.post('/api/products', isAuthenticated, async (req, res) => {
     try {
-      const validData = insertProductSchema.parse(req.body);
+      // Additional security validation for products
+      const body = req.body;
+      
+      // Validate required fields
+      if (!body.name || typeof body.name !== 'string' || body.name.trim().length === 0) {
+        return res.status(400).json({ message: 'Product name is required and must be a non-empty string' });
+      }
+      
+      if (!body.description || typeof body.description !== 'string' || body.description.trim().length === 0) {
+        return res.status(400).json({ message: 'Product description is required and must be a non-empty string' });
+      }
+      
+      // Validate arrays
+      if (body.photos && !Array.isArray(body.photos)) {
+        return res.status(400).json({ message: 'Photos must be an array' });
+      }
+      
+      if (body.subProductIds && !Array.isArray(body.subProductIds)) {
+        return res.status(400).json({ message: 'Sub-product IDs must be an array' });
+      }
+      
+      // Validate sub-product IDs are numbers
+      if (body.subProductIds && body.subProductIds.some((id: any) => typeof id !== 'number' || id < 1)) {
+        return res.status(400).json({ message: 'All sub-product IDs must be positive numbers' });
+      }
+      
+      // Validate brand ID if provided
+      if (body.brandId && (typeof body.brandId !== 'number' || body.brandId < 1)) {
+        return res.status(400).json({ message: 'Brand ID must be a positive number' });
+      }
+      
+      const validData = insertProductSchema.parse(body);
       const product = await storage.createProduct(validData);
       res.status(201).json({ message: 'Product created successfully', product });
     } catch (error) {
       if (error instanceof z.ZodError) {
+        console.error('Product validation error:', error.errors);
         return res.status(400).json({ message: 'Invalid data', errors: error.errors });
       }
-      res.status(500).json({ message: 'Server error' });
+      console.error('Product creation error:', error);
+      res.status(500).json({ message: 'Server error', error: error instanceof Error ? error.message : 'Unknown error' });
     }
   });
   
@@ -421,6 +470,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get('/api/sub-products/:id', async (req, res) => {
     try {
       const subProductId = parseInt(req.params.id);
+      
+      // Input validation for security
+      if (isNaN(subProductId) || subProductId < 1) {
+        return res.status(400).json({ message: 'Invalid sub-product ID' });
+      }
+      
       const subProduct = await storage.getSubProduct(subProductId);
       
       if (!subProduct) {
@@ -429,6 +484,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       res.json({ subProduct });
     } catch (error) {
+      console.error('Get sub-product error:', error);
       res.status(500).json({ message: 'Server error' });
     }
   });
@@ -437,14 +493,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   app.post('/api/sub-products', isAuthenticated, async (req, res) => {
     try {
-      const validData = insertSubProductSchema.parse(req.body);
+      // Additional security validation
+      const body = req.body;
+      
+      // Validate required fields explicitly
+      if (!body.name || typeof body.name !== 'string' || body.name.trim().length === 0) {
+        return res.status(400).json({ message: 'Name is required and must be a non-empty string' });
+      }
+      
+      if (!body.photo || typeof body.photo !== 'string' || body.photo.trim().length === 0) {
+        return res.status(400).json({ message: 'Photo is required and must be a non-empty string' });
+      }
+      
+      // Validate model number if provided
+      if (body.modelNumber && typeof body.modelNumber !== 'string') {
+        return res.status(400).json({ message: 'Model number must be a string' });
+      }
+      
+      // Validate content if provided
+      if (body.content && typeof body.content !== 'string') {
+        return res.status(400).json({ message: 'Content must be a string' });
+      }
+      
+      const validData = insertSubProductSchema.parse(body);
       const subProduct = await storage.createSubProduct(validData);
       res.status(201).json({ message: 'Sub-product created successfully', subProduct });
     } catch (error) {
       if (error instanceof z.ZodError) {
+        console.error('Sub-product validation error:', error.errors);
         return res.status(400).json({ message: 'Invalid data', errors: error.errors });
       }
-      res.status(500).json({ message: 'Server error' });
+      console.error('Sub-product creation error:', error);
+      res.status(500).json({ message: 'Server error', error: error instanceof Error ? error.message : 'Unknown error' });
     }
   });
   

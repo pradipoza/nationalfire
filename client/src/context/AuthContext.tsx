@@ -31,13 +31,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   // Fetch current user on mount
   const { data, isLoading, isError } = useQuery({
     queryKey: [API_ENDPOINTS.CURRENT_USER],
-    queryFn: getQueryFn<{ user: User } | null>({ on401: "returnNull" }),
     retry: false,
   });
 
   // Update user when data changes
   useEffect(() => {
-    if (data) {
+    if (data && 'user' in data) {
       setUser(data.user);
     } else {
       setUser(null);
