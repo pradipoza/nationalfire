@@ -217,12 +217,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Change password route
+  // Change password route with enhanced security
   app.put('/api/me/password', isAuthenticated, async (req, res) => {
     try {
       const passwordSchema = z.object({
-        currentPassword: z.string().min(1, 'Current password is required'),
-        newPassword: z.string().min(6, 'New password must be at least 6 characters'),
+        currentPassword: z.string().min(1, 'Current password is required').max(128, 'Password too long'),
+        newPassword: z.string()
+          .min(8, 'New password must be at least 8 characters')
+          .max(128, 'Password too long')
+          .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, 'Password must contain at least one lowercase letter, one uppercase letter, and one number'),
       });
       
       const { currentPassword, newPassword } = passwordSchema.parse(req.body);
@@ -239,8 +242,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: 'Current password is incorrect' });
       }
       
-      // Hash new password and update
-      const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+      // Hash new password and update with increased rounds for security
+      const hashedNewPassword = await bcrypt.hash(newPassword, 12);
       const updatedUser = await storage.updateUserPassword(req.user!.id, hashedNewPassword);
       
       if (!updatedUser) {
@@ -259,6 +262,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.put('/api/users/:id', isAuthenticated, async (req, res) => {
     try {
       const userId = parseInt(req.params.id);
+      
+      // Enhanced input validation
+      if (isNaN(userId) || userId < 1 || userId > 2147483647) {
+        return res.status(400).json({ message: 'Invalid user ID' });
+      }
+      
       if (userId !== req.user!.id) {
         return res.status(403).json({ message: 'Forbidden' });
       }
@@ -301,8 +310,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const productId = parseInt(req.params.id);
       
-      // Input validation for security
-      if (isNaN(productId) || productId < 1) {
+      // Enhanced input validation for security
+      if (isNaN(productId) || productId < 1 || productId > 2147483647) {
         return res.status(400).json({ message: 'Invalid product ID' });
       }
       
@@ -314,7 +323,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       res.json({ product });
     } catch (error) {
-      console.error('Get product error:', error);
+      console.error('Get product error:', error instanceof Error ? error.message : 'Unknown error');
       res.status(500).json({ message: 'Server error' });
     }
   });
@@ -368,6 +377,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.put('/api/products/:id', isAuthenticated, async (req, res) => {
     try {
       const productId = parseInt(req.params.id);
+      
+      // Enhanced input validation
+      if (isNaN(productId) || productId < 1 || productId > 2147483647) {
+        return res.status(400).json({ message: 'Invalid product ID' });
+      }
+      
       const updateSchema = insertProductSchema.partial();
       const validData = updateSchema.parse(req.body);
       
@@ -381,6 +396,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (error instanceof z.ZodError) {
         return res.status(400).json({ message: 'Invalid data', errors: error.errors });
       }
+      console.error('Product update error:', error instanceof Error ? error.message : 'Unknown error');
       res.status(500).json({ message: 'Server error' });
     }
   });
@@ -408,6 +424,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.delete('/api/products/:id', isAuthenticated, async (req, res) => {
     try {
       const productId = parseInt(req.params.id);
+      
+      // Enhanced input validation
+      if (isNaN(productId) || productId < 1 || productId > 2147483647) {
+        return res.status(400).json({ message: 'Invalid product ID' });
+      }
+      
       const deleted = await storage.deleteProduct(productId);
       
       if (!deleted) {
@@ -416,6 +438,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       res.json({ message: 'Product deleted successfully' });
     } catch (error) {
+      console.error('Product deletion error:', error instanceof Error ? error.message : 'Unknown error');
       res.status(500).json({ message: 'Server error' });
     }
   });
@@ -439,18 +462,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: 'Invalid IDs array' });
       }
       
-      const subProducts = await storage.getSubProductsByIds(ids);
+      // Limit array size to prevent DoS attacks
+      if (ids.length > 100) {
+        return res.status(400).json({ message: 'Too many IDs requested' });
+      }
+      
+      // Validate all IDs are positive integers
+      const validIds = ids.filter(id => 
+        typeof id === 'number' && 
+        Number.isInteger(id) && 
+        id > 0 && 
+        id <= 2147483647
+      );
+      
+      if (validIds.length !== ids.length) {
+        return res.status(400).json({ message: 'All IDs must be positive integers' });
+      }
+      
+      const subProducts = await storage.getSubProductsByIds(validIds);
       res.json({ subProducts });
     } catch (error) {
-      console.error('Error in /api/sub-products/by-ids:', error);
-      res.status(500).json({ message: 'Server error', error: error instanceof Error ? error.message : 'Unknown error' });
+      console.error('Error in /api/sub-products/by-ids:', error instanceof Error ? error.message : 'Unknown error');
+      res.status(500).json({ message: 'Server error' });
     }
   });
   
-  // Get parent product of a sub-product
+  // Get parent product of a sub-product  
   app.get('/api/sub-products/:id/parent-product', async (req, res) => {
     try {
       const subProductId = parseInt(req.params.id);
+      
+      // Enhanced input validation
+      if (isNaN(subProductId) || subProductId < 1 || subProductId > 2147483647) {
+        return res.status(400).json({ message: 'Invalid sub-product ID' });
+      }
       
       // Optimized: Get all products and find which one contains this sub-product
       const products = await storage.getProducts();
@@ -464,6 +509,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       res.json({ product: parentProduct });
     } catch (error) {
+      console.error('Get parent product error:', error instanceof Error ? error.message : 'Unknown error');
       res.status(500).json({ message: 'Server error' });
     }
   });
@@ -472,8 +518,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const subProductId = parseInt(req.params.id);
       
-      // Input validation for security
-      if (isNaN(subProductId) || subProductId < 1) {
+      // Enhanced input validation for security
+      if (isNaN(subProductId) || subProductId < 1 || subProductId > 2147483647) {
         return res.status(400).json({ message: 'Invalid sub-product ID' });
       }
       
@@ -485,7 +531,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       res.json({ subProduct });
     } catch (error) {
-      console.error('Get sub-product error:', error);
+      console.error('Get sub-product error:', error instanceof Error ? error.message : 'Unknown error');
       res.status(500).json({ message: 'Server error' });
     }
   });
@@ -563,22 +609,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.patch('/api/sub-products/:id', isAuthenticated, async (req, res) => {
     try {
       const subProductId = parseInt(req.params.id);
-      console.log('PATCH sub-product request:', subProductId, req.body);
+      
+      // Enhanced input validation
+      if (isNaN(subProductId) || subProductId < 1 || subProductId > 2147483647) {
+        return res.status(400).json({ message: 'Invalid sub-product ID' });
+      }
       
       const updateSchema = insertSubProductSchema.partial();
       const validData = updateSchema.parse(req.body);
       
-      console.log('Validated data for sub-product update:', validData);
+      // Validate content size to prevent DoS attacks
+      if (validData.htmlContent && validData.htmlContent.length > 10485760) { // 10MB limit
+        return res.status(400).json({ message: 'HTML content too large' });
+      }
+      
+      if (validData.cssContent && validData.cssContent.length > 1048576) { // 1MB limit
+        return res.status(400).json({ message: 'CSS content too large' });
+      }
       
       const updatedSubProduct = await storage.updateSubProduct(subProductId, validData);
       if (!updatedSubProduct) {
         return res.status(404).json({ message: 'Sub-product not found' });
       }
       
-      console.log('Updated sub-product:', updatedSubProduct);
       res.json({ message: 'Sub-product updated successfully', subProduct: updatedSubProduct });
     } catch (error) {
-      console.error('PATCH sub-product error:', error);
+      console.error('PATCH sub-product error:', error instanceof Error ? error.message : 'Unknown error');
       if (error instanceof z.ZodError) {
         return res.status(400).json({ message: 'Invalid data', errors: error.errors });
       }
@@ -777,6 +833,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   app.post('/api/inquiries', async (req, res) => {
     try {
+      // Additional validation for inquiry content
+      const body = req.body;
+      
+      if (body.name && body.name.length > 100) {
+        return res.status(400).json({ message: 'Name too long' });
+      }
+      
+      if (body.email && body.email.length > 100) {
+        return res.status(400).json({ message: 'Email too long' });
+      }
+      
+      if (body.phone && body.phone.length > 20) {
+        return res.status(400).json({ message: 'Phone number too long' });
+      }
+      
+      if (body.message && body.message.length > 5000) {
+        return res.status(400).json({ message: 'Message too long' });
+      }
+      
       const validData = insertInquirySchema.parse(req.body);
       const inquiry = await storage.createInquiry(validData);
       res.status(201).json({ message: 'Inquiry sent successfully', inquiry });
@@ -784,6 +859,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (error instanceof z.ZodError) {
         return res.status(400).json({ message: 'Invalid data', errors: error.errors });
       }
+      console.error('Inquiry creation error:', error instanceof Error ? error.message : 'Unknown error');
       res.status(500).json({ message: 'Server error' });
     }
   });

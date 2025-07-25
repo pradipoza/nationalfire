@@ -1,8 +1,62 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import rateLimit from "express-rate-limit";
+import helmet from "helmet";
 
 const app = express();
+
+// Trust proxy for production deployment (required for rate limiting)
+if (process.env.NODE_ENV === 'production') {
+  app.set('trust proxy', 1);
+}
+
+// Security middleware - helmet for security headers
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"], // Required for GrapesJS editor
+      fontSrc: ["'self'", "https://fonts.gstatic.com"],
+      imgSrc: ["'self'", "data:", "blob:", "https:"],
+      connectSrc: ["'self'"],
+      frameSrc: ["'none'"],
+      objectSrc: ["'none'"],
+      baseUri: ["'self'"],
+      formAction: ["'self'"]
+    }
+  },
+  hsts: {
+    maxAge: 31536000,
+    includeSubDomains: true,
+    preload: true
+  }
+}));
+
+// Rate limiting to prevent abuse
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 1000, // Limit each IP to 1000 requests per windowMs
+  message: {
+    error: 'Too many requests from this IP, please try again later.'
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5, // Limit each IP to 5 login attempts per windowMs
+  message: {
+    error: 'Too many login attempts from this IP, please try again later.'
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+app.use(limiter);
+app.use('/api/login', authLimiter);
 
 // Add CORS headers for cross-origin requests - SECURE CONFIGURATION
 app.use((req, res, next) => {
@@ -27,9 +81,21 @@ app.use((req, res, next) => {
   }
 });
 
-app.use(express.json({ limit: '50mb' })); // Increased limit for image uploads
-app.use(express.urlencoded({ limit: '50mb', extended: true }));
-app.use(express.urlencoded({ extended: false }));
+// Enhanced security: Set reasonable limits to prevent DoS attacks
+app.use(express.json({ 
+  limit: '10mb', // Reduced from 50mb for security
+  verify: (req, res, buf) => {
+    // Additional request validation can be added here
+    if (buf.length > 10485760) { // 10MB
+      throw new Error('Request too large');
+    }
+  }
+}));
+app.use(express.urlencoded({ 
+  limit: '10mb', 
+  extended: true,
+  parameterLimit: 1000 // Limit number of parameters
+}));
 
 app.use((req, res, next) => {
   const start = Date.now();

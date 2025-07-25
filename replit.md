@@ -213,6 +213,18 @@ Changelog:
   - Removed all default layout elements (headers, navigation, product info cards, images)
   - Sub-product pages now display only content created in the visual editor or blank page if no design exists
   - Full creative control over entire page layout and content through visual page builder
+  - Added back navigation button for user-friendly navigation to parent product
+  - Comprehensive security audit and vulnerability fixes:
+    * Enhanced password requirements (8+ chars, uppercase, lowercase, numbers)
+    * Added rate limiting (1000 requests/15min, 5 login attempts/15min)
+    * Implemented helmet security headers with CSP
+    * Enhanced input validation for all integer parameters
+    * Added content size limits to prevent DoS attacks
+    * Improved error handling without information leakage
+    * Added request size validation and parameter limits
+    * Increased bcrypt rounds from 10 to 12 for stronger password hashing
+    * Added comprehensive validation for all user inputs
+    * Fixed trust proxy configuration for production deployment
 
 ## User Preferences
 

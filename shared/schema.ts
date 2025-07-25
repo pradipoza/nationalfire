@@ -17,6 +17,10 @@ export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
   password: true,
   email: true,
+}).extend({
+  username: z.string().min(3).max(50).regex(/^[a-zA-Z0-9_]+$/, 'Username can only contain letters, numbers, and underscores'),
+  password: z.string().min(8).max(128).regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, 'Password must contain at least one lowercase letter, one uppercase letter, and one number'),
+  email: z.string().email().max(100),
 });
 
 export type InsertUser = z.infer<typeof insertUserSchema>;
@@ -59,6 +63,13 @@ export const insertSubProductSchema = createInsertSchema(subProducts).omit({
   id: true,
   createdAt: true,
   updatedAt: true,
+}).extend({
+  name: z.string().min(1).max(200).trim(),
+  modelNumber: z.string().max(100).optional(),
+  photo: z.string().min(1),
+  content: z.string().max(1048576).optional(), // 1MB limit
+  htmlContent: z.string().max(10485760).optional(), // 10MB limit
+  cssContent: z.string().max(1048576).optional(), // 1MB limit
 });
 
 export type InsertSubProduct = z.infer<typeof insertSubProductSchema>;

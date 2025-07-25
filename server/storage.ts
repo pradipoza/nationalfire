@@ -117,8 +117,8 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
-    // Hash the password
-    const hashedPassword = await bcrypt.hash(insertUser.password, 10);
+    // Hash the password with increased rounds for security
+    const hashedPassword = await bcrypt.hash(insertUser.password, 12);
     
     const [user] = await db
       .insert(users)
