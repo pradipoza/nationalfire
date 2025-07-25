@@ -200,6 +200,15 @@ Changelog:
   - Editor now supports creating sophisticated product showcase pages comparable to professional websites (shibaura-bousai.co.jp, anaf.eu)
   - Four-row toolbar interface with organized tool grouping and color-coded template buttons
   - Added comprehensive CSS styling for proper rendering of advanced layouts and professional typography
+- July 25, 2025. Visual Page Builder Integration for Sub-Products
+  - Integrated GrapesJS visual page builder directly into sub-product management system
+  - Replaced standalone page builder with sub-product content editor integration
+  - Added pageData, htmlContent, and cssContent fields to sub_products database schema
+  - Created "Design Page" button in sub-product cards for visual content editing
+  - Sub-products now support full visual page design with drag-and-drop interface
+  - Visual editor includes professional templates, custom blocks, and advanced styling
+  - Seamless integration between basic sub-product info editing and visual content creation
+  - Removed separate page builder from admin navigation in favor of sub-product integration
 
 ## User Preferences
 

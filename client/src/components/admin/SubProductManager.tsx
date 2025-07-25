@@ -23,7 +23,7 @@ import {
   FileText
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { AdvancedRichTextEditor } from "@/components/AdvancedRichTextEditor";
+import PageBuilder from "@/components/admin/PageBuilder";
 import type { SubProduct, InsertSubProduct } from "@shared/schema";
 
 const SubProductManager: React.FC = () => {
@@ -31,7 +31,8 @@ const SubProductManager: React.FC = () => {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [editingSubProduct, setEditingSubProduct] = useState<SubProduct | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [content, setContent] = useState<string>("");
+  const [showPageBuilder, setShowPageBuilder] = useState(false);
+  const [currentPageData, setCurrentPageData] = useState<any>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -132,7 +133,7 @@ const SubProductManager: React.FC = () => {
       name: formData.get("name") as string,
       modelNumber: formData.get("modelNumber") as string || null,
       photo: imagePreview || "https://via.placeholder.com/400x300",
-      content: content,
+      content: "",
     };
 
     createMutation.mutate(subProductData);
@@ -148,7 +149,6 @@ const SubProductManager: React.FC = () => {
       name: formData.get("name") as string,
       modelNumber: formData.get("modelNumber") as string || null,
       photo: imagePreview || editingSubProduct.photo,
-      content: content,
     };
 
     updateMutation.mutate({ id: editingSubProduct.id, data: subProductData });
@@ -157,12 +157,16 @@ const SubProductManager: React.FC = () => {
   const handleEdit = (subProduct: SubProduct) => {
     setEditingSubProduct(subProduct);
     setImagePreview(subProduct.photo);
-    setContent(subProduct.content || "");
     setIsEditDialogOpen(true);
   };
 
+  const handleEditContent = (subProduct: SubProduct) => {
+    setEditingSubProduct(subProduct);
+    setCurrentPageData(subProduct.pageData);
+    setShowPageBuilder(true);
+  };
+
   const handleOpenCreateDialog = () => {
-    setContent("");
     setImagePreview(null);
     setIsCreateDialogOpen(true);
   };
@@ -193,6 +197,45 @@ const SubProductManager: React.FC = () => {
         <h3 className="text-lg font-semibold mb-2">Error loading sub-products</h3>
         <p className="text-gray-600">Please try refreshing the page</p>
       </div>
+    );
+  }
+
+  // Show Page Builder when editing content
+  if (showPageBuilder && editingSubProduct) {
+    return (
+      <PageBuilder
+        pageSlug={`sub-product-${editingSubProduct.id}`}
+        pageTitle={`${editingSubProduct.name} - Content Designer`}
+        initialData={currentPageData}
+        onBack={() => {
+          setShowPageBuilder(false);
+          setEditingSubProduct(null);
+          setCurrentPageData(null);
+          queryClient.invalidateQueries({ queryKey: [API_ENDPOINTS.SUB_PRODUCTS] });
+        }}
+        onSave={async (data: any, html: string, css: string) => {
+          if (!editingSubProduct) return;
+          
+          try {
+            await apiRequest("PATCH", API_ENDPOINTS.SUB_PRODUCT(editingSubProduct.id), {
+              pageData: data,
+              htmlContent: html,
+              cssContent: css,
+            });
+            
+            toast({
+              title: "Success",
+              description: "Sub-product page design saved successfully",
+            });
+          } catch (error) {
+            toast({
+              title: "Error", 
+              description: "Failed to save page design",
+              variant: "destructive",
+            });
+          }
+        }}
+      />
     );
   }
 
@@ -249,17 +292,7 @@ const SubProductManager: React.FC = () => {
                 )}
               </div>
               
-              <div>
-                <Label htmlFor="content">Custom Page Designer</Label>
-                <p className="text-sm text-gray-600 mb-2">
-                  Design your complete sub-product page with drag-and-drop editor, advanced layouts, and professional templates.
-                </p>
-                <AdvancedRichTextEditor
-                  content={content}
-                  onChange={setContent}
-                  placeholder="Design your custom sub-product page with advanced drag-and-drop tools..."
-                />
-              </div>
+
               
               <div className="flex justify-end space-x-2 pt-6 border-t">
                 <Button type="button" variant="outline" onClick={() => setIsCreateDialogOpen(false)}>
@@ -299,7 +332,16 @@ const SubProductManager: React.FC = () => {
                     className="flex-1"
                   >
                     <Edit2 className="w-4 h-4 mr-1" />
-                    Edit
+                    Edit Info
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleEditContent(subProduct)}
+                    className="flex-1 bg-fire-red text-white hover:bg-fire-red/90"
+                  >
+                    <FileText className="w-4 h-4 mr-1" />
+                    Design Page
                   </Button>
                   <Button
                     variant="outline"

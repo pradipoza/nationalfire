@@ -263,13 +263,7 @@ const Sidebar: React.FC = () => {
             >
               Customers
             </SidebarLink>
-            <SidebarLink
-              href="/admin/pages"
-              icon={<FileText className="h-5 w-5" />}
-              onClick={() => isMobile && setIsOpen(false)}
-            >
-              Page Builder
-            </SidebarLink>
+
             <SidebarLink
               href="/admin/contact"
               icon={<PhoneCall className="h-5 w-5" />}

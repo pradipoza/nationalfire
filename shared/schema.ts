@@ -48,6 +48,9 @@ export const subProducts = pgTable("sub_products", {
   modelNumber: text("model_number"), // optional
   photo: text("photo").notNull(),
   content: text("content").default(""), // Rich text content for detailed descriptions
+  pageData: json("page_data").$type<any>(), // GrapesJS project data JSON
+  htmlContent: text("html_content"), // Generated HTML from GrapesJS
+  cssContent: text("css_content"), // Generated CSS from GrapesJS
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });

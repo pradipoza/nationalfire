@@ -16,14 +16,18 @@ import gjsPresetWebpage from 'grapesjs-preset-webpage';
 interface PageBuilderProps {
   pageSlug?: string;
   pageTitle?: string;
+  initialData?: any;
   onBack?: () => void;
+  onSave?: (data: any, html: string, css: string) => Promise<void>;
   className?: string;
 }
 
 const PageBuilder: React.FC<PageBuilderProps> = ({ 
   pageSlug = 'new-page', 
   pageTitle = 'New Page',
+  initialData,
   onBack,
+  onSave,
   className = '' 
 }) => {
   const editorRef = useRef<HTMLDivElement>(null);
@@ -299,7 +303,31 @@ const PageBuilder: React.FC<PageBuilderProps> = ({
     
     setIsSaving(true);
     try {
-      await editorInstanceRef.current.store();
+      const projectData = editorInstanceRef.current.getProjectData();
+      const html = editorInstanceRef.current.getHtml();
+      const css = editorInstanceRef.current.getCss();
+
+      if (onSave) {
+        // Use custom save function for sub-products
+        await onSave(projectData, html, css);
+      } else {
+        // Default save to pages API
+        await fetch(`/api/pages/${pageSlug}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include',
+          body: JSON.stringify({
+            slug: pageSlug,
+            title: title,
+            data: projectData,
+            htmlContent: html,
+            cssContent: css,
+          }),
+        });
+      }
+
       toast({
         title: "Success",
         description: "Page saved successfully!",
