@@ -22,6 +22,7 @@ import MemoryStore from "memorystore";
 import ConnectPgSimple from "connect-pg-simple";
 import bcrypt from "bcrypt";
 import { pool } from "./db";
+import multer from "multer";
 
 // Add TypeScript declaration for req.user
 declare global {
@@ -1105,6 +1106,107 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       res.status(500).json({ message: 'Server error' });
     }
+  });
+
+  // Pages routes for GrapesJS page builder
+  app.get('/api/pages/:slug', async (req, res) => {
+    try {
+      const slug = req.params.slug;
+      const page = await storage.getPage(slug);
+      if (!page) {
+        return res.json({ data: {} }); // Return empty for new pages
+      }
+      res.json({ id: page.id, slug: page.slug, title: page.title, data: page.data });
+    } catch (error) {
+      console.error('Error loading page:', error);
+      res.status(500).json({ message: 'Server error' });
+    }
+  });
+
+  app.put('/api/pages/:slug', isAuthenticated, async (req, res) => {
+    try {
+      const slug = req.params.slug;
+      const { title, data, htmlContent, cssContent } = req.body;
+      
+      if (!data) {
+        return res.status(400).json({ message: 'No page data provided' });
+      }
+
+      const pageData = {
+        slug,
+        title: title || 'Untitled Page',
+        data,
+        htmlContent: htmlContent || '',
+        cssContent: cssContent || ''
+      };
+
+      const page = await storage.saveOrUpdatePage(pageData);
+      res.json({ message: 'Page saved successfully', page });
+    } catch (error) {
+      console.error('Error saving page:', error);
+      res.status(500).json({ message: 'Server error' });
+    }
+  });
+
+  app.get('/api/pages', isAuthenticated, async (req, res) => {
+    try {
+      const pages = await storage.getPages();
+      res.json({ pages });
+    } catch (error) {
+      console.error('Error loading pages:', error);
+      res.status(500).json({ message: 'Server error' });
+    }
+  });
+
+  app.delete('/api/pages/:slug', isAuthenticated, async (req, res) => {
+    try {
+      const slug = req.params.slug;
+      const success = await storage.deletePage(slug);
+      if (!success) {
+        return res.status(404).json({ message: 'Page not found' });
+      }
+      res.json({ message: 'Page deleted successfully' });
+    } catch (error) {
+      console.error('Error deleting page:', error);
+      res.status(500).json({ message: 'Server error' });
+    }
+  });
+
+  // Image upload endpoint for GrapesJS Asset Manager
+  app.post('/api/upload/image', isAuthenticated, (req, res) => {
+    // Configure multer for memory storage
+    const storage = multer.memoryStorage();
+    const upload = multer({ 
+      storage,
+      limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit
+      fileFilter: (req: any, file: any, cb: any) => {
+        if (file.mimetype.startsWith('image/')) {
+          cb(null, true);
+        } else {
+          cb(new Error('Only image files are allowed'));
+        }
+      }
+    });
+
+    upload.array('files')(req, res, (err: any) => {
+      if (err) {
+        return res.status(400).json({ message: err.message });
+      }
+
+      const files = req.files;
+      if (!files || !Array.isArray(files) || files.length === 0) {
+        return res.status(400).json({ message: 'No files uploaded' });
+      }
+
+      // Convert uploaded files to base64 data URLs
+      const imageUrls = files.map((file: any) => {
+        const base64 = file.buffer.toString('base64');
+        return `data:${file.mimetype};base64,${base64}`;
+      });
+
+      // Return in format expected by GrapesJS
+      res.json({ data: imageUrls });
+    });
   });
   
   return httpServer;

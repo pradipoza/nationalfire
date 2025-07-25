@@ -10,7 +10,8 @@ import {
   analytics, type Analytics, type InsertAnalytics,
   brands, type Brand, type InsertBrand,
   portfolio, type Portfolio, type InsertPortfolio,
-  customers, type Customer, type InsertCustomer
+  customers, type Customer, type InsertCustomer,
+  pages, type Page, type InsertPage
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, sql, inArray } from "drizzle-orm";
@@ -95,6 +96,12 @@ export interface IStorage {
   createCustomer(customer: InsertCustomer): Promise<Customer>;
   updateCustomer(id: number, updates: Partial<InsertCustomer>): Promise<Customer | undefined>;
   deleteCustomer(id: number): Promise<boolean>;
+  
+  // Pages
+  getPages(): Promise<Page[]>;
+  getPage(slug: string): Promise<Page | undefined>;
+  saveOrUpdatePage(pageData: InsertPage): Promise<Page>;
+  deletePage(slug: string): Promise<boolean>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -604,6 +611,54 @@ export class DatabaseStorage implements IStorage {
       return result.rowCount !== null && result.rowCount > 0;
     } catch (error) {
       console.error('Error deleting customer:', error);
+      return false;
+    }
+  }
+
+  // Pages
+  async getPages(): Promise<Page[]> {
+    const results = await db.select().from(pages).orderBy(desc(pages.updatedAt));
+    return results;
+  }
+
+  async getPage(slug: string): Promise<Page | undefined> {
+    const [page] = await db.select().from(pages).where(eq(pages.slug, slug));
+    return page;
+  }
+
+  async saveOrUpdatePage(pageData: InsertPage): Promise<Page> {
+    const existingPage = await this.getPage(pageData.slug);
+    
+    if (existingPage) {
+      // Update existing page
+      const [updatedPage] = await db
+        .update(pages)
+        .set({
+          title: pageData.title,
+          data: pageData.data,
+          htmlContent: pageData.htmlContent,
+          cssContent: pageData.cssContent,
+          updatedAt: new Date()
+        })
+        .where(eq(pages.slug, pageData.slug))
+        .returning();
+      return updatedPage;
+    } else {
+      // Create new page
+      const [newPage] = await db
+        .insert(pages)
+        .values(pageData)
+        .returning();
+      return newPage;
+    }
+  }
+
+  async deletePage(slug: string): Promise<boolean> {
+    try {
+      const result = await db.delete(pages).where(eq(pages.slug, slug));
+      return result.rowCount !== null && result.rowCount > 0;
+    } catch (error) {
+      console.error('Error deleting page:', error);
       return false;
     }
   }

@@ -61,6 +61,27 @@ export const insertSubProductSchema = createInsertSchema(subProducts).omit({
 export type InsertSubProduct = z.infer<typeof insertSubProductSchema>;
 export type SubProduct = typeof subProducts.$inferSelect;
 
+// Pages schema for GrapesJS page builder
+export const pages = pgTable("pages", {
+  id: serial("id").primaryKey(),
+  slug: text("slug").notNull().unique(), // page identifier (e.g., sub-product id or custom slug)
+  title: text("title").notNull(),
+  data: json("data").$type<any>().notNull(), // GrapesJS project data JSON
+  htmlContent: text("html_content"), // Generated HTML from GrapesJS
+  cssContent: text("css_content"), // Generated CSS from GrapesJS
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const insertPageSchema = createInsertSchema(pages).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export type InsertPage = z.infer<typeof insertPageSchema>;
+export type Page = typeof pages.$inferSelect;
+
 // Products schema (updated to remove content and use sub-products)
 export const products = pgTable("products", {
   id: serial("id").primaryKey(),
