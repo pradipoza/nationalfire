@@ -159,16 +159,26 @@ const SubProductDetail: React.FC<SubProductDetailProps> = ({ id }) => {
 
           {/* Custom Content Area - Full Width WYSIWYG Design */}
           <div className="lg:col-span-2">
-            {subProduct.content && subProduct.content.trim() !== '' && subProduct.content !== '<p></p>' ? (
-              // Show ONLY the custom-designed editor content - no titles, no headers, no default styling
+            {subProduct.htmlContent && subProduct.htmlContent.trim() !== '' ? (
+              // Show ONLY the custom-designed visual page builder content - no titles, no headers, no default styling
+              <div className="bg-white rounded-lg shadow-sm">
+                <style dangerouslySetInnerHTML={{ __html: subProduct.cssContent || '' }} />
+                <div dangerouslySetInnerHTML={{ __html: subProduct.htmlContent }} />
+              </div>
+            ) : subProduct.content && subProduct.content.trim() !== '' && subProduct.content !== '<p></p>' ? (
+              // Fallback to old rich text content
               <div 
                 className="rich-content bg-white rounded-lg shadow-sm"
                 dangerouslySetInnerHTML={{ __html: subProduct.content }}
               />
             ) : (
               // Completely blank page if no content designed in editor - full creative control
-              <div className="bg-white rounded-lg shadow-sm min-h-[600px]">
-                {/* Intentionally completely blank - user has full design control via editor */}
+              <div className="bg-white rounded-lg shadow-sm min-h-[600px] flex items-center justify-center">
+                <div className="text-center text-gray-500">
+                  <Package className="h-16 w-16 mx-auto mb-4 opacity-50" />
+                  <p className="text-lg">No content available</p>
+                  <p className="text-sm">Use the admin panel to design this page</p>
+                </div>
               </div>
             )}
           </div>

@@ -223,6 +223,10 @@ const SubProductManager: React.FC = () => {
               cssContent: css,
             });
             
+            // Invalidate both the list and the specific sub-product cache
+            queryClient.invalidateQueries({ queryKey: [API_ENDPOINTS.SUB_PRODUCTS] });
+            queryClient.invalidateQueries({ queryKey: [API_ENDPOINTS.SUB_PRODUCT(editingSubProduct.id)] });
+            
             toast({
               title: "Success",
               description: "Sub-product page design saved successfully",
@@ -422,15 +426,10 @@ const SubProductManager: React.FC = () => {
               </div>
               
               <div>
-                <Label htmlFor="edit-content">Custom Page Designer</Label>
+                <Label>Custom Page Design</Label>
                 <p className="text-sm text-gray-600 mb-2">
-                  Design your complete sub-product page with drag-and-drop editor, advanced layouts, and professional templates.
+                  Use the "Design Page" button in the sub-product card to create custom page layouts with the visual page builder.
                 </p>
-                <AdvancedRichTextEditor
-                  content={content}
-                  onChange={setContent}
-                  placeholder="Design your custom sub-product page with advanced drag-and-drop tools..."
-                />
               </div>
               
               <div className="flex justify-end space-x-2 pt-6 border-t">
