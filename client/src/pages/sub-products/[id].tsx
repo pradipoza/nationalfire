@@ -76,6 +76,25 @@ const SubProductDetail: React.FC<SubProductDetailProps> = ({ id }) => {
 
   return (
     <div className="min-h-screen">
+      {/* Back button - always visible at top-left */}
+      <div className="fixed top-4 left-4 z-50">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => {
+            if (parentProduct) {
+              setLocation(`/products/${parentProduct.id}`);
+            } else {
+              setLocation('/products');
+            }
+          }}
+          className="bg-white/80 backdrop-blur-sm border border-gray-200 hover:bg-white/90 shadow-sm"
+        >
+          <ChevronLeft className="h-4 w-4 mr-1" />
+          Back
+        </Button>
+      </div>
+
       {subProduct.htmlContent && subProduct.htmlContent.trim() !== '' ? (
         // Show ONLY the custom-designed visual page builder content - complete control over entire page
         <div className="w-full">
