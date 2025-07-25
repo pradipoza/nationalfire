@@ -75,115 +75,29 @@ const SubProductDetail: React.FC<SubProductDetailProps> = ({ id }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white border-b">
-        <div className="container mx-auto px-4 py-6">
-          <div className="flex items-center gap-4 mb-4">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => {
-                if (parentProduct) {
-                  setLocation(`/products/${parentProduct.id}`);
-                } else {
-                  setLocation('/products');
-                }
-              }}
-            >
-              <ChevronLeft className="h-4 w-4 mr-2" />
-              Back to Products
-            </Button>
-            <div className="text-sm text-gray-500">
-              <span>Products</span> / <span>Sub-Products</span> / 
-              <span className="text-gray-900 font-medium">{subProduct.name}</span>
+    <div className="min-h-screen">
+      {subProduct.htmlContent && subProduct.htmlContent.trim() !== '' ? (
+        // Show ONLY the custom-designed visual page builder content - complete control over entire page
+        <div className="w-full">
+          <style dangerouslySetInnerHTML={{ __html: subProduct.cssContent || '' }} />
+          <div dangerouslySetInnerHTML={{ __html: subProduct.htmlContent }} />
+        </div>
+      ) : (
+        // Completely blank page if no content designed in editor - no default layout, no navigation, nothing
+        <div className="w-full h-screen bg-white flex items-center justify-center">
+          <div className="text-center text-gray-400">
+            <div className="w-24 h-24 mx-auto mb-6 opacity-20">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                <circle cx="8.5" cy="8.5" r="1.5"/>
+                <polyline points="21,15 16,10 5,21"/>
+              </svg>
             </div>
+            <p className="text-lg font-light mb-2">No content designed</p>
+            <p className="text-sm opacity-60">This page will display content created in the admin panel</p>
           </div>
         </div>
-      </div>
-
-      {/* Main Content */}
-      <div className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Product Image */}
-          <div className="lg:col-span-1">
-            <div className="sticky top-8">
-              <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-                <img
-                  src={subProduct.photo}
-                  alt={subProduct.name}
-                  className="w-full h-96 object-cover"
-                />
-              </div>
-              
-              {/* Product Info Card */}
-              <div className="bg-white rounded-lg shadow-sm p-6 mt-6">
-                <h3 className="font-semibold text-gray-900 mb-4 flex items-center">
-                  <Package className="h-5 w-5 mr-2" />
-                  Product Information
-                </h3>
-                <div className="space-y-3">
-                  {subProduct.modelNumber && (
-                    <div className="flex items-center justify-between">
-                      <span className="text-gray-600 flex items-center">
-                        <Hash className="h-4 w-4 mr-1" />
-                        Model Number
-                      </span>
-                      <Badge variant="secondary">{subProduct.modelNumber}</Badge>
-                    </div>
-                  )}
-                  <div className="flex items-center justify-between">
-                    <span className="text-gray-600 flex items-center">
-                      <Calendar className="h-4 w-4 mr-1" />
-                      Added
-                    </span>
-                    <span className="text-sm text-gray-900">
-                      {formatDate(subProduct.createdAt)}
-                    </span>
-                  </div>
-                  {subProduct.updatedAt && subProduct.updatedAt !== subProduct.createdAt && (
-                    <div className="flex items-center justify-between">
-                      <span className="text-gray-600 flex items-center">
-                        <Calendar className="h-4 w-4 mr-1" />
-                        Updated
-                      </span>
-                      <span className="text-sm text-gray-900">
-                        {formatDate(subProduct.updatedAt)}
-                      </span>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Custom Content Area - Full Width WYSIWYG Design */}
-          <div className="lg:col-span-2">
-            {subProduct.htmlContent && subProduct.htmlContent.trim() !== '' ? (
-              // Show ONLY the custom-designed visual page builder content - no titles, no headers, no default styling
-              <div className="bg-white rounded-lg shadow-sm">
-                <style dangerouslySetInnerHTML={{ __html: subProduct.cssContent || '' }} />
-                <div dangerouslySetInnerHTML={{ __html: subProduct.htmlContent }} />
-              </div>
-            ) : subProduct.content && subProduct.content.trim() !== '' && subProduct.content !== '<p></p>' ? (
-              // Fallback to old rich text content
-              <div 
-                className="rich-content bg-white rounded-lg shadow-sm"
-                dangerouslySetInnerHTML={{ __html: subProduct.content }}
-              />
-            ) : (
-              // Completely blank page if no content designed in editor - full creative control
-              <div className="bg-white rounded-lg shadow-sm min-h-[600px] flex items-center justify-center">
-                <div className="text-center text-gray-500">
-                  <Package className="h-16 w-16 mx-auto mb-4 opacity-50" />
-                  <p className="text-lg">No content available</p>
-                  <p className="text-sm">Use the admin panel to design this page</p>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
+      )}
     </div>
   );
 };

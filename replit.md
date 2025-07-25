@@ -209,6 +209,10 @@ Changelog:
   - Visual editor includes professional templates, custom blocks, and advanced styling
   - Seamless integration between basic sub-product info editing and visual content creation
   - Removed separate page builder from admin navigation in favor of sub-product integration
+  - Converted sub-product detail pages to be completely controlled by visual page builder
+  - Removed all default layout elements (headers, navigation, product info cards, images)
+  - Sub-product pages now display only content created in the visual editor or blank page if no design exists
+  - Full creative control over entire page layout and content through visual page builder
 
 ## User Preferences
 
