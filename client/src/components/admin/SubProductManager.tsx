@@ -162,7 +162,10 @@ const SubProductManager: React.FC = () => {
 
   const handleEditContent = (subProduct: SubProduct) => {
     setEditingSubProduct(subProduct);
-    setCurrentPageData(subProduct.pageData);
+    // Load existing page data if it exists
+    const existingPageData = subProduct.pageData || null;
+    console.log('Loading existing page data for sub-product:', subProduct.id, existingPageData);
+    setCurrentPageData(existingPageData);
     setShowPageBuilder(true);
   };
 
@@ -217,6 +220,12 @@ const SubProductManager: React.FC = () => {
           if (!editingSubProduct) return;
           
           try {
+            console.log('Saving page data for sub-product:', editingSubProduct.id, {
+              pageData: data,
+              htmlContent: html,
+              cssContent: css,
+            });
+            
             await apiRequest("PATCH", API_ENDPOINTS.SUB_PRODUCT(editingSubProduct.id), {
               pageData: data,
               htmlContent: html,
@@ -232,6 +241,7 @@ const SubProductManager: React.FC = () => {
               description: "Sub-product page design saved successfully",
             });
           } catch (error) {
+            console.error('Failed to save page design:', error);
             toast({
               title: "Error", 
               description: "Failed to save page design",

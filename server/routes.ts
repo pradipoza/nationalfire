@@ -559,6 +559,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: 'Server error' });
     }
   });
+
+  app.patch('/api/sub-products/:id', isAuthenticated, async (req, res) => {
+    try {
+      const subProductId = parseInt(req.params.id);
+      console.log('PATCH sub-product request:', subProductId, req.body);
+      
+      const updateSchema = insertSubProductSchema.partial();
+      const validData = updateSchema.parse(req.body);
+      
+      console.log('Validated data for sub-product update:', validData);
+      
+      const updatedSubProduct = await storage.updateSubProduct(subProductId, validData);
+      if (!updatedSubProduct) {
+        return res.status(404).json({ message: 'Sub-product not found' });
+      }
+      
+      console.log('Updated sub-product:', updatedSubProduct);
+      res.json({ message: 'Sub-product updated successfully', subProduct: updatedSubProduct });
+    } catch (error) {
+      console.error('PATCH sub-product error:', error);
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: 'Invalid data', errors: error.errors });
+      }
+      res.status(500).json({ message: 'Server error' });
+    }
+  });
   
   app.delete('/api/sub-products/:id', isAuthenticated, async (req, res) => {
     try {

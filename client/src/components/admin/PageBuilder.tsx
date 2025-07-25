@@ -174,32 +174,13 @@ const PageBuilder: React.FC<PageBuilderProps> = ({
         addBtnText: 'Add Image'
       },
       // Configure storage manager for saving/loading page designs
-      storageManager: {
+      storageManager: initialData ? {
+        type: 'simple',
+        autosave: false,
+      } : {
         type: 'remote',
-        autosave: false, // We'll handle saving manually
-        autoload: true,
-        options: {
-          remote: {
-            urlLoad: `/api/pages/${pageSlug}`,
-            urlStore: `/api/pages/${pageSlug}`,
-            fetchOptions: (opts: any) => ({
-              ...opts,
-              credentials: 'include',
-              headers: {
-                'Content-Type': 'application/json',
-                ...opts.headers
-              }
-            }),
-            onStore: (data: any) => ({ 
-              slug: pageSlug, 
-              title: title,
-              data,
-              htmlContent: editor.getHtml(),
-              cssContent: editor.getCss()
-            }),
-            onLoad: (result: any) => result?.data || {}
-          }
-        }
+        autosave: false,
+        autoload: false, // We'll load manually if no initialData
       },
       canvas: {
         styles: [
@@ -285,6 +266,11 @@ const PageBuilder: React.FC<PageBuilderProps> = ({
     // Store editor reference
     editorInstanceRef.current = editor;
 
+    // Load initial data if provided
+    if (initialData) {
+      editor.loadProjectData(initialData);
+    }
+
     // Add preview toggle
     editor.Commands.add('toggle-preview', {
       run: () => setIsPreview(true),
@@ -296,7 +282,7 @@ const PageBuilder: React.FC<PageBuilderProps> = ({
         editorInstanceRef.current.destroy();
       }
     };
-  }, [pageSlug, title]);
+  }, [pageSlug, title, initialData]);
 
   const handleSave = async () => {
     if (!editorInstanceRef.current) return;
