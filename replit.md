@@ -225,6 +225,11 @@ Changelog:
     * Increased bcrypt rounds from 10 to 12 for stronger password hashing
     * Added comprehensive validation for all user inputs
     * Fixed trust proxy configuration for production deployment
+- July 27, 2025. Integrated Botpress AI Chatbot Widget
+  - Added Botpress webchat widget v3.2 to provide AI customer support
+  - Integrated custom chatbot configuration for National Fire emergency vehicles
+  - Chatbot widget appears on all pages for instant customer assistance
+  - Enhanced user experience with AI-powered support for product inquiries and general questions
 
 ## User Preferences
 
