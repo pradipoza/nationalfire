@@ -228,10 +228,14 @@ Changelog:
 - July 27, 2025. Integrated Botpress AI Chatbot Widget and Fixed Sub-Product Creation
   - Added Botpress webchat widget v3.2 to provide AI customer support
   - Integrated custom chatbot configuration for National Fire emergency vehicles
-  - Chatbot widget appears on public pages only (excluded from admin panel areas)
+  - Chatbot widget appears on public pages only (excluded from admin panel areas and login page)
   - Enhanced user experience with AI-powered support for product inquiries and general questions
   - Fixed sub-product creation duplicate name validation with proper client-side checking
   - Added comprehensive form validation for sub-product creation with better error handling
+  - Improved delete button visibility with red destructive variant styling
+  - Enhanced chatbot exclusion with multiple methods: JavaScript detection, CSS rules, and body attributes
+  - Added aggressive route monitoring to hide chatbot in restricted areas
+  - Created comprehensive deployment guide for GitHub repository setup and production deployment
 
 ## User Preferences
 
