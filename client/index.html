@@ -12,19 +12,36 @@
     <script type="module" src="/src/main.tsx"></script>
     
     <!-- Botpress AI Chatbot Widget -->
-    <script src="https://cdn.botpress.cloud/webchat/v3.2/inject.js"></script>
-    <script src="https://files.bpcontent.cloud/2024/11/14/15/20241114153714-Q3U0U143.js"></script>
+    <script src="https://cdn.botpress.cloud/webchat/v3.2/inject.js" defer></script>
+    <script src="https://files.bpcontent.cloud/2024/11/14/15/20241114153714-Q3U0U143.js" defer></script>
     
     <!-- Debug: Check if Botpress loaded -->
     <script>
       window.addEventListener('load', function() {
         setTimeout(function() {
+          console.log('Checking Botpress availability...');
           if (window.botpress) {
-            console.log('Botpress chatbot loaded successfully');
+            console.log('✓ Botpress chatbot loaded successfully');
+            
+            // Additional debug info
+            if (window.botpress.webchat) {
+              console.log('✓ Botpress webchat module available');
+            }
           } else {
-            console.error('Botpress chatbot failed to load');
+            console.error('✗ Botpress chatbot failed to load');
           }
-        }, 2000);
+          
+          // Check if chatbot widget is visible in DOM
+          const chatWidget = document.querySelector('[data-testid="botpress-chat"]') || 
+                           document.querySelector('#bp-web-widget') ||
+                           document.querySelector('.bp-widget');
+          
+          if (chatWidget) {
+            console.log('✓ Botpress widget found in DOM');
+          } else {
+            console.log('⚠ Botpress widget not found in DOM yet');
+          }
+        }, 4000);
       });
     </script>
     

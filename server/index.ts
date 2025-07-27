@@ -11,17 +11,17 @@ if (process.env.NODE_ENV === 'production') {
   app.set('trust proxy', 1);
 }
 
-// Security middleware - helmet for security headers
+// Security middleware - helmet for security headers with relaxed CSP for Botpress
 app.use(helmet({
   contentSecurityPolicy: {
     directives: {
-      defaultSrc: ["'self'"],
-      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdn.botpress.cloud"],
-      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://cdn.botpress.cloud", "https://files.bpcontent.cloud"], // Required for GrapesJS editor and Botpress chatbot
-      fontSrc: ["'self'", "https://fonts.gstatic.com"],
+      defaultSrc: ["'self'", "https:"],
+      styleSrc: ["'self'", "'unsafe-inline'", "https:"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https:"], // Required for GrapesJS editor and Botpress chatbot
+      fontSrc: ["'self'", "https:"],
       imgSrc: ["'self'", "data:", "blob:", "https:"],
-      connectSrc: ["'self'", "https://chat.botpress.cloud", "https://api.botpress.cloud", "wss://chat.botpress.cloud"],
-      frameSrc: ["'self'", "https://webchat.botpress.cloud"],
+      connectSrc: ["'self'", "https:", "wss:"],
+      frameSrc: ["'self'", "https:"],
       objectSrc: ["'none'"],
       baseUri: ["'self'"],
       formAction: ["'self'"]
