@@ -225,16 +225,11 @@ Changelog:
     * Increased bcrypt rounds from 10 to 12 for stronger password hashing
     * Added comprehensive validation for all user inputs
     * Fixed trust proxy configuration for production deployment
-- July 27, 2025. Integrated Botpress AI Chatbot Widget and Fixed Sub-Product Creation
-  - Added Botpress webchat widget v3.2 to provide AI customer support
-  - Integrated custom chatbot configuration for National Fire emergency vehicles
-  - Chatbot widget appears on public pages only (excluded from admin panel areas and login page)
-  - Enhanced user experience with AI-powered support for product inquiries and general questions
+- July 27, 2025. Enhanced Sub-Product Management System
   - Fixed sub-product creation duplicate name validation with proper client-side checking
   - Added comprehensive form validation for sub-product creation with better error handling
   - Improved delete button visibility with red destructive variant styling
-  - Enhanced chatbot exclusion with multiple methods: JavaScript detection, CSS rules, and body attributes
-  - Added aggressive route monitoring to hide chatbot in restricted areas
+  - Enhanced sub-product creation workflow with comprehensive validation
   - Created comprehensive deployment guide for GitHub repository setup and production deployment
 - July 27, 2025. Professional QA Security and Performance Enhancements
   - Applied comprehensive QA engineer recommendations for production-grade quality
@@ -251,12 +246,9 @@ Changelog:
   - Added comprehensive input validation and sanitization across all API endpoints
   - All QA recommendations implemented for small-scale production deployment (under 100 visits/day)
   - Fixed sub-product selection counting bug in product management interface
-  - Implemented proper conditional loading for Botpress AI chatbot widget
-  - Chatbot now loads only on public pages (excluded from /admin and /login routes)
-  - Enhanced performance by preventing unnecessary script loading on restricted pages
-  - Fixed sub-product selection bug showing incorrect count when no items selected
-  - Implemented proper chatbot conditional loading - now only loads on public pages (excludes /admin and /login)
-  - Replaced complex hiding logic with clean conditional injection for better performance
+  - Enhanced sub-product creation form with proper validation and error handling
+  - Improved delete button visibility with red destructive variant styling
+  - Removed AI chatbot integration at user request for cleaner website experience
 
 ## User Preferences
 
