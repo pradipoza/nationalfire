@@ -129,10 +129,45 @@ const SubProductManager: React.FC = () => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     
+    if (!imagePreview) {
+      toast({
+        title: "Error",
+        description: "Please upload an image",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const name = (formData.get("name") as string)?.trim();
+    const modelNumber = (formData.get("modelNumber") as string)?.trim();
+
+    if (!name) {
+      toast({
+        title: "Error",
+        description: "Product name is required",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Check for duplicate names (case-insensitive)
+    const existingProduct = subProducts?.subProducts?.find(p => 
+      p.name.toLowerCase() === name.toLowerCase()
+    );
+    
+    if (existingProduct) {
+      toast({
+        title: "Error",
+        description: "A sub-product with this name already exists. Please choose a different name.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     const subProductData: InsertSubProduct = {
-      name: formData.get("name") as string,
-      modelNumber: formData.get("modelNumber") as string || null,
-      photo: imagePreview || "https://via.placeholder.com/400x300",
+      name: name,
+      modelNumber: modelNumber || null,
+      photo: imagePreview,
       content: "",
     };
 

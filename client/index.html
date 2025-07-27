@@ -15,33 +15,46 @@
     <script src="https://cdn.botpress.cloud/webchat/v3.2/inject.js" defer></script>
     <script src="https://files.bpcontent.cloud/2024/11/14/15/20241114153714-Q3U0U143.js" defer></script>
     
-    <!-- Debug: Check if Botpress loaded -->
+    <!-- Debug: Check if Botpress loaded and hide in admin -->
     <script>
       window.addEventListener('load', function() {
         setTimeout(function() {
-          console.log('Checking Botpress availability...');
+          // Hide chatbot in admin areas
+          function hideChatbotInAdmin() {
+            const isAdminPage = window.location.pathname.includes('/admin');
+            const chatWidget = document.querySelector('[data-testid="botpress-chat"]') || 
+                             document.querySelector('#bp-web-widget') ||
+                             document.querySelector('.bp-widget') ||
+                             document.querySelector('iframe[src*="botpress"]');
+            
+            if (chatWidget) {
+              if (isAdminPage) {
+                chatWidget.style.display = 'none';
+                console.log('Chatbot hidden in admin area');
+              } else {
+                chatWidget.style.display = 'block';
+                console.log('Chatbot visible on public page');
+              }
+            }
+          }
+          
+          // Check Botpress loading
           if (window.botpress) {
             console.log('✓ Botpress chatbot loaded successfully');
+            hideChatbotInAdmin();
             
-            // Additional debug info
-            if (window.botpress.webchat) {
-              console.log('✓ Botpress webchat module available');
-            }
+            // Watch for route changes to hide/show chatbot
+            let currentPath = window.location.pathname;
+            setInterval(function() {
+              if (window.location.pathname !== currentPath) {
+                currentPath = window.location.pathname;
+                setTimeout(hideChatbotInAdmin, 500);
+              }
+            }, 1000);
           } else {
             console.error('✗ Botpress chatbot failed to load');
           }
-          
-          // Check if chatbot widget is visible in DOM
-          const chatWidget = document.querySelector('[data-testid="botpress-chat"]') || 
-                           document.querySelector('#bp-web-widget') ||
-                           document.querySelector('.bp-widget');
-          
-          if (chatWidget) {
-            console.log('✓ Botpress widget found in DOM');
-          } else {
-            console.log('⚠ Botpress widget not found in DOM yet');
-          }
-        }, 4000);
+        }, 3000);
       });
     </script>
     
