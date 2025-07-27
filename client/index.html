@@ -11,107 +11,31 @@
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
     
-    <!-- Botpress AI Chatbot Widget -->
-    <script src="https://cdn.botpress.cloud/webchat/v3.2/inject.js" defer></script>
-    <script src="https://files.bpcontent.cloud/2024/11/14/15/20241114153714-Q3U0U143.js" defer></script>
-    
-    <!-- Debug: Check if Botpress loaded and hide in admin/login -->
+    <!-- Conditional Botpress AI Chatbot Widget - Only loads on public pages -->
     <script>
-      window.addEventListener('load', function() {
-        setTimeout(function() {
-          // Hide chatbot in admin areas and login page
-          function hideChatbotInRestrictedAreas() {
-            const currentPath = window.location.pathname;
-            const isRestrictedArea = currentPath.includes('/admin') || currentPath.includes('/login');
-            
-            // Find all possible chatbot elements
-            const chatElements = [
-              document.querySelector('[data-testid="botpress-chat"]'),
-              document.querySelector('#bp-web-widget'),
-              document.querySelector('.bp-widget'),
-              document.querySelector('iframe[src*="botpress"]'),
-              document.querySelector('[id*="botpress"]'),
-              document.querySelector('[class*="botpress"]'),
-              document.querySelector('.webchat-container'),
-              document.querySelector('#webchat-root'),
-              document.querySelector('#fab-root')
-            ].filter(Boolean);
-            
-            chatElements.forEach(element => {
-              if (isRestrictedArea) {
-                element.style.display = 'none !important';
-                element.style.visibility = 'hidden';
-                element.style.opacity = '0';
-                console.log('Chatbot hidden in restricted area:', currentPath);
-              } else {
-                element.style.display = '';
-                element.style.visibility = '';
-                element.style.opacity = '';
-                console.log('Chatbot visible on public page:', currentPath);
-              }
-            });
-            
-            // Also hide by finding parent containers
-            const parentContainers = document.querySelectorAll('div');
-            parentContainers.forEach(container => {
-              if (container.innerHTML.includes('botpress') || container.innerHTML.includes('webchat')) {
-                if (isRestrictedArea) {
-                  container.style.display = 'none !important';
-                }
-              }
-            });
-          }
-          
-          // Check Botpress loading
-          if (window.botpress) {
-            console.log('✓ Botpress chatbot loaded successfully');
-            hideChatbotInRestrictedAreas();
-            
-            // Watch for route changes more aggressively
-            let currentPath = window.location.pathname;
-            const checkInterval = setInterval(function() {
-              if (window.location.pathname !== currentPath) {
-                currentPath = window.location.pathname;
-                setTimeout(hideChatbotInRestrictedAreas, 100);
-                setTimeout(hideChatbotInRestrictedAreas, 500);
-                setTimeout(hideChatbotInRestrictedAreas, 1000);
-              }
-              // Also check periodically in case elements are dynamically added
-              hideChatbotInRestrictedAreas();
-            }, 500);
-          } else {
-            console.error('✗ Botpress chatbot failed to load');
-          }
-        }, 2000);
-      });
-      
-      // Additional script to set body data attributes for CSS-based hiding
-      function updatePageType() {
-        const path = window.location.pathname;
-        const body = document.body;
-        
-        if (path.includes('/admin')) {
-          body.setAttribute('data-page-type', 'admin');
-        } else if (path.includes('/login')) {
-          body.setAttribute('data-page-type', 'login');
-        } else {
-          body.removeAttribute('data-page-type');
-        }
+      const currentPath = window.location.pathname;
+      const isPublicPage = !currentPath.startsWith('/admin') && !currentPath.startsWith('/login');
+
+      if (isPublicPage) {
+        const s1 = document.createElement('script');
+        s1.src = 'https://cdn.botpress.cloud/webchat/v3.2/inject.js';
+        s1.defer = true;
+        document.body.appendChild(s1);
+
+        const s2 = document.createElement('script');
+        s2.src = 'https://files.bpcontent.cloud/2024/11/14/15/20241114153714-Q3U0U143.js';
+        s2.defer = true;
+        document.body.appendChild(s2);
+
+        // Debug log for successful loading
+        window.addEventListener('load', function() {
+          setTimeout(function() {
+            if (window.botpress) {
+              console.log('✓ Botpress chatbot loaded successfully');
+            }
+          }, 2000);
+        });
       }
-      
-      // Set initial page type
-      updatePageType();
-      
-      // Watch for navigation changes
-      window.addEventListener('popstate', updatePageType);
-      let lastUrl = location.href;
-      new MutationObserver(() => {
-        const url = location.href;
-        if (url !== lastUrl) {
-          lastUrl = url;
-          updatePageType();
-        }
-      }).observe(document, {subtree: true, childList: true});
     </script>
     
     <!-- This is a replit script which adds a banner on the top of the page when opened in development mode outside the replit environment -->

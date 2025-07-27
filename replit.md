@@ -250,6 +250,9 @@ Changelog:
   - Implemented request size limits and parameter validation to prevent DoS attacks
   - Added comprehensive input validation and sanitization across all API endpoints
   - All QA recommendations implemented for small-scale production deployment (under 100 visits/day)
+  - Fixed sub-product selection bug showing incorrect count when no items selected
+  - Implemented proper chatbot conditional loading - now only loads on public pages (excludes /admin and /login)
+  - Replaced complex hiding logic with clean conditional injection for better performance
 
 ## User Preferences
 
