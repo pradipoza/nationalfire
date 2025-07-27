@@ -69,9 +69,14 @@
 
       // Wait for chatbot to load and then manage visibility
       window.addEventListener('load', function() {
-        setTimeout(function() {
+        console.log('Page loaded, checking for Botpress...');
+        
+        function checkBotpress(attempts = 0) {
+          console.log(`Checking Botpress attempt ${attempts + 1}...`);
+          
           if (window.botpress) {
             console.log('✓ Botpress chatbot loaded successfully');
+            console.log('Current path:', window.location.pathname);
             manageChatbotVisibility();
             
             // Watch for route changes in SPA
@@ -79,12 +84,21 @@
             setInterval(function() {
               if (window.location.pathname !== currentPath) {
                 currentPath = window.location.pathname;
+                console.log('Route changed to:', currentPath);
                 setTimeout(manageChatbotVisibility, 100);
                 setTimeout(manageChatbotVisibility, 500);
               }
             }, 200);
+          } else if (attempts < 10) {
+            console.log('Botpress not ready yet, retrying...');
+            setTimeout(() => checkBotpress(attempts + 1), 1000);
+          } else {
+            console.error('✗ Botpress chatbot failed to load after 10 attempts');
+            console.log('Available globals:', Object.keys(window).filter(k => k.toLowerCase().includes('bot')));
           }
-        }, 2000);
+        }
+        
+        checkBotpress();
       });
     </script>
     
