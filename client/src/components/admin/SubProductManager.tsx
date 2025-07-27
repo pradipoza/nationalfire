@@ -373,12 +373,12 @@ const SubProductManager: React.FC = () => {
                 {subProduct.modelNumber && (
                   <p className="text-sm text-gray-600 mb-3">Model: {subProduct.modelNumber}</p>
                 )}
-                <div className="flex gap-2">
+                <div className="flex gap-2 flex-wrap">
                   <Button
                     variant="outline"
                     size="sm"
                     onClick={() => handleEdit(subProduct)}
-                    className="flex-1"
+                    className="flex-1 min-w-[80px]"
                   >
                     <Edit2 className="w-4 h-4 mr-1" />
                     Edit Info
@@ -387,16 +387,17 @@ const SubProductManager: React.FC = () => {
                     variant="outline"
                     size="sm"
                     onClick={() => handleEditContent(subProduct)}
-                    className="flex-1 bg-fire-red text-white hover:bg-fire-red/90"
+                    className="flex-1 min-w-[100px] bg-fire-red text-white hover:bg-fire-red/90"
                   >
                     <FileText className="w-4 h-4 mr-1" />
                     Design Page
                   </Button>
                   <Button
-                    variant="outline"
+                    variant="destructive"
                     size="sm"
                     onClick={() => handleDelete(subProduct.id)}
-                    className="text-red-600 hover:text-red-800"
+                    className="bg-red-600 hover:bg-red-700 text-white"
+                    title="Delete sub-product"
                   >
                     <Trash2 className="w-4 h-4" />
                   </Button>

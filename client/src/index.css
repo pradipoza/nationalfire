@@ -2,6 +2,31 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Hide chatbot in admin and login areas */
+body[data-page-type="admin"] [id*="botpress"],
+body[data-page-type="admin"] [class*="botpress"],
+body[data-page-type="admin"] .webchat-container,
+body[data-page-type="admin"] #webchat-root,
+body[data-page-type="admin"] #fab-root,
+body[data-page-type="login"] [id*="botpress"],
+body[data-page-type="login"] [class*="botpress"],
+body[data-page-type="login"] .webchat-container,
+body[data-page-type="login"] #webchat-root,
+body[data-page-type="login"] #fab-root {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* Additional chatbot hiding for admin routes */
+[data-route*="/admin"] [id*="botpress"],
+[data-route*="/admin"] [class*="botpress"],
+[data-route*="/login"] [id*="botpress"],
+[data-route*="/login"] [class*="botpress"] {
+  display: none !important;
+}
+
 :root {
   --background: 0 0% 100%;
   --foreground: 20 14.3% 4.1%;
