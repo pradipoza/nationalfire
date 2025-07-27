@@ -381,7 +381,16 @@ const ProductManager: React.FC = () => {
       </Card>
 
       {/* Add Product Dialog */}
-      <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+      <Dialog open={isAddDialogOpen} onOpenChange={(open) => {
+        if (!open) {
+          // Reset state when dialog closes
+          setSelectedSubProducts([]);
+          setPhotoUrls([]);
+          setNewPhotoUrl("");
+          form.reset();
+        }
+        setIsAddDialogOpen(open);
+      }}>
         <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Add New Product</DialogTitle>
@@ -616,7 +625,17 @@ const ProductManager: React.FC = () => {
       </Dialog>
 
       {/* Edit Product Dialog */}
-      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+      <Dialog open={isEditDialogOpen} onOpenChange={(open) => {
+        if (!open) {
+          // Reset state when dialog closes
+          setSelectedSubProducts([]);
+          setPhotoUrls([]);
+          setNewPhotoUrl("");
+          setCurrentProduct(null);
+          form.reset();
+        }
+        setIsEditDialogOpen(open);
+      }}>
         <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Edit Product</DialogTitle>
