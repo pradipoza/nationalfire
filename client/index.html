@@ -13,29 +13,79 @@
     
     <!-- Conditional Botpress AI Chatbot Widget - Only loads on public pages -->
     <script>
-      const currentPath = window.location.pathname;
-      const isPublicPage = !currentPath.startsWith('/admin') && !currentPath.startsWith('/login');
+      // For SPAs, we need to load the chatbot and then manage its visibility
+      // Load the chatbot scripts
+      const s1 = document.createElement('script');
+      s1.src = 'https://cdn.botpress.cloud/webchat/v3.2/inject.js';
+      s1.defer = true;
+      document.body.appendChild(s1);
 
-      if (isPublicPage) {
-        const s1 = document.createElement('script');
-        s1.src = 'https://cdn.botpress.cloud/webchat/v3.2/inject.js';
-        s1.defer = true;
-        document.body.appendChild(s1);
+      const s2 = document.createElement('script');
+      s2.src = 'https://files.bpcontent.cloud/2024/11/14/15/20241114153714-Q3U0U143.js';
+      s2.defer = true;
+      document.body.appendChild(s2);
 
-        const s2 = document.createElement('script');
-        s2.src = 'https://files.bpcontent.cloud/2024/11/14/15/20241114153714-Q3U0U143.js';
-        s2.defer = true;
-        document.body.appendChild(s2);
-
-        // Debug log for successful loading
-        window.addEventListener('load', function() {
-          setTimeout(function() {
-            if (window.botpress) {
-              console.log('✓ Botpress chatbot loaded successfully');
+      // Function to hide/show chatbot based on current route
+      function manageChatbotVisibility() {
+        const currentPath = window.location.pathname;
+        const isRestrictedPage = currentPath.startsWith('/admin') || currentPath.startsWith('/login');
+        
+        // Find chatbot elements
+        const chatElements = [
+          document.querySelector('[data-testid="botpress-chat"]'),
+          document.querySelector('#bp-web-widget'),
+          document.querySelector('.bp-widget'),
+          document.querySelector('iframe[src*="botpress"]'),
+          document.querySelector('[id*="botpress"]'),
+          document.querySelector('[class*="botpress"]'),
+          document.querySelector('.webchat-container'),
+          document.querySelector('#webchat-root'),
+          document.querySelector('#fab-root')
+        ].filter(Boolean);
+        
+        chatElements.forEach(element => {
+          if (isRestrictedPage) {
+            element.style.display = 'none';
+            element.style.visibility = 'hidden';
+            element.style.opacity = '0';
+          } else {
+            element.style.display = '';
+            element.style.visibility = '';
+            element.style.opacity = '';
+          }
+        });
+        
+        // Find any div containing botpress or webchat
+        document.querySelectorAll('div').forEach(div => {
+          if (div.innerHTML && (div.innerHTML.includes('botpress') || div.innerHTML.includes('webchat'))) {
+            if (isRestrictedPage) {
+              div.style.display = 'none';
+            } else {
+              div.style.display = '';
             }
-          }, 2000);
+          }
         });
       }
+
+      // Wait for chatbot to load and then manage visibility
+      window.addEventListener('load', function() {
+        setTimeout(function() {
+          if (window.botpress) {
+            console.log('✓ Botpress chatbot loaded successfully');
+            manageChatbotVisibility();
+            
+            // Watch for route changes in SPA
+            let currentPath = window.location.pathname;
+            setInterval(function() {
+              if (window.location.pathname !== currentPath) {
+                currentPath = window.location.pathname;
+                setTimeout(manageChatbotVisibility, 100);
+                setTimeout(manageChatbotVisibility, 500);
+              }
+            }, 200);
+          }
+        }, 2000);
+      });
     </script>
     
     <!-- This is a replit script which adds a banner on the top of the page when opened in development mode outside the replit environment -->
