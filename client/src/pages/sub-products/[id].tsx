@@ -9,6 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { RichTextDisplay } from "@/components/RichTextDisplay";
 import { ChevronLeft, AlertCircle, Package, Calendar, Hash } from "lucide-react";
 import type { SubProduct } from "@shared/schema";
+import DOMPurify from 'dompurify';
 
 interface SubProductDetailProps {
   id: string;
@@ -98,8 +99,8 @@ const SubProductDetail: React.FC<SubProductDetailProps> = ({ id }) => {
       {subProduct.htmlContent && subProduct.htmlContent.trim() !== '' ? (
         // Show ONLY the custom-designed visual page builder content - complete control over entire page
         <div className="w-full">
-          <style dangerouslySetInnerHTML={{ __html: subProduct.cssContent || '' }} />
-          <div dangerouslySetInnerHTML={{ __html: subProduct.htmlContent }} />
+          <style dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(subProduct.cssContent || '', { ALLOWED_TAGS: ['style'], ALLOWED_ATTR: [] }) }} />
+          <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(subProduct.htmlContent) }} />
         </div>
       ) : (
         // Completely blank page if no content designed in editor - no default layout, no navigation, nothing

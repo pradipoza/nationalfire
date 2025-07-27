@@ -3,12 +3,27 @@ import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import rateLimit from "express-rate-limit";
 import helmet from "helmet";
+import compression from "compression";
+import morgan from "morgan";
 
 const app = express();
 
-// Trust proxy for production deployment (required for rate limiting)
+// Trust proxy configuration for production
 if (process.env.NODE_ENV === 'production') {
   app.set('trust proxy', 1);
+  app.enable('trust proxy');
+} else {
+  app.set('trust proxy', 1);
+}
+
+// Enable gzip compression for better performance
+app.use(compression());
+
+// Add request logging
+if (process.env.NODE_ENV === 'production') {
+  app.use(morgan('combined'));
+} else {
+  app.use(morgan('dev'));
 }
 
 // Security middleware - helmet for security headers with relaxed CSP for Botpress
@@ -56,7 +71,6 @@ const authLimiter = rateLimit({
 });
 
 app.use(limiter);
-app.use('/api/login', authLimiter);
 
 // Add CORS headers for cross-origin requests - SECURE CONFIGURATION
 app.use((req, res, next) => {
@@ -130,13 +144,25 @@ app.use((req, res, next) => {
 (async () => {
   const server = await registerRoutes(app);
 
+  // API 404 handler - must be after all API routes are registered
+  app.use('/api/*', (_req, res) => {
+    res.status(404).json({ error: 'API endpoint not found' });
+  });
+
+  // Global error handler - improved for production safety
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     console.error('Error occurred:', err);
     const status = err.status || err.statusCode || 500;
-    const message = err.message || "Internal Server Error";
-
-    res.status(status).json({ message });
-    // Don't throw the error again to prevent process crash
+    
+    // Standardize error format and don't expose internal details in production
+    if (process.env.NODE_ENV === 'production') {
+      res.status(status).json({ error: status >= 500 ? 'Internal server error' : err.message });
+    } else {
+      res.status(status).json({ 
+        error: err.message || "Internal Server Error",
+        stack: err.stack
+      });
+    }
   });
 
   // importantly only setup vite in development and after

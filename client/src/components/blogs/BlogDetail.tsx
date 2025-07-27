@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
+import DOMPurify from 'dompurify';
 
 interface BlogDetailProps {
   id: string;

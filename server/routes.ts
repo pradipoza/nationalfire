@@ -23,6 +23,18 @@ import ConnectPgSimple from "connect-pg-simple";
 import bcrypt from "bcrypt";
 import { pool } from "./db";
 import multer from "multer";
+import rateLimit from "express-rate-limit";
+
+// Rate limiter specifically for login attempts
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5, // Limit each IP to 5 login attempts per windowMs
+  message: {
+    error: 'Too many login attempts from this IP, please try again later.'
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
 
 // Add TypeScript declaration for req.user
 declare global {
@@ -69,6 +81,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.use(session({
     secret: sessionSecret!,
+    name: 'sessionId', // Custom session cookie name for security
     resave: false,
     saveUninitialized: false,
     store: sessionStore,
@@ -122,7 +135,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     if (req.isAuthenticated() && req.user) {
       return next();
     }
-    res.status(401).json({ message: 'Not authenticated' });
+    res.status(401).json({ error: 'Not authenticated' });
   };
   
   // Analytics middleware
@@ -143,20 +156,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use(trackPageVisit);
   
   // Authentication routes
-  app.post('/api/login', (req, res, next) => {
+  app.post('/api/login', authLimiter, (req, res, next) => {
     passport.authenticate('local', (err: any, user: any, info: any) => {
       if (err) {
         console.error('Login error:', err);
-        return res.status(500).json({ message: 'Server error during login' });
+        return res.status(500).json({ error: 'Server error during login' });
       }
       if (!user) {
-        return res.status(401).json({ message: info?.message || 'Invalid credentials' });
+        return res.status(401).json({ error: info?.message || 'Invalid credentials' });
       }
       
       req.logIn(user, (err) => {
         if (err) {
           console.error('Session error:', err);
-          return res.status(500).json({ message: 'Session creation failed' });
+          return res.status(500).json({ error: 'Session creation failed' });
         }
         
         res.json({ 
@@ -179,7 +192,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   app.get('/api/me', (req, res) => {
     if (!req.isAuthenticated() || !req.user) {
-      return res.status(401).json({ message: 'Not authenticated' });
+      return res.status(401).json({ error: 'Not authenticated' });
     }
     res.json({ 
       user: { 
@@ -265,11 +278,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Enhanced input validation
       if (isNaN(userId) || userId < 1 || userId > 2147483647) {
-        return res.status(400).json({ message: 'Invalid user ID' });
+        return res.status(400).json({ error: 'Invalid user ID' });
       }
       
       if (userId !== req.user!.id) {
-        return res.status(403).json({ message: 'Forbidden' });
+        return res.status(403).json({ error: 'Forbidden' });
       }
       
       const updateSchema = insertUserSchema.partial();
