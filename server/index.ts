@@ -16,12 +16,12 @@ app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
-      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"], // Required for GrapesJS editor
+      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdn.botpress.cloud"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://cdn.botpress.cloud", "https://files.bpcontent.cloud"], // Required for GrapesJS editor and Botpress chatbot
       fontSrc: ["'self'", "https://fonts.gstatic.com"],
       imgSrc: ["'self'", "data:", "blob:", "https:"],
-      connectSrc: ["'self'"],
-      frameSrc: ["'none'"],
+      connectSrc: ["'self'", "https://chat.botpress.cloud", "https://api.botpress.cloud", "wss://chat.botpress.cloud"],
+      frameSrc: ["'self'", "https://webchat.botpress.cloud"],
       objectSrc: ["'none'"],
       baseUri: ["'self'"],
       formAction: ["'self'"]

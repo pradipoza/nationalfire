@@ -12,8 +12,21 @@
     <script type="module" src="/src/main.tsx"></script>
     
     <!-- Botpress AI Chatbot Widget -->
-    <script src="https://cdn.botpress.cloud/webchat/v3.2/inject.js" defer></script>
-    <script src="https://files.bpcontent.cloud/2024/11/14/15/20241114153714-Q3U0U143.js" defer></script>
+    <script src="https://cdn.botpress.cloud/webchat/v3.2/inject.js"></script>
+    <script src="https://files.bpcontent.cloud/2024/11/14/15/20241114153714-Q3U0U143.js"></script>
+    
+    <!-- Debug: Check if Botpress loaded -->
+    <script>
+      window.addEventListener('load', function() {
+        setTimeout(function() {
+          if (window.botpress) {
+            console.log('Botpress chatbot loaded successfully');
+          } else {
+            console.error('Botpress chatbot failed to load');
+          }
+        }, 2000);
+      });
+    </script>
     
     <!-- This is a replit script which adds a banner on the top of the page when opened in development mode outside the replit environment -->
     <script type="text/javascript" src="https://replit.com/public/js/replit-dev-banner.js"></script>
