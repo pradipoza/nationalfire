@@ -100,6 +100,139 @@ const SubProductDetail: React.FC<SubProductDetailProps> = ({ id }) => {
         // Show ONLY the custom-designed visual page builder content - complete control over entire page
         <div className="w-full">
           <style dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(subProduct.cssContent || '', { ALLOWED_TAGS: ['style'], ALLOWED_ATTR: [] }) }} />
+          <style>{`
+            /* Mobile-First Responsive Template for Admin Content */
+            @media (max-width: 768px) {
+              * {
+                box-sizing: border-box !important;
+              }
+              
+              body, html {
+                overflow-x: hidden !important;
+                width: 100% !important;
+              }
+              
+              /* Layout fixes */
+              div, section, article, main, header, footer {
+                max-width: 100% !important;
+                width: 100% !important;
+                overflow-x: hidden !important;
+                padding-left: 16px !important;
+                padding-right: 16px !important;
+              }
+              
+              .gjs-row, .row, [class*="col"], [class*="grid"] {
+                width: 100% !important;
+                flex-direction: column !important;
+                display: block !important;
+                margin: 0 !important;
+                padding: 8px !important;
+              }
+              
+              /* Typography */
+              h1 { 
+                font-size: 24px !important; 
+                line-height: 1.3 !important; 
+                margin: 16px 0 !important;
+                text-align: center !important;
+              }
+              h2 { font-size: 20px !important; margin: 14px 0 !important; }
+              h3 { font-size: 18px !important; margin: 12px 0 !important; }
+              h4, h5, h6 { font-size: 16px !important; margin: 10px 0 !important; }
+              
+              p, div, span {
+                font-size: 14px !important;
+                line-height: 1.5 !important;
+                margin: 8px 0 !important;
+                word-wrap: break-word !important;
+              }
+              
+              /* Images */
+              img {
+                max-width: 100% !important;
+                width: auto !important;
+                height: auto !important;
+                display: block !important;
+                margin: 10px auto !important;
+              }
+              
+              /* Tables */
+              table {
+                width: 100% !important;
+                font-size: 12px !important;
+                border-collapse: collapse !important;
+                margin: 16px 0 !important;
+                display: block !important;
+                overflow-x: auto !important;
+              }
+              
+              table th, table td {
+                padding: 8px 4px !important;
+                font-size: 11px !important;
+                border: 1px solid #e5e7eb !important;
+                word-wrap: break-word !important;
+              }
+              
+              /* Buttons */
+              button, .btn {
+                width: 100% !important;
+                max-width: 300px !important;
+                padding: 12px 16px !important;
+                font-size: 16px !important;
+                margin: 8px auto !important;
+                display: block !important;
+              }
+              
+              /* Forms */
+              input, select, textarea {
+                width: 100% !important;
+                padding: 12px !important;
+                font-size: 16px !important;
+                margin: 8px 0 !important;
+              }
+              
+              /* Flexbox and Grid fixes */
+              [style*="display: flex"], .flex {
+                flex-direction: column !important;
+                gap: 16px !important;
+              }
+              
+              [style*="display: grid"], .grid {
+                grid-template-columns: 1fr !important;
+                gap: 16px !important;
+              }
+              
+              /* Cards and containers */
+              .card, .container, .content {
+                margin: 16px 8px !important;
+                padding: 16px !important;
+                border-radius: 8px !important;
+              }
+              
+              /* Fixed positioning fixes */
+              [style*="position: absolute"], [style*="position: fixed"] {
+                position: relative !important;
+                top: auto !important;
+                left: auto !important;
+              }
+              
+              /* Width constraints */
+              [style*="width"][style*="px"] {
+                max-width: 100% !important;
+              }
+            }
+            
+            @media (max-width: 576px) {
+              h1 { font-size: 22px !important; }
+              h2 { font-size: 18px !important; }
+              h3 { font-size: 16px !important; }
+              
+              table th, table td {
+                font-size: 10px !important;
+                padding: 6px 3px !important;
+              }
+            }
+          `}</style>
           <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(subProduct.htmlContent) }} />
         </div>
       ) : (
