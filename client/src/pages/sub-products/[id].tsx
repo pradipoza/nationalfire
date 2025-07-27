@@ -101,135 +101,224 @@ const SubProductDetail: React.FC<SubProductDetailProps> = ({ id }) => {
         <div className="w-full">
           <style dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(subProduct.cssContent || '', { ALLOWED_TAGS: ['style'], ALLOWED_ATTR: [] }) }} />
           <style>{`
-            /* Mobile-First Responsive Template for Admin Content */
+            /* Balanced Mobile Responsive CSS for Admin Content */
             @media (max-width: 768px) {
-              * {
-                box-sizing: border-box !important;
-              }
-              
+              /* Prevent horizontal scrolling without being too restrictive */
               body, html {
-                overflow-x: hidden !important;
-                width: 100% !important;
+                overflow-x: hidden;
+                width: 100%;
               }
               
-              /* Layout fixes */
-              div, section, article, main, header, footer {
-                max-width: 100% !important;
-                width: 100% !important;
-                overflow-x: hidden !important;
-                padding-left: 16px !important;
-                padding-right: 16px !important;
+              /* Basic container adjustments - less aggressive */
+              div, section, article, main {
+                max-width: 100%;
+                overflow-x: hidden;
+                padding-left: 12px;
+                padding-right: 12px;
               }
               
-              .gjs-row, .row, [class*="col"], [class*="grid"] {
+              /* Grid and flex layout improvements */
+              .gjs-row, .row, [class*="col-"] {
                 width: 100% !important;
                 flex-direction: column !important;
-                display: block !important;
-                margin: 0 !important;
-                padding: 8px !important;
+                margin-bottom: 16px;
               }
               
-              /* Typography */
+              /* Typography - readable but not overly large */
               h1 { 
-                font-size: 24px !important; 
+                font-size: 26px !important; 
                 line-height: 1.3 !important; 
-                margin: 16px 0 !important;
+                margin: 20px 0 16px 0 !important;
                 text-align: center !important;
               }
-              h2 { font-size: 20px !important; margin: 14px 0 !important; }
-              h3 { font-size: 18px !important; margin: 12px 0 !important; }
-              h4, h5, h6 { font-size: 16px !important; margin: 10px 0 !important; }
+              h2 { 
+                font-size: 22px !important; 
+                line-height: 1.3 !important; 
+                margin: 18px 0 14px 0 !important; 
+              }
+              h3 { 
+                font-size: 20px !important; 
+                line-height: 1.3 !important; 
+                margin: 16px 0 12px 0 !important; 
+              }
+              h4, h5, h6 { 
+                font-size: 18px !important; 
+                line-height: 1.3 !important; 
+                margin: 14px 0 10px 0 !important; 
+              }
               
-              p, div, span {
-                font-size: 14px !important;
-                line-height: 1.5 !important;
-                margin: 8px 0 !important;
+              /* Body text - comfortable reading size */
+              p, div, span, li {
+                font-size: 15px !important;
+                line-height: 1.6 !important;
+                margin: 10px 0 !important;
                 word-wrap: break-word !important;
               }
               
-              /* Images */
+              /* Images - responsive but maintain aspect ratio */
               img {
                 max-width: 100% !important;
                 width: auto !important;
                 height: auto !important;
                 display: block !important;
-                margin: 10px auto !important;
+                margin: 16px auto !important;
+                border-radius: 8px;
               }
               
-              /* Tables */
+              /* Tables - horizontal scroll for specs */
               table {
                 width: 100% !important;
-                font-size: 12px !important;
+                font-size: 13px !important;
                 border-collapse: collapse !important;
-                margin: 16px 0 !important;
+                margin: 20px 0 !important;
                 display: block !important;
                 overflow-x: auto !important;
+                white-space: nowrap !important;
+                -webkit-overflow-scrolling: touch !important;
+              }
+              
+              table thead {
+                display: block !important;
+                background: #f8f9fa !important;
+              }
+              
+              table tbody {
+                display: block !important;
+                max-height: none !important;
+              }
+              
+              table tr {
+                display: table !important;
+                width: 100% !important;
+                table-layout: fixed !important;
               }
               
               table th, table td {
-                padding: 8px 4px !important;
-                font-size: 11px !important;
-                border: 1px solid #e5e7eb !important;
+                padding: 10px 8px !important;
+                font-size: 12px !important;
+                border: 1px solid #dee2e6 !important;
                 word-wrap: break-word !important;
+                min-width: 80px !important;
               }
               
-              /* Buttons */
-              button, .btn {
-                width: 100% !important;
-                max-width: 300px !important;
-                padding: 12px 16px !important;
+              /* Buttons - touch friendly */
+              button, .btn, input[type="button"], input[type="submit"] {
+                min-width: 280px !important;
+                max-width: 100% !important;
+                padding: 14px 20px !important;
                 font-size: 16px !important;
-                margin: 8px auto !important;
+                margin: 12px auto !important;
                 display: block !important;
+                border-radius: 8px !important;
+                text-align: center !important;
               }
               
               /* Forms */
+              form {
+                width: 100% !important;
+                padding: 20px 16px !important;
+              }
+              
               input, select, textarea {
                 width: 100% !important;
-                padding: 12px !important;
+                padding: 14px !important;
                 font-size: 16px !important;
-                margin: 8px 0 !important;
+                margin: 10px 0 !important;
+                border-radius: 6px !important;
+                border: 1px solid #ced4da !important;
+                box-sizing: border-box !important;
               }
               
-              /* Flexbox and Grid fixes */
-              [style*="display: flex"], .flex {
+              /* Flexbox adjustments - less aggressive */
+              .flex, [style*="display: flex"] {
                 flex-direction: column !important;
-                gap: 16px !important;
+                align-items: stretch !important;
+                gap: 20px !important;
               }
               
-              [style*="display: grid"], .grid {
+              /* Grid adjustments */
+              .grid, [style*="display: grid"] {
+                grid-template-columns: 1fr !important;
+                gap: 20px !important;
+              }
+              
+              /* Cards and content blocks */
+              .card, .content, [class*="container"] {
+                margin: 20px 12px !important;
+                padding: 20px !important;
+                border-radius: 12px !important;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+              }
+              
+              /* Lists */
+              ul, ol {
+                padding-left: 24px !important;
+                margin: 16px 0 !important;
+              }
+              
+              li {
+                margin: 8px 0 !important;
+                font-size: 15px !important;
+                line-height: 1.6 !important;
+              }
+              
+              /* Width constraints for large elements */
+              [style*="width: "][style*="px"] {
+                max-width: 100% !important;
+              }
+              
+              /* Specification tables special handling */
+              .specifications, .tech-specs, [class*="spec"] {
+                overflow-x: auto !important;
+                -webkit-overflow-scrolling: touch !important;
+                margin: 20px 0 !important;
+              }
+              
+              .specifications table, .tech-specs table {
+                min-width: 400px !important;
+                font-size: 11px !important;
+              }
+              
+              /* Product showcase elements */
+              .product-header, .product-title {
+                text-align: center !important;
+                padding: 24px 16px !important;
+                background: #f8f9fa !important;
+                border-radius: 12px !important;
+                margin: 20px 0 !important;
+              }
+              
+              .feature-grid, .specs-grid {
+                display: grid !important;
                 grid-template-columns: 1fr !important;
                 gap: 16px !important;
-              }
-              
-              /* Cards and containers */
-              .card, .container, .content {
-                margin: 16px 8px !important;
-                padding: 16px !important;
-                border-radius: 8px !important;
-              }
-              
-              /* Fixed positioning fixes */
-              [style*="position: absolute"], [style*="position: fixed"] {
-                position: relative !important;
-                top: auto !important;
-                left: auto !important;
-              }
-              
-              /* Width constraints */
-              [style*="width"][style*="px"] {
-                max-width: 100% !important;
+                margin: 24px 0 !important;
               }
             }
             
-            @media (max-width: 576px) {
-              h1 { font-size: 22px !important; }
-              h2 { font-size: 18px !important; }
-              h3 { font-size: 16px !important; }
+            /* Extra small screens (less than 480px) */
+            @media (max-width: 480px) {
+              div, section, article {
+                padding-left: 8px !important;
+                padding-right: 8px !important;
+              }
+              
+              h1 { font-size: 24px !important; }
+              h2 { font-size: 20px !important; }
+              h3 { font-size: 18px !important; }
+              
+              p, div, span, li {
+                font-size: 14px !important;
+              }
               
               table th, table td {
+                font-size: 11px !important;
+                padding: 8px 6px !important;
+                min-width: 70px !important;
+              }
+              
+              .specifications table {
                 font-size: 10px !important;
-                padding: 6px 3px !important;
               }
             }
           `}</style>
