@@ -9,7 +9,7 @@ interface ProductDetailPageProps {
 
 const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ id }) => {
   return (
-    <div className="py-12">
+    <div className="pt-3 pb-12">
       <ProductDetail id={id} />
     </div>
   );

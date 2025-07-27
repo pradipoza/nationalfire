@@ -152,12 +152,12 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ id }) => {
       
       {/* Product Header - Name and Description Only */}
       <div className="mb-8">
-        <h1 className="text-3xl md:text-4xl font-bold text-blue-600 font-montserrat mb-4">
+        <h1 className="text-3xl md:text-4xl font-bold text-red-600 font-montserrat mb-4">
           {product.name}
         </h1>
         
         <div className="max-w-none mb-6">
-          <p className="text-base md:text-lg text-gray-700 whitespace-pre-line leading-relaxed font-inter">
+          <p className="text-base md:text-lg whitespace-pre-line leading-relaxed font-inter" style={{ color: 'rgb(0, 0, 0)' }}>
             {product.description}
           </p>
         </div>
