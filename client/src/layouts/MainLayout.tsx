@@ -13,19 +13,19 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   const pathname = typeof window !== 'undefined' ? window.location.pathname : '/';
   
   return (
-    <div className="min-h-screen">
-      {/* Fixed Navbar */}
+    <div className="min-h-screen flex flex-col">
+      {/* Fixed Navbar - top, left, right */}
       <div className="fixed top-0 left-0 right-0 z-50">
         <Navbar />
       </div>
       
       {/* Main content with proper spacing */}
-      <main className="pt-16 pb-96 min-h-screen overflow-x-hidden">
+      <main className="pt-16 flex-grow overflow-x-hidden">
         {children}
       </main>
       
-      {/* Fixed Footer */}
-      <div className="fixed bottom-0 left-0 right-0 z-40">
+      {/* Footer - fixed width but normal flow (not fixed to bottom) */}
+      <div className="w-full">
         <Footer />
       </div>
     </div>
