@@ -98,231 +98,122 @@ const SubProductDetail: React.FC<SubProductDetailProps> = ({ id }) => {
 
       {subProduct.htmlContent && subProduct.htmlContent.trim() !== '' ? (
         // Show ONLY the custom-designed visual page builder content - complete control over entire page
-        <div className="w-full">
+        <div className="subproduct-page w-full">
           <style dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(subProduct.cssContent || '', { ALLOWED_TAGS: ['style'], ALLOWED_ATTR: [] }) }} />
           <style>{`
-            /* Balanced Mobile Responsive CSS for Admin Content */
+            /* Scoped Responsive Container Styles as per diagnostic document */
+            .subproduct-page {
+              width: 100%;
+              box-sizing: border-box;
+            }
+            
+            .subproduct-content {
+              width: 100%;
+              box-sizing: border-box;
+            }
+            
+            .subproduct-content img,
+            .subproduct-content video,
+            .subproduct-content iframe {
+              max-width: 100%;
+              height: auto;
+            }
+            
+            /* Ensure any fixed-width elements shrink if needed */
+            .subproduct-content * {
+              max-width: 100%;
+              box-sizing: border-box;
+            }
+            
+            /* Responsive columns helper */
+            .responsive-columns {
+              display: flex;
+              flex-wrap: wrap;
+              gap: 20px;
+            }
+            
             @media (max-width: 768px) {
-              /* Prevent horizontal scrolling without being too restrictive */
-              body, html {
-                overflow-x: hidden;
-                width: 100%;
+              .responsive-columns {
+                flex-direction: column;
               }
-              
-              /* Basic container adjustments - less aggressive */
-              div, section, article, main {
-                max-width: 100%;
-                overflow-x: hidden;
-                padding-left: 12px;
-                padding-right: 12px;
-              }
-              
-              /* Grid and flex layout improvements */
-              .gjs-row, .row, [class*="col-"] {
-                width: 100% !important;
-                flex-direction: column !important;
-                margin-bottom: 16px;
-              }
-              
-              /* Typography - readable but not overly large */
-              h1 { 
+            }
+            /* Additional Mobile Responsive Enhancements */
+            @media (max-width: 768px) {
+              .subproduct-content h1 { 
                 font-size: 26px !important; 
                 line-height: 1.3 !important; 
                 margin: 20px 0 16px 0 !important;
                 text-align: center !important;
               }
-              h2 { 
+              .subproduct-content h2 { 
                 font-size: 22px !important; 
-                line-height: 1.3 !important; 
                 margin: 18px 0 14px 0 !important; 
               }
-              h3 { 
+              .subproduct-content h3 { 
                 font-size: 20px !important; 
-                line-height: 1.3 !important; 
                 margin: 16px 0 12px 0 !important; 
               }
-              h4, h5, h6 { 
+              .subproduct-content h4, 
+              .subproduct-content h5, 
+              .subproduct-content h6 { 
                 font-size: 18px !important; 
-                line-height: 1.3 !important; 
                 margin: 14px 0 10px 0 !important; 
               }
               
-              /* Body text - comfortable reading size */
-              p, div, span, li {
+              .subproduct-content p, 
+              .subproduct-content div, 
+              .subproduct-content span, 
+              .subproduct-content li {
                 font-size: 15px !important;
                 line-height: 1.6 !important;
                 margin: 10px 0 !important;
-                word-wrap: break-word !important;
               }
               
-              /* Images - responsive but maintain aspect ratio */
-              img {
-                max-width: 100% !important;
-                width: auto !important;
-                height: auto !important;
-                display: block !important;
-                margin: 16px auto !important;
-                border-radius: 8px;
-              }
-              
-              /* Tables - horizontal scroll for specs */
-              table {
-                width: 100% !important;
+              .subproduct-content table {
                 font-size: 13px !important;
-                border-collapse: collapse !important;
-                margin: 20px 0 !important;
-                display: block !important;
                 overflow-x: auto !important;
+                display: block !important;
                 white-space: nowrap !important;
-                -webkit-overflow-scrolling: touch !important;
               }
               
-              table thead {
-                display: block !important;
-                background: #f8f9fa !important;
-              }
-              
-              table tbody {
-                display: block !important;
-                max-height: none !important;
-              }
-              
-              table tr {
-                display: table !important;
-                width: 100% !important;
-                table-layout: fixed !important;
-              }
-              
-              table th, table td {
+              .subproduct-content table th, 
+              .subproduct-content table td {
                 padding: 10px 8px !important;
                 font-size: 12px !important;
-                border: 1px solid #dee2e6 !important;
-                word-wrap: break-word !important;
                 min-width: 80px !important;
               }
               
-              /* Buttons - touch friendly */
-              button, .btn, input[type="button"], input[type="submit"] {
-                min-width: 280px !important;
-                max-width: 100% !important;
-                padding: 14px 20px !important;
-                font-size: 16px !important;
+              .subproduct-content button, 
+              .subproduct-content .btn {
+                width: 100% !important;
+                max-width: 300px !important;
                 margin: 12px auto !important;
                 display: block !important;
-                border-radius: 8px !important;
-                text-align: center !important;
-              }
-              
-              /* Forms */
-              form {
-                width: 100% !important;
-                padding: 20px 16px !important;
-              }
-              
-              input, select, textarea {
-                width: 100% !important;
-                padding: 14px !important;
-                font-size: 16px !important;
-                margin: 10px 0 !important;
-                border-radius: 6px !important;
-                border: 1px solid #ced4da !important;
-                box-sizing: border-box !important;
-              }
-              
-              /* Flexbox adjustments - less aggressive */
-              .flex, [style*="display: flex"] {
-                flex-direction: column !important;
-                align-items: stretch !important;
-                gap: 20px !important;
-              }
-              
-              /* Grid adjustments */
-              .grid, [style*="display: grid"] {
-                grid-template-columns: 1fr !important;
-                gap: 20px !important;
-              }
-              
-              /* Cards and content blocks */
-              .card, .content, [class*="container"] {
-                margin: 20px 12px !important;
-                padding: 20px !important;
-                border-radius: 12px !important;
-                box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
-              }
-              
-              /* Lists */
-              ul, ol {
-                padding-left: 24px !important;
-                margin: 16px 0 !important;
-              }
-              
-              li {
-                margin: 8px 0 !important;
-                font-size: 15px !important;
-                line-height: 1.6 !important;
-              }
-              
-              /* Width constraints for large elements */
-              [style*="width: "][style*="px"] {
-                max-width: 100% !important;
-              }
-              
-              /* Specification tables special handling */
-              .specifications, .tech-specs, [class*="spec"] {
-                overflow-x: auto !important;
-                -webkit-overflow-scrolling: touch !important;
-                margin: 20px 0 !important;
-              }
-              
-              .specifications table, .tech-specs table {
-                min-width: 400px !important;
-                font-size: 11px !important;
-              }
-              
-              /* Product showcase elements */
-              .product-header, .product-title {
-                text-align: center !important;
-                padding: 24px 16px !important;
-                background: #f8f9fa !important;
-                border-radius: 12px !important;
-                margin: 20px 0 !important;
-              }
-              
-              .feature-grid, .specs-grid {
-                display: grid !important;
-                grid-template-columns: 1fr !important;
-                gap: 16px !important;
-                margin: 24px 0 !important;
               }
             }
             
-            /* Extra small screens (less than 480px) */
             @media (max-width: 480px) {
-              div, section, article {
-                padding-left: 8px !important;
-                padding-right: 8px !important;
-              }
+              .subproduct-content h1 { font-size: 24px !important; }
+              .subproduct-content h2 { font-size: 20px !important; }
+              .subproduct-content h3 { font-size: 18px !important; }
               
-              h1 { font-size: 24px !important; }
-              h2 { font-size: 20px !important; }
-              h3 { font-size: 18px !important; }
-              
-              p, div, span, li {
+              .subproduct-content p, 
+              .subproduct-content div, 
+              .subproduct-content span {
                 font-size: 14px !important;
               }
               
-              table th, table td {
+              .subproduct-content table th, 
+              .subproduct-content table td {
                 font-size: 11px !important;
                 padding: 8px 6px !important;
-                min-width: 70px !important;
-              }
-              
-              .specifications table {
-                font-size: 10px !important;
               }
             }
           `}</style>
-          <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(subProduct.htmlContent) }} />
+          <div 
+            className="subproduct-content"
+            dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(subProduct.htmlContent) }} 
+          />
         </div>
       ) : (
         // Completely blank page if no content designed in editor - no default layout, no navigation, nothing

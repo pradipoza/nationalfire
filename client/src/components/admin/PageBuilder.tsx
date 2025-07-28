@@ -40,13 +40,76 @@ const PageBuilder: React.FC<PageBuilderProps> = ({
   useEffect(() => {
     if (!editorRef.current) return;
 
-    // Initialize GrapesJS editor
+    // Initialize GrapesJS editor with mobile-first responsive configuration
     const editor = grapesjs.init({
       container: editorRef.current,
       fromElement: false,
       height: '100%',
       width: '100%',
       plugins: [gjsPresetWebpage],
+      // Mobile-first media query configuration
+      mediaCondition: 'min-width',
+      deviceManager: {
+        devices: [
+          { 
+            name: 'Mobile', 
+            width: '320px', 
+            widthMedia: '' // Default/mobile - no media query
+          },
+          { 
+            name: 'Tablet', 
+            width: '768px', 
+            widthMedia: '768px' // min-width: 768px
+          },
+          { 
+            name: 'Desktop', 
+            width: '1024px', 
+            widthMedia: '1024px' // min-width: 1024px
+          }
+        ],
+      },
+      panels: {
+        defaults: [
+          {
+            id: 'panel-devices',
+            el: '.panel__devices',
+            buttons: [
+              { 
+                id: 'device-mobile', 
+                label: '📱', 
+                command: 'set-device-mobile',
+                attributes: { title: 'Mobile View' }
+              },
+              { 
+                id: 'device-tablet', 
+                label: '📱', 
+                command: 'set-device-tablet',
+                attributes: { title: 'Tablet View' }
+              },
+              { 
+                id: 'device-desktop', 
+                label: '💻', 
+                command: 'set-device-desktop',
+                active: true,
+                attributes: { title: 'Desktop View' }
+              },
+            ],
+          },
+        ],
+      },
+      commands: {
+        defaults: {
+          'set-device-mobile': {
+            run: (editor: any) => editor.setDevice('Mobile')
+          },
+          'set-device-tablet': {
+            run: (editor: any) => editor.setDevice('Tablet')
+          },
+          'set-device-desktop': {
+            run: (editor: any) => editor.setDevice('Desktop')
+          },
+        }
+      },
       pluginsOpts: {
         'gjs-preset-webpage': {
           blocks: ['column1', 'column2', 'column3', 'text', 'link', 'image', 'video', 'map'],
@@ -98,11 +161,11 @@ const PageBuilder: React.FC<PageBuilderProps> = ({
             id: 'two-columns',
             label: '2 Columns',
             content: `
-              <div style="display: flex; gap: 20px;">
-                <div style="flex: 1; padding: 20px; border: 1px dashed #ccc;">
+              <div class="responsive-columns" style="display: flex; flex-wrap: wrap; gap: 20px;">
+                <div style="flex: 1; min-width: 280px; padding: 20px; border: 1px dashed #ccc;">
                   <div data-gjs-type="text">Column 1 content</div>
                 </div>
-                <div style="flex: 1; padding: 20px; border: 1px dashed #ccc;">
+                <div style="flex: 1; min-width: 280px; padding: 20px; border: 1px dashed #ccc;">
                   <div data-gjs-type="text">Column 2 content</div>
                 </div>
               </div>
@@ -113,14 +176,14 @@ const PageBuilder: React.FC<PageBuilderProps> = ({
             id: 'three-columns',
             label: '3 Columns',
             content: `
-              <div style="display: flex; gap: 15px;">
-                <div style="flex: 1; padding: 15px; border: 1px dashed #ccc;">
+              <div class="responsive-columns" style="display: flex; flex-wrap: wrap; gap: 15px;">
+                <div style="flex: 1; min-width: 220px; padding: 15px; border: 1px dashed #ccc;">
                   <div data-gjs-type="text">Column 1</div>
                 </div>
-                <div style="flex: 1; padding: 15px; border: 1px dashed #ccc;">
+                <div style="flex: 1; min-width: 220px; padding: 15px; border: 1px dashed #ccc;">
                   <div data-gjs-type="text">Column 2</div>
                 </div>
-                <div style="flex: 1; padding: 15px; border: 1px dashed #ccc;">
+                <div style="flex: 1; min-width: 220px; padding: 15px; border: 1px dashed #ccc;">
                   <div data-gjs-type="text">Column 3</div>
                 </div>
               </div>
@@ -170,7 +233,6 @@ const PageBuilder: React.FC<PageBuilderProps> = ({
         upload: '/api/upload/image',
         uploadName: 'files',
         autoAdd: true,
-        uploadText: 'Drop files here or click to upload',
         addBtnText: 'Add Image'
       },
       // Configure storage manager for saving/loading page designs
@@ -266,6 +328,9 @@ const PageBuilder: React.FC<PageBuilderProps> = ({
     // Store editor reference
     editorInstanceRef.current = editor;
 
+    // Set initial device to Mobile for mobile-first design
+    editor.setDevice('Mobile');
+
     // Load initial data if provided
     if (initialData) {
       editor.loadProjectData(initialData);
@@ -344,8 +409,18 @@ const PageBuilder: React.FC<PageBuilderProps> = ({
           <head>
             <title>${title}</title>
             <meta charset="utf-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1">
-            <style>${css}</style>
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <style>
+              /* Base responsive styles */
+              * { box-sizing: border-box; }
+              body { margin: 0; font-family: 'Inter', sans-serif; line-height: 1.6; }
+              img, video, iframe { max-width: 100%; height: auto; }
+              .responsive-columns { display: flex; flex-wrap: wrap; gap: 20px; }
+              @media (max-width: 768px) {
+                .responsive-columns { flex-direction: column; }
+              }
+              ${css}
+            </style>
           </head>
           <body>${html}</body>
         </html>
@@ -378,6 +453,9 @@ const PageBuilder: React.FC<PageBuilderProps> = ({
         </div>
         
         <div className="flex items-center gap-2">
+          {/* Device Switcher Panel */}
+          <div className="panel__devices flex items-center gap-1 mr-4 p-1 bg-gray-100 rounded"></div>
+          
           <Button variant="outline" onClick={handlePreview}>
             <Eye className="w-4 h-4 mr-2" />
             Preview
