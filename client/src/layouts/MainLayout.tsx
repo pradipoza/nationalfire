@@ -1,6 +1,7 @@
 import React from "react";
 import Navbar from "@/components/shared/Navbar";
 import Footer from "@/components/shared/Footer";
+import ZoomControls from "@/components/ui/ZoomControls";
 import { useQuery } from "@tanstack/react-query";
 import { API_ENDPOINTS } from "@/lib/config";
 
@@ -19,9 +20,12 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
         <Navbar />
       </div>
       
-      {/* Main content with horizontal scroll */}
-      <main className="pt-16 flex-grow overflow-x-auto overflow-y-auto">
-        <div className="min-w-fit w-full">
+      {/* Main content with horizontal scroll and zoom */}
+      <main 
+        id="main-content" 
+        className="pt-16 flex-grow overflow-x-auto overflow-y-auto zoom-container"
+      >
+        <div className="min-w-fit w-full zoom-content">
           {children}
         </div>
       </main>
@@ -30,6 +34,9 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
       <div className="w-full">
         <Footer />
       </div>
+      
+      {/* Zoom Controls */}
+      <ZoomControls />
     </div>
   );
 };
