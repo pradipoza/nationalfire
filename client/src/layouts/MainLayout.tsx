@@ -19,9 +19,11 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
         <Navbar />
       </div>
       
-      {/* Main content with proper spacing */}
-      <main className="pt-16 flex-grow overflow-x-hidden">
-        {children}
+      {/* Main content with horizontal scroll and zoom capability */}
+      <main className="pt-16 flex-grow overflow-x-auto overflow-y-auto">
+        <div className="min-w-full" style={{ minWidth: '100vw' }}>
+          {children}
+        </div>
       </main>
       
       {/* Footer - fixed width but normal flow (not fixed to bottom) */}

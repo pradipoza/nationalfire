@@ -101,15 +101,21 @@ const SubProductDetail: React.FC<SubProductDetailProps> = ({ id }) => {
         <div className="subproduct-page w-full">
           <style dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(subProduct.cssContent || '', { ALLOWED_TAGS: ['style'], ALLOWED_ATTR: [] }) }} />
           <style>{`
-            /* Scoped Responsive Container Styles as per diagnostic document */
+            /* Scoped Responsive Container Styles with horizontal scroll capability */
             .subproduct-page {
               width: 100%;
               box-sizing: border-box;
+              overflow-x: auto;
+              overflow-y: visible;
+              scroll-behavior: smooth;
+              -webkit-overflow-scrolling: touch;
             }
             
             .subproduct-content {
-              width: 100%;
+              min-width: 100%;
+              width: max-content;
               box-sizing: border-box;
+              transform-origin: top left;
             }
             
             .subproduct-content img,
@@ -119,10 +125,22 @@ const SubProductDetail: React.FC<SubProductDetailProps> = ({ id }) => {
               height: auto;
             }
             
-            /* Ensure any fixed-width elements shrink if needed */
+            /* Allow content to expand beyond viewport for horizontal scrolling */
             .subproduct-content * {
-              max-width: 100%;
+              max-width: none !important;
               box-sizing: border-box;
+            }
+            
+            /* Enable wide tables and content */
+            .subproduct-content table {
+              width: auto !important;
+              min-width: auto !important;
+            }
+            
+            /* Maintain image responsiveness while allowing zoom */
+            .subproduct-content img {
+              width: auto !important;
+              height: auto !important;
             }
             
             /* Responsive columns helper */

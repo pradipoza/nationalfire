@@ -79,6 +79,28 @@ body[data-page-type="login"] #fab-root {
   --ring: 240 4.9% 83.9%;
 }
 
+/* Enable horizontal scroll and zoom for main content */
+main {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Allow content to be zoomable while keeping navbar/footer fixed */
+main > div {
+  transform-origin: top left;
+  transition: transform 0.2s ease-in-out;
+}
+
+/* Ensure wide content doesn't break layout */
+main .subproduct-content * {
+  max-width: none !important;
+}
+
+/* Enable pinch-to-zoom on mobile */
+main {
+  touch-action: manipulation;
+}
+
 @layer base {
   * {
     @apply border-border;
