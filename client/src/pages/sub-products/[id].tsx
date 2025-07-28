@@ -101,21 +101,28 @@ const SubProductDetail: React.FC<SubProductDetailProps> = ({ id }) => {
         <div className="subproduct-page w-full">
           <style dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(subProduct.cssContent || '', { ALLOWED_TAGS: ['style'], ALLOWED_ATTR: [] }) }} />
           <style>{`
-            /* Scoped Responsive Container Styles with horizontal scroll capability */
+            /* Enable zoom and horizontal scroll without changing structure */
             .subproduct-page {
               width: 100%;
               box-sizing: border-box;
               overflow-x: auto;
-              overflow-y: visible;
+              overflow-y: auto;
               scroll-behavior: smooth;
               -webkit-overflow-scrolling: touch;
+              /* Enable zoom functionality */
+              touch-action: pan-x pan-y pinch-zoom;
+              zoom: 1;
+              -webkit-user-select: text;
+              user-select: text;
             }
             
             .subproduct-content {
-              min-width: 100%;
-              width: max-content;
+              min-width: max-content;
+              width: auto;
               box-sizing: border-box;
               transform-origin: top left;
+              /* Allow content to be wider than viewport */
+              overflow: visible;
             }
             
             .subproduct-content img,
@@ -125,22 +132,33 @@ const SubProductDetail: React.FC<SubProductDetailProps> = ({ id }) => {
               height: auto;
             }
             
-            /* Allow content to expand beyond viewport for horizontal scrolling */
+            /* Allow all content to be wider than viewport and zoomable */
             .subproduct-content * {
               max-width: none !important;
               box-sizing: border-box;
+              /* Enable text selection for better zoom interaction */
+              -webkit-user-select: text;
+              user-select: text;
             }
             
-            /* Enable wide tables and content */
+            /* Enable wide tables and content with horizontal scroll */
             .subproduct-content table {
               width: auto !important;
               min-width: auto !important;
+              table-layout: auto !important;
             }
             
-            /* Maintain image responsiveness while allowing zoom */
+            /* Images maintain aspect ratio but can be zoomed */
             .subproduct-content img {
               width: auto !important;
               height: auto !important;
+              max-width: none !important;
+            }
+            
+            /* Ensure divs and containers can expand horizontally */
+            .subproduct-content div, .subproduct-content section {
+              width: auto !important;
+              min-width: auto !important;
             }
             
             /* Responsive columns helper */

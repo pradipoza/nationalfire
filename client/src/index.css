@@ -83,22 +83,40 @@ body[data-page-type="login"] #fab-root {
 main {
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
+  overflow-x: auto;
+  overflow-y: auto;
+  /* Enable pinch-to-zoom on mobile and desktop */
+  touch-action: pan-x pan-y pinch-zoom;
+  /* Allow content to be zoomed with browser zoom */
+  zoom: 1;
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
 }
 
-/* Allow content to be zoomable while keeping navbar/footer fixed */
+/* Allow content to expand beyond viewport width */
 main > div {
+  min-width: max-content;
+  width: 100%;
   transform-origin: top left;
-  transition: transform 0.2s ease-in-out;
 }
 
-/* Ensure wide content doesn't break layout */
-main .subproduct-content * {
+/* Ensure wide content can be displayed and scrolled */
+main * {
   max-width: none !important;
+  white-space: nowrap;
 }
 
-/* Enable pinch-to-zoom on mobile */
-main {
-  touch-action: manipulation;
+/* Allow text content to wrap normally */
+main p, main div, main span, main h1, main h2, main h3, main h4, main h5, main h6 {
+  white-space: normal !important;
+}
+
+/* Enable horizontal scrolling for tables and wide elements */
+main table, main .wide-content {
+  width: auto !important;
+  min-width: auto !important;
 }
 
 @layer base {
