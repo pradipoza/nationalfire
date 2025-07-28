@@ -101,28 +101,15 @@ const SubProductDetail: React.FC<SubProductDetailProps> = ({ id }) => {
         <div className="subproduct-page w-full">
           <style dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(subProduct.cssContent || '', { ALLOWED_TAGS: ['style'], ALLOWED_ATTR: [] }) }} />
           <style>{`
-            /* Enable zoom and horizontal scroll without changing structure */
+            /* Scoped Responsive Container Styles as per diagnostic document */
             .subproduct-page {
               width: 100%;
               box-sizing: border-box;
-              overflow-x: auto;
-              overflow-y: auto;
-              scroll-behavior: smooth;
-              -webkit-overflow-scrolling: touch;
-              /* Enable zoom functionality */
-              touch-action: pan-x pan-y pinch-zoom;
-              zoom: 1;
-              -webkit-user-select: text;
-              user-select: text;
             }
             
             .subproduct-content {
-              min-width: max-content;
-              width: auto;
+              width: 100%;
               box-sizing: border-box;
-              transform-origin: top left;
-              /* Allow content to be wider than viewport */
-              overflow: visible;
             }
             
             .subproduct-content img,
@@ -132,33 +119,10 @@ const SubProductDetail: React.FC<SubProductDetailProps> = ({ id }) => {
               height: auto;
             }
             
-            /* Allow all content to be wider than viewport and zoomable */
+            /* Ensure any fixed-width elements shrink if needed */
             .subproduct-content * {
-              max-width: none !important;
+              max-width: 100%;
               box-sizing: border-box;
-              /* Enable text selection for better zoom interaction */
-              -webkit-user-select: text;
-              user-select: text;
-            }
-            
-            /* Enable wide tables and content with horizontal scroll */
-            .subproduct-content table {
-              width: auto !important;
-              min-width: auto !important;
-              table-layout: auto !important;
-            }
-            
-            /* Images maintain aspect ratio but can be zoomed */
-            .subproduct-content img {
-              width: auto !important;
-              height: auto !important;
-              max-width: none !important;
-            }
-            
-            /* Ensure divs and containers can expand horizontally */
-            .subproduct-content div, .subproduct-content section {
-              width: auto !important;
-              min-width: auto !important;
             }
             
             /* Responsive columns helper */
