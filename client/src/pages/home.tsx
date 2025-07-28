@@ -9,7 +9,7 @@ import ContactPreview from "@/components/home/ContactPreview";
 
 const Home: React.FC = () => {
   return (
-    <main>
+    <main className="min-w-fit">
       <HeroSection />
       <ProductsPreview />
       <BlogsPreview />

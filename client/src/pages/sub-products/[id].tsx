@@ -98,43 +98,46 @@ const SubProductDetail: React.FC<SubProductDetailProps> = ({ id }) => {
 
       {subProduct.htmlContent && subProduct.htmlContent.trim() !== '' ? (
         // Show ONLY the custom-designed visual page builder content - complete control over entire page
-        <div className="subproduct-page w-full">
+        <div className="subproduct-page min-w-fit w-auto">
           <style dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(subProduct.cssContent || '', { ALLOWED_TAGS: ['style'], ALLOWED_ATTR: [] }) }} />
           <style>{`
-            /* Scoped Responsive Container Styles as per diagnostic document */
+            /* Horizontal Scroll Support for Wide Content */
             .subproduct-page {
-              width: 100%;
+              min-width: max-content;
+              width: auto;
               box-sizing: border-box;
             }
             
             .subproduct-content {
-              width: 100%;
+              min-width: max-content;
+              width: auto;
               box-sizing: border-box;
             }
             
             .subproduct-content img,
             .subproduct-content video,
             .subproduct-content iframe {
-              max-width: 100%;
               height: auto;
             }
             
-            /* Ensure any fixed-width elements shrink if needed */
+            /* Allow content to maintain its natural width */
             .subproduct-content * {
-              max-width: 100%;
               box-sizing: border-box;
             }
             
-            /* Responsive columns helper */
+            /* Responsive columns helper - no wrapping for horizontal scroll */
             .responsive-columns {
               display: flex;
-              flex-wrap: wrap;
+              flex-wrap: nowrap;
               gap: 20px;
+              min-width: max-content;
             }
             
+            /* Preserve layout on all screen sizes */
             @media (max-width: 768px) {
               .responsive-columns {
-                flex-direction: column;
+                flex-direction: row;
+                flex-wrap: nowrap;
               }
             }
             /* Additional Mobile Responsive Enhancements */
