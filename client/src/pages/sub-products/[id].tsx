@@ -217,7 +217,7 @@ const SubProductDetail: React.FC<SubProductDetailProps> = ({ id }) => {
         </div>
       ) : (
         // Completely blank page if no content designed in editor - no default layout, no navigation, nothing
-        <div className="w-full h-screen bg-white flex items-center justify-center">
+        <div className="w-full min-h-screen bg-white flex items-center justify-center">
           <div className="text-center text-gray-400">
             <div className="w-24 h-24 mx-auto mb-6 opacity-20">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1">

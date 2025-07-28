@@ -7,17 +7,7 @@ import { config } from "@/lib/config";
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
   const [location] = useLocation();
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
 
   // Close mobile menu when location changes
   useEffect(() => {
@@ -29,8 +19,7 @@ const Navbar: React.FC = () => {
   return (
     <nav
       className={cn(
-        "sticky top-0 z-50 w-full transition-all duration-300",
-        scrolled ? "bg-white shadow-md" : "bg-white/95 shadow-sm"
+        "w-full transition-all duration-300 bg-white shadow-md"
       )}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
