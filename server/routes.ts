@@ -1306,14 +1306,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
     });
 
-    upload.array('files')(req, res, (err: any) => {
+    const uploadMiddleware = upload.any();
+    uploadMiddleware(req, res, (err: any) => {
       if (err) {
         console.error('Upload error:', err);
         return res.status(400).json({ message: err.message });
       }
 
-      const files = req.files;
+      const files = req.files as Express.Multer.File[];
       console.log('Files received:', files?.length || 0);
+      console.log('Request fields:', Object.keys(req.body));
       
       if (!files || !Array.isArray(files) || files.length === 0) {
         console.log('No files in request');
