@@ -233,7 +233,12 @@ const PageBuilder: React.FC<PageBuilderProps> = ({
         upload: '/api/upload/image',
         uploadName: 'files',
         autoAdd: true,
-        addBtnText: 'Add Image'
+        headers: {
+          'Accept': 'application/json',
+        },
+        params: {},
+        credentials: 'include',
+        multiUpload: true
       },
       // Configure storage manager for saving/loading page designs
       storageManager: initialData ? {
@@ -335,6 +340,32 @@ const PageBuilder: React.FC<PageBuilderProps> = ({
     if (initialData) {
       editor.loadProjectData(initialData);
     }
+
+    // Add event listeners for asset manager
+    editor.on('asset:upload:start', () => {
+      console.log('Image upload started...');
+      toast({
+        title: "Uploading Image",
+        description: "Please wait while your image is being uploaded.",
+      });
+    });
+
+    editor.on('asset:upload:end', (result: any) => {
+      console.log('Image upload completed:', result);
+      toast({
+        title: "Image Uploaded",
+        description: "Your image has been successfully uploaded and added to the page.",
+      });
+    });
+
+    editor.on('asset:upload:error', (error: any) => {
+      console.error('Image upload error:', error);
+      toast({
+        title: "Upload Failed",
+        description: "There was an error uploading your image. Please try again.",
+        variant: "destructive",
+      });
+    });
 
     // Add preview toggle
     editor.Commands.add('toggle-preview', {

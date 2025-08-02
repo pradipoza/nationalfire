@@ -1289,12 +1289,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Image upload endpoint for GrapesJS Asset Manager
   app.post('/api/upload/image', isAuthenticated, (req, res) => {
+    console.log('Image upload request received');
+    
     // Configure multer for memory storage
     const storage = multer.memoryStorage();
     const upload = multer({ 
       storage,
       limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit
       fileFilter: (req: any, file: any, cb: any) => {
+        console.log('File filter check:', file.mimetype);
         if (file.mimetype.startsWith('image/')) {
           cb(null, true);
         } else {
@@ -1305,22 +1308,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     upload.array('files')(req, res, (err: any) => {
       if (err) {
+        console.error('Upload error:', err);
         return res.status(400).json({ message: err.message });
       }
 
       const files = req.files;
+      console.log('Files received:', files?.length || 0);
+      
       if (!files || !Array.isArray(files) || files.length === 0) {
+        console.log('No files in request');
         return res.status(400).json({ message: 'No files uploaded' });
       }
 
-      // Convert uploaded files to base64 data URLs
-      const imageUrls = files.map((file: any) => {
-        const base64 = file.buffer.toString('base64');
-        return `data:${file.mimetype};base64,${base64}`;
-      });
+      try {
+        // Convert uploaded files to base64 data URLs and format for GrapesJS
+        const assets = files.map((file: any) => {
+          const base64 = file.buffer.toString('base64');
+          const dataUrl = `data:${file.mimetype};base64,${base64}`;
+          console.log('Created asset for file:', file.originalname, 'size:', file.size);
+          return {
+            src: dataUrl,
+            type: 'image',
+            height: 100,
+            width: 100
+          };
+        });
 
-      // Return in format expected by GrapesJS
-      res.json({ data: imageUrls });
+        console.log('Returning assets:', assets.length);
+        // Return in format expected by GrapesJS Asset Manager
+        res.json({ data: assets });
+      } catch (error) {
+        console.error('Error processing files:', error);
+        res.status(500).json({ message: 'Error processing uploaded files' });
+      }
     });
   });
   
