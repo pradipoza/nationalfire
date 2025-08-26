@@ -1,0 +1,43 @@
+keyword	type	priority
+fire safety equipment Nepal	Primary	High
+emergency vehicles Nepal	Primary	High
+fire protection services Nepal	Primary	High
+ambulance services Nepal	Primary	High
+fire truck manufacturer Nepal	Primary	High
+fire safety company Bhaktpur	Primary	High
+emergency vehicles Kathmandu	Primary	High
+fire equipment supplier Nepal	Primary	High
+ambulance supplier Nepal	Primary	High
+fire protection Kathmandu valley	Primary	High
+fire extinguisher Nepal	Primary	High
+portable fire pump Nepal	Primary	High
+firefighting equipment Nepal	Primary	High
+electric ambulance Nepal	Primary	High
+fire safety boots Nepal	Primary	High
+fire protection suit Nepal	Primary	High
+generator supplier Nepal	Primary	High
+garbage compactor Nepal	Primary	High
+electric bus Nepal	Primary	High
+firefighting boat Nepal	Primary	High
+fire safety consultation Nepal	Primary	High
+emergency vehicle maintenance Nepal	Primary	High
+fire equipment installation Nepal	Primary	High
+fire safety training Nepal	Primary	High
+government fire equipment supplier	Primary	High
+municipality fire vehicles Nepal	Primary	High
+hospital ambulance supplier Nepal	Primary	High
+industrial fire safety Nepal	Primary	High
+commercial fire protection Nepal	Primary	High
+best fire safety equipment company in Nepal	Long-tail	Medium
+portable fire fighting pump supplier Kathmandu	Long-tail	Medium
+Italian fire extinguisher distributor Nepal	Long-tail	Medium
+Japanese fire pump dealer Nepal	Long-tail	Medium
+electric ambulance manufacturer Nepal	Long-tail	Medium
+fire protection suit supplier Bhaktpur	Long-tail	Medium
+government approved fire equipment Nepal	Long-tail	Medium
+fire safety equipment for hospitals Nepal	Long-tail	Medium
+municipal garbage compactor supplier Nepal	Long-tail	Medium
+eco-friendly electric bus Nepal	Long-tail	Medium
+emergency vehicle spare parts Nepal	Long-tail	Medium
+fire safety consultation services Kathmandu	Long-tail	Medium
+firefighting equipment maintenance Nepal	Long-tail	Medium

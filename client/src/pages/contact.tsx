@@ -4,6 +4,8 @@ import { API_ENDPOINTS } from "@/lib/config";
 import { config } from "@/lib/config";
 import ContactForm from "@/components/contact/ContactForm";
 import ContactInfo from "@/components/contact/ContactInfo";
+import SEOHead from "@/components/seo/SEOHead";
+import { pageKeywords, generateStructuredData } from "@/data/seoKeywords";
 import { MapPin, Phone, Mail, Clock } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -12,18 +14,30 @@ const ContactPage: React.FC = () => {
     queryKey: [API_ENDPOINTS.CONTACT_INFO],
   });
 
-  const contactInfo = data?.contactInfo;
+  const contactInfo = data?.contactInfo || null;
+  const structuredData = generateStructuredData('service', {
+    name: "Fire Safety Consultation Services",
+    description: "Professional fire safety consultation and emergency vehicle services in Nepal"
+  });
   
   return (
-    <div>
+    <>
+      <SEOHead
+        title="Contact National Fire Nepal | Fire Safety Consultation Services Kathmandu | Emergency Vehicle Maintenance"
+        description="Contact National Fire Nepal for fire safety consultation services in Kathmandu, emergency vehicle maintenance, fire equipment installation and professional fire protection services across Nepal."
+        keywords={pageKeywords.contact}
+        canonicalUrl="https://nationalfire.com.np/contact"
+        structuredData={structuredData}
+      />
+      <div>
       <section className="py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h1 className="text-3xl md:text-4xl font-bold text-gray-900 font-montserrat">
-              Contact Us
+              Contact National Fire Nepal | Fire Safety Consultation Services
             </h1>
             <p className="mt-4 text-lg text-gray-500 max-w-3xl mx-auto">
-              Reach out to discuss your emergency vehicle needs or request more information
+              Contact us for fire safety consultation services in Kathmandu, emergency vehicle maintenance, fire equipment installation and professional fire protection services across Nepal.
             </p>
           </div>
 
@@ -70,6 +84,7 @@ const ContactPage: React.FC = () => {
 
 
     </div>
+    </>
   );
 };
 

@@ -7,6 +7,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ShoppingCart, Search, X } from "lucide-react";
+import SEOHead from "@/components/seo/SEOHead";
+import { pageKeywords, generateStructuredData } from "@/data/seoKeywords";
 
 const ProductsPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -31,15 +33,28 @@ const ProductsPage: React.FC = () => {
     setSearchTerm("");
   };
 
+  const structuredData = generateStructuredData('product', {
+    name: "Fire Safety Equipment and Emergency Vehicles",
+    description: "Complete range of fire extinguishers, emergency vehicles, ambulances, fire trucks, and specialized fire protection equipment for Nepal"
+  });
+
   return (
-    <div className="py-12 bg-gray-50 min-w-fit">
+    <>
+      <SEOHead
+        title="Fire Safety Equipment Nepal | Fire Extinguishers, Emergency Vehicles & Firefighting Equipment"
+        description="Browse our complete range of fire safety equipment in Nepal. Fire extinguishers, portable fire pumps, emergency vehicles, ambulances, electric buses, and professional firefighting equipment. Government approved suppliers."
+        keywords={pageKeywords.products}
+        canonicalUrl="https://nationalfire.com.np/products"
+        structuredData={structuredData}
+      />
+      <div className="py-12 bg-gray-50 min-w-fit">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 min-w-fit">
         <div className="text-center mb-10">
           <h1 className="text-3xl md:text-4xl font-bold text-gray-900 font-montserrat">
-            Our Products
+            Fire Safety Equipment Nepal - Professional Firefighting & Emergency Products
           </h1>
           <p className="mt-4 text-lg text-gray-500 max-w-3xl mx-auto">
-            Discover our range of emergency vehicles, electric buses, and specialized parts designed for reliability and performance.
+            Comprehensive range of fire extinguishers, portable fire pumps, emergency vehicles, ambulances, electric buses, and government approved fire protection equipment across Nepal. Serving hospitals, municipalities, industries and commercial establishments.
           </p>
         </div>
 
@@ -120,6 +135,7 @@ const ProductsPage: React.FC = () => {
         )}
       </div>
     </div>
+    </>
   );
 };
 

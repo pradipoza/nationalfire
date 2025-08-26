@@ -6,6 +6,8 @@ import { Check, Loader2 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "wouter";
 import CustomerSection from "@/components/CustomerSection";
+import SEOHead from "@/components/seo/SEOHead";
+import { pageKeywords, generateStructuredData } from "@/data/seoKeywords";
 import fireExtinguisherImg from "@assets/ChatGPT Image Jul 2, 2025, 06_55_51 PM_1751462265443.png";
 import fireTruckImg from "@assets/ChatGPT Image Jul 2, 2025, 06_44_37 PM_1751462265444.png";
 import electricBusImg from "@assets/national fire 3_1751462265443.jpg";
@@ -15,6 +17,8 @@ const AboutPage: React.FC = () => {
   const { data, isLoading } = useQuery({
     queryKey: [API_ENDPOINTS.ABOUT_STATS],
   });
+
+  const structuredData = generateStructuredData('organization');
 
   const aboutStats = data?.aboutStats;
   const counterRef = useRef<HTMLDivElement>(null);
@@ -71,16 +75,24 @@ const AboutPage: React.FC = () => {
   };
 
   return (
-    <div>
+    <>
+      <SEOHead
+        title="About National Fire Nepal | Fire Safety Company Bhaktpur | Government Fire Equipment Supplier"
+        description="Leading fire safety company in Bhaktpur, Nepal since 2009. Government approved fire equipment supplier serving hospitals, municipalities and industries across Nepal. Professional fire safety training and consultation services."
+        keywords={pageKeywords.about}
+        canonicalUrl="https://nationalfire.com.np/about"
+        structuredData={structuredData}
+      />
+      <div>
       {/* Company Introduction Section */}
       <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h1 className="text-3xl md:text-4xl font-bold text-gray-900 font-montserrat">
-              About National Fire Safe Pvt. Ltd.
+              About National Fire Nepal | Fire Safety Company Bhaktpur
             </h1>
             <p className="mt-4 text-lg text-gray-500 max-w-3xl mx-auto">
-              Safety and innovation drive everything we do - protecting lives and property across Nepal since 2009
+              Government approved fire equipment supplier and fire safety company in Bhaktpur, Nepal since 2009. Leading provider of fire protection services, emergency vehicles, and industrial fire safety solutions across Nepal.
             </p>
           </div>
 
@@ -344,6 +356,7 @@ const AboutPage: React.FC = () => {
         </div>
       </section>
     </div>
+    </>
   );
 };
 
