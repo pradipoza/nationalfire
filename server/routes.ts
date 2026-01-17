@@ -14,6 +14,8 @@ import {
   insertAboutStatsSchema,
   insertAnalyticsSchema,
   insertBrandSchema,
+  insertSiteSettingsSchema,
+  insertAboutContentSchema,
   User as AppUser
 } from "@shared/schema";
 import session from "express-session";
@@ -934,6 +936,56 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       res.json({ message: 'About stats updated successfully', aboutStats: updatedAboutStats });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: 'Invalid data', errors: error.errors });
+      }
+      res.status(500).json({ message: 'Server error' });
+    }
+  });
+  
+  // About content routes
+  app.get('/api/about-content', async (req, res) => {
+    try {
+      const aboutContent = await storage.getAboutContent();
+      res.json({ aboutContent: aboutContent || null });
+    } catch (error) {
+      res.status(500).json({ message: 'Server error' });
+    }
+  });
+  
+  app.put('/api/about-content', isAuthenticated, async (req, res) => {
+    try {
+      const updateSchema = insertAboutContentSchema.partial();
+      const validData = updateSchema.parse(req.body);
+      
+      const updatedAboutContent = await storage.updateAboutContent(validData);
+      res.json({ message: 'About content updated successfully', aboutContent: updatedAboutContent });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: 'Invalid data', errors: error.errors });
+      }
+      res.status(500).json({ message: 'Server error' });
+    }
+  });
+  
+  // Site settings routes
+  app.get('/api/site-settings', async (req, res) => {
+    try {
+      const siteSettings = await storage.getSiteSettings();
+      res.json({ siteSettings: siteSettings || null });
+    } catch (error) {
+      res.status(500).json({ message: 'Server error' });
+    }
+  });
+  
+  app.put('/api/site-settings', isAuthenticated, async (req, res) => {
+    try {
+      const updateSchema = insertSiteSettingsSchema.partial();
+      const validData = updateSchema.parse(req.body);
+      
+      const updatedSettings = await storage.updateSiteSettings(validData);
+      res.json({ message: 'Site settings updated successfully', siteSettings: updatedSettings });
     } catch (error) {
       if (error instanceof z.ZodError) {
         return res.status(400).json({ message: 'Invalid data', errors: error.errors });

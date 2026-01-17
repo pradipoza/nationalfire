@@ -152,11 +152,11 @@ export const insertGallerySchema = createInsertSchema(gallery).omit({
 export type InsertGallery = z.infer<typeof insertGallerySchema>;
 export type Gallery = typeof gallery.$inferSelect;
 
-// Contact Information schema
+// Contact Information schema (supports multiple phone numbers)
 export const contactInfo = pgTable("contact_info", {
   id: serial("id").primaryKey(),
   address: text("address").notNull(),
-  phone: text("phone").notNull(),
+  phones: json("phones").$type<string[]>().notNull().default([]),
   email: text("email").notNull(),
   facebook: text("facebook"),
   instagram: text("instagram"),
@@ -172,6 +172,40 @@ export const insertContactInfoSchema = createInsertSchema(contactInfo).omit({
 
 export type InsertContactInfo = z.infer<typeof insertContactInfoSchema>;
 export type ContactInfo = typeof contactInfo.$inferSelect;
+
+// Site Settings schema (for logo and other global settings)
+export const siteSettings = pgTable("site_settings", {
+  id: serial("id").primaryKey(),
+  logo: text("logo"),
+  faviconUrl: text("favicon_url"),
+  companyName: text("company_name").default("National Fire Safe Pvt. Ltd."),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const insertSiteSettingsSchema = createInsertSchema(siteSettings).omit({
+  id: true,
+  updatedAt: true,
+});
+
+export type InsertSiteSettings = z.infer<typeof insertSiteSettingsSchema>;
+export type SiteSettings = typeof siteSettings.$inferSelect;
+
+// About Content schema (for dynamic about us page content)
+export const aboutContent = pgTable("about_content", {
+  id: serial("id").primaryKey(),
+  title: text("title").default("National Fire Safe Pvt. Ltd."),
+  introTitle: text("intro_title"),
+  content: text("content"),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const insertAboutContentSchema = createInsertSchema(aboutContent).omit({
+  id: true,
+  updatedAt: true,
+});
+
+export type InsertAboutContent = z.infer<typeof insertAboutContentSchema>;
+export type AboutContent = typeof aboutContent.$inferSelect;
 
 // Contact Inquiries schema
 export const inquiries = pgTable("inquiries", {

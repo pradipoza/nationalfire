@@ -11,7 +11,9 @@ import {
   brands, type Brand, type InsertBrand,
   portfolio, type Portfolio, type InsertPortfolio,
   customers, type Customer, type InsertCustomer,
-  pages, type Page, type InsertPage
+  pages, type Page, type InsertPage,
+  siteSettings, type SiteSettings, type InsertSiteSettings,
+  aboutContent, type AboutContent, type InsertAboutContent
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, sql, inArray } from "drizzle-orm";
@@ -102,6 +104,14 @@ export interface IStorage {
   getPage(slug: string): Promise<Page | undefined>;
   saveOrUpdatePage(pageData: InsertPage): Promise<Page>;
   deletePage(slug: string): Promise<boolean>;
+  
+  // Site Settings
+  getSiteSettings(): Promise<SiteSettings | undefined>;
+  updateSiteSettings(updates: Partial<InsertSiteSettings>): Promise<SiteSettings | undefined>;
+  
+  // About Content
+  getAboutContent(): Promise<AboutContent | undefined>;
+  updateAboutContent(updates: Partial<InsertAboutContent>): Promise<AboutContent | undefined>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -398,7 +408,7 @@ export class DatabaseStorage implements IStorage {
         .insert(contactInfo)
         .values({
           address: updates.address || "123 Emergency Avenue, Phoenix, AZ",
-          phone: updates.phone || "+1 (555) 123-4567",
+          phones: updates.phones || ["+1 (555) 123-4567"],
           email: updates.email || "info@nationalfire.com",
           facebook: updates.facebook,
           instagram: updates.instagram,
@@ -413,7 +423,7 @@ export class DatabaseStorage implements IStorage {
     const updateValues: any = { updatedAt: new Date() };
     
     if (updates.address) updateValues.address = updates.address;
-    if (updates.phone) updateValues.phone = updates.phone;
+    if (updates.phones !== undefined) updateValues.phones = updates.phones;
     if (updates.email) updateValues.email = updates.email;
     if (updates.facebook !== undefined) updateValues.facebook = updates.facebook;
     if (updates.instagram !== undefined) updateValues.instagram = updates.instagram;
@@ -661,6 +671,76 @@ export class DatabaseStorage implements IStorage {
       console.error('Error deleting page:', error);
       return false;
     }
+  }
+
+  // Site Settings
+  async getSiteSettings(): Promise<SiteSettings | undefined> {
+    const [settings] = await db.select().from(siteSettings);
+    return settings;
+  }
+
+  async updateSiteSettings(updates: Partial<InsertSiteSettings>): Promise<SiteSettings | undefined> {
+    const existingSettings = await this.getSiteSettings();
+    
+    if (!existingSettings) {
+      const [newSettings] = await db
+        .insert(siteSettings)
+        .values({
+          logo: updates.logo,
+          faviconUrl: updates.faviconUrl,
+          companyName: updates.companyName || "National Fire Safe Pvt. Ltd."
+        })
+        .returning();
+      return newSettings;
+    }
+    
+    const updateValues: any = { updatedAt: new Date() };
+    
+    if (updates.logo !== undefined) updateValues.logo = updates.logo;
+    if (updates.faviconUrl !== undefined) updateValues.faviconUrl = updates.faviconUrl;
+    if (updates.companyName !== undefined) updateValues.companyName = updates.companyName;
+    
+    const [updatedSettings] = await db
+      .update(siteSettings)
+      .set(updateValues)
+      .where(eq(siteSettings.id, existingSettings.id))
+      .returning();
+    return updatedSettings;
+  }
+
+  // About Content
+  async getAboutContent(): Promise<AboutContent | undefined> {
+    const [content] = await db.select().from(aboutContent);
+    return content;
+  }
+
+  async updateAboutContent(updates: Partial<InsertAboutContent>): Promise<AboutContent | undefined> {
+    const existingContent = await this.getAboutContent();
+    
+    if (!existingContent) {
+      const [newContent] = await db
+        .insert(aboutContent)
+        .values({
+          title: updates.title || "National Fire Safe Pvt. Ltd.",
+          introTitle: updates.introTitle,
+          content: updates.content
+        })
+        .returning();
+      return newContent;
+    }
+    
+    const updateValues: any = { updatedAt: new Date() };
+    
+    if (updates.title !== undefined) updateValues.title = updates.title;
+    if (updates.introTitle !== undefined) updateValues.introTitle = updates.introTitle;
+    if (updates.content !== undefined) updateValues.content = updates.content;
+    
+    const [updatedContent] = await db
+      .update(aboutContent)
+      .set(updateValues)
+      .where(eq(aboutContent.id, existingContent.id))
+      .returning();
+    return updatedContent;
   }
 }
 

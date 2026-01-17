@@ -52,6 +52,7 @@ export const API_ENDPOINTS = {
 
   // About
   ABOUT_STATS: "/api/about-stats",
+  ABOUT_CONTENT: "/api/about-content",
 
   // Analytics
   ANALYTICS: "/api/analytics",
@@ -60,4 +61,15 @@ export const API_ENDPOINTS = {
   BRANDS: "/api/brands",
   BRAND: (id: number | string) => `/api/brands/${id}`,
   BRAND_PRODUCTS: (id: number | string) => `/api/brands/${id}/products`,
+  
+  // Portfolio
+  PORTFOLIO: "/api/portfolio",
+  PORTFOLIO_ITEM: (id: number | string) => `/api/portfolio/${id}`,
+  
+  // Customers
+  CUSTOMERS: "/api/customers",
+  CUSTOMER: (id: number | string) => `/api/customers/${id}`,
+  
+  // Site Settings
+  SITE_SETTINGS: "/api/site-settings",
 };
