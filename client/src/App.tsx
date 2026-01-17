@@ -38,6 +38,7 @@ import AdminPortfolio from "@/pages/admin/portfolio";
 import AdminCustomers from "@/pages/admin/customers";
 import AdminContact from "@/pages/admin/contact";
 import AdminSettings from "@/pages/admin/settings";
+import AdminAboutUs from "@/pages/admin/about-us";
 
 
 function ScrollToTop() {
@@ -217,6 +218,13 @@ function Router() {
         {() => (
           <AdminLayout>
             <AdminSettings />
+          </AdminLayout>
+        )}
+      </Route>
+      <Route path="/admin/about-us">
+        {() => (
+          <AdminLayout>
+            <AdminAboutUs />
           </AdminLayout>
         )}
       </Route>

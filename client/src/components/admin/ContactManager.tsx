@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { API_ENDPOINTS } from "@/lib/config";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { useForm } from "react-hook-form";
+import { useForm, useFieldArray } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ContactInfo, Inquiry } from "@shared/schema";
@@ -48,6 +48,8 @@ import {
   Trash2,
   Eye,
   Clock,
+  Plus,
+  X,
 } from "lucide-react";
 import {
   AlertDialog,
@@ -64,10 +66,11 @@ import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { format } from "date-fns";
 
-// Form schema for contact info
 const contactInfoSchema = z.object({
   address: z.string().min(5, "Address must be at least 5 characters"),
-  phone: z.string().min(5, "Phone number must be at least 5 characters"),
+  phones: z.array(z.object({
+    value: z.string().min(5, "Phone number must be at least 5 characters")
+  })).min(1, "At least one phone number is required"),
   email: z.string().email("Please enter a valid email"),
   facebook: z.string().url("Please enter a valid URL").optional().or(z.literal("")),
   instagram: z.string().url("Please enter a valid URL").optional().or(z.literal("")),
@@ -85,7 +88,6 @@ const ContactManager: React.FC = () => {
   const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
   const [selectedInquiry, setSelectedInquiry] = useState<Inquiry | null>(null);
 
-  // Load contact info
   const {
     data: contactData,
     isLoading: isLoadingContactInfo,
@@ -94,7 +96,6 @@ const ContactManager: React.FC = () => {
     queryKey: [API_ENDPOINTS.CONTACT_INFO],
   });
 
-  // Load inquiries
   const {
     data: inquiriesData,
     isLoading: isLoadingInquiries,
@@ -103,15 +104,14 @@ const ContactManager: React.FC = () => {
     queryKey: [API_ENDPOINTS.INQUIRIES],
   });
 
-  const contactInfo = contactData?.contactInfo;
-  const inquiries = inquiriesData?.inquiries || [];
+  const contactInfo = contactData?.contactInfo as ContactInfo | undefined;
+  const inquiries = (inquiriesData?.inquiries || []) as Inquiry[];
 
-  // Form for contact info
   const form = useForm<ContactInfoFormValues>({
     resolver: zodResolver(contactInfoSchema),
     defaultValues: {
       address: "",
-      phone: "",
+      phones: [{ value: "" }],
       email: "",
       facebook: "",
       instagram: "",
@@ -120,12 +120,19 @@ const ContactManager: React.FC = () => {
     },
   });
 
-  // Set form values when contact info is loaded
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: "phones",
+  });
+
   React.useEffect(() => {
     if (contactInfo) {
+      const phonesArray = contactInfo.phones || [];
       form.reset({
         address: contactInfo.address,
-        phone: contactInfo.phone,
+        phones: phonesArray.length > 0 
+          ? phonesArray.map((p: string) => ({ value: p }))
+          : [{ value: "" }],
         email: contactInfo.email,
         facebook: contactInfo.facebook || "",
         instagram: contactInfo.instagram || "",
@@ -135,10 +142,13 @@ const ContactManager: React.FC = () => {
     }
   }, [contactInfo, form]);
 
-  // Update contact info mutation
   const updateContactInfoMutation = useMutation({
     mutationFn: async (data: ContactInfoFormValues) => {
-      const res = await apiRequest("PUT", API_ENDPOINTS.CONTACT_INFO, data);
+      const payload = {
+        ...data,
+        phones: data.phones.map(p => p.value),
+      };
+      const res = await apiRequest("PUT", API_ENDPOINTS.CONTACT_INFO, payload);
       return res.json();
     },
     onSuccess: () => {
@@ -148,7 +158,7 @@ const ContactManager: React.FC = () => {
         description: "The contact information has been updated successfully",
       });
     },
-    onError: (error) => {
+    onError: () => {
       toast({
         title: "Error",
         description: "Failed to update contact information. Please try again.",
@@ -157,7 +167,6 @@ const ContactManager: React.FC = () => {
     },
   });
 
-  // Mark inquiry as read mutation
   const markInquiryAsReadMutation = useMutation({
     mutationFn: async (id: number) => {
       const res = await apiRequest("PUT", API_ENDPOINTS.MARK_INQUIRY_READ(id));
@@ -170,7 +179,7 @@ const ContactManager: React.FC = () => {
         description: "The inquiry has been marked as read",
       });
     },
-    onError: (error) => {
+    onError: () => {
       toast({
         title: "Error",
         description: "Failed to update inquiry status. Please try again.",
@@ -179,7 +188,6 @@ const ContactManager: React.FC = () => {
     },
   });
 
-  // Delete inquiry mutation
   const deleteInquiryMutation = useMutation({
     mutationFn: async (id: number) => {
       const res = await apiRequest("DELETE", API_ENDPOINTS.INQUIRY(id));
@@ -193,7 +201,7 @@ const ContactManager: React.FC = () => {
       });
       setIsDeleteDialogOpen(false);
     },
-    onError: (error) => {
+    onError: () => {
       toast({
         title: "Error",
         description: "Failed to delete inquiry. Please try again.",
@@ -202,36 +210,31 @@ const ContactManager: React.FC = () => {
     },
   });
 
-  // Handle form submission for contact info
   const onSubmitContactInfo = (values: ContactInfoFormValues) => {
-    updateContactInfoMutation.mutateAsync(values);
+    updateContactInfoMutation.mutate(values);
   };
 
-  // View inquiry details
   const viewInquiry = (inquiry: Inquiry) => {
     setSelectedInquiry(inquiry);
     setIsViewDialogOpen(true);
     
-    // If the inquiry is not read, mark it as read
     if (!inquiry.read) {
-      markInquiryAsReadMutation.mutateAsync(inquiry.id);
+      markInquiryAsReadMutation.mutate(inquiry.id);
     }
   };
 
-  // Open delete dialog
   const openDeleteDialog = (inquiry: Inquiry) => {
     setSelectedInquiry(inquiry);
     setIsDeleteDialogOpen(true);
   };
 
-  // Delete inquiry
   const onDeleteConfirm = () => {
     if (!selectedInquiry) return;
     deleteInquiryMutation.mutate(selectedInquiry.id);
   };
 
-  // Format date
-  const formatDate = (dateString: string) => {
+  const formatDate = (dateString: string | Date | null) => {
+    if (!dateString) return "Unknown";
     return format(new Date(dateString), "MMM d, yyyy h:mm a");
   };
 
@@ -286,23 +289,6 @@ const ContactManager: React.FC = () => {
                       
                       <FormField
                         control={form.control}
-                        name="phone"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Phone Number</FormLabel>
-                            <FormControl>
-                              <div className="flex gap-2">
-                                <Phone className="h-5 w-5 text-muted-foreground mt-2" />
-                                <Input placeholder="Enter phone number" {...field} />
-                              </div>
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      
-                      <FormField
-                        control={form.control}
                         name="email"
                         render={({ field }) => (
                           <FormItem>
@@ -317,7 +303,56 @@ const ContactManager: React.FC = () => {
                           </FormItem>
                         )}
                       />
+                    </div>
+
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <FormLabel className="text-base font-medium">Phone Numbers</FormLabel>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => append({ value: "" })}
+                        >
+                          <Plus className="h-4 w-4 mr-2" />
+                          Add Phone
+                        </Button>
+                      </div>
                       
+                      {fields.map((field, index) => (
+                        <div key={field.id} className="flex gap-2 items-start">
+                          <Phone className="h-5 w-5 text-muted-foreground mt-2" />
+                          <FormField
+                            control={form.control}
+                            name={`phones.${index}.value`}
+                            render={({ field }) => (
+                              <FormItem className="flex-1">
+                                <FormControl>
+                                  <Input 
+                                    placeholder={`Phone number ${index + 1}`} 
+                                    {...field} 
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          {fields.length > 1 && (
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => remove(index)}
+                              className="text-red-500 hover:text-red-700"
+                            >
+                              <X className="h-4 w-4" />
+                            </Button>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <FormField
                         control={form.control}
                         name="facebook"
@@ -505,7 +540,6 @@ const ContactManager: React.FC = () => {
         </TabsContent>
       </Tabs>
 
-      {/* View Inquiry Dialog */}
       {selectedInquiry && (
         <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
           <DialogContent className="sm:max-w-lg">
@@ -589,7 +623,6 @@ const ContactManager: React.FC = () => {
         </Dialog>
       )}
 
-      {/* Delete Confirmation Dialog */}
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -600,18 +633,13 @@ const ContactManager: React.FC = () => {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={deleteInquiryMutation.isPending}>
-              Cancel
-            </AlertDialogCancel>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={onDeleteConfirm}
-              disabled={deleteInquiryMutation.isPending}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              className="bg-red-600 hover:bg-red-700"
             >
               {deleteInquiryMutation.isPending ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Deleting...
-                </>
+                <Loader2 className="h-4 w-4 animate-spin" />
               ) : (
                 "Delete"
               )}

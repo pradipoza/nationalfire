@@ -861,7 +861,7 @@ async function initializeSeedData() {
       // Create initial contact info
       await storage.updateContactInfo({
         address: "123 Emergency Avenue, Industrial Zone, Phoenix, AZ 85001, USA",
-        phone: "+1 (555) 123-4567",
+        phones: ["+1 (555) 123-4567"],
         email: "info@nationalfire.com",
         facebook: "https://facebook.com/nationalfire",
         instagram: "https://instagram.com/nationalfire",

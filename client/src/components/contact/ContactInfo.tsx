@@ -40,13 +40,18 @@ const ContactInfo: React.FC = () => {
             <Phone className="h-5 w-5 text-white" />
           </div>
           <div className="ml-4">
-            <h4 className="text-lg font-medium text-gray-900">Phone Number</h4>
+            <h4 className="text-lg font-medium text-gray-900">Phone Numbers</h4>
             {isLoading ? (
               <Skeleton className="h-5 w-36 mt-1" />
             ) : (
-              <p className="text-gray-500 mt-1">
-                {contactInfo?.phone || config.contactPhone}
-              </p>
+              <div className="text-gray-500 mt-1 space-y-1">
+                {(contactInfo?.phones && contactInfo.phones.length > 0) 
+                  ? contactInfo.phones.map((phone: string, index: number) => (
+                      <p key={index}>{phone}</p>
+                    ))
+                  : <p>{config.contactPhone}</p>
+                }
+              </div>
             )}
           </div>
         </div>
