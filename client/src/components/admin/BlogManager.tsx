@@ -44,6 +44,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { RichTextEditor } from "@/components/ui/rich-text-editor";
 import {
   Select,
   SelectContent,
@@ -477,10 +478,11 @@ const BlogManager: React.FC = () => {
                   <FormItem>
                     <FormLabel>Content</FormLabel>
                     <FormControl>
-                      <Textarea
+                      <RichTextEditor
+                        content={field.value || ""}
+                        onChange={field.onChange}
                         placeholder="Write your blog content here"
-                        className="min-h-32"
-                        {...field}
+                        minHeight="300px"
                       />
                     </FormControl>
                     <FormMessage />
@@ -639,10 +641,11 @@ const BlogManager: React.FC = () => {
                   <FormItem>
                     <FormLabel>Content</FormLabel>
                     <FormControl>
-                      <Textarea
+                      <RichTextEditor
+                        content={field.value || ""}
+                        onChange={field.onChange}
                         placeholder="Write your blog content here"
-                        className="min-h-32"
-                        {...field}
+                        minHeight="300px"
                       />
                     </FormControl>
                     <FormMessage />

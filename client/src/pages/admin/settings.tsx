@@ -41,8 +41,10 @@ import {
   Lock,
   Loader2,
   Info,
+  Image as ImageIcon,
+  Upload,
 } from "lucide-react";
-import { aboutStats, AboutStats } from "@shared/schema";
+import { aboutStats, AboutStats, SiteSettings } from "@shared/schema";
 
 // Form schema for user profile
 const profileSchema = z.object({
@@ -67,9 +69,16 @@ const aboutStatsSchema = z.object({
   productsSupplied: z.number().min(0),
 });
 
+// Form schema for site branding
+const brandingSchema = z.object({
+  logo: z.string().optional(),
+  companyName: z.string().min(1, "Company name is required"),
+});
+
 type ProfileFormValues = z.infer<typeof profileSchema>;
 type PasswordFormValues = z.infer<typeof passwordSchema>;
 type AboutStatsFormValues = z.infer<typeof aboutStatsSchema>;
+type BrandingFormValues = z.infer<typeof brandingSchema>;
 
 const AdminSettings: React.FC = () => {
   const { user } = useAuth();
@@ -106,10 +115,25 @@ const AdminSettings: React.FC = () => {
     },
   });
 
+  // Branding form
+  const brandingForm = useForm<BrandingFormValues>({
+    resolver: zodResolver(brandingSchema),
+    defaultValues: {
+      logo: "",
+      companyName: "National Fire Safe Pvt. Ltd.",
+    },
+  });
+
   // Load about stats
   const { data: aboutStatsData, isLoading: isLoadingAboutStats } = 
     useQuery<{ aboutStats: AboutStats }>({ 
       queryKey: [API_ENDPOINTS.ABOUT_STATS] 
+    });
+
+  // Load site settings
+  const { data: siteSettingsData, isLoading: isLoadingSiteSettings } = 
+    useQuery<{ siteSettings: SiteSettings | null }>({ 
+      queryKey: [API_ENDPOINTS.SITE_SETTINGS] 
     });
 
   // Set about stats form values when data is loaded
@@ -123,6 +147,17 @@ const AdminSettings: React.FC = () => {
       });
     }
   }, [aboutStatsData, aboutStatsForm]);
+
+  // Set branding form values when data is loaded
+  React.useEffect(() => {
+    if (siteSettingsData?.siteSettings) {
+      const settings = siteSettingsData.siteSettings;
+      brandingForm.reset({
+        logo: settings.logo || "",
+        companyName: settings.companyName || "National Fire Safe Pvt. Ltd.",
+      });
+    }
+  }, [siteSettingsData, brandingForm]);
 
   // Update profile mutation
   const updateProfileMutation = useMutation({
@@ -206,6 +241,50 @@ const AdminSettings: React.FC = () => {
     updateAboutStatsMutation.mutate(values);
   };
 
+  // Update site settings mutation
+  const updateSiteSettingsMutation = useMutation({
+    mutationFn: async (data: BrandingFormValues) => {
+      const payload = {
+        logo: data.logo,
+        faviconUrl: data.logo, // Use same logo as favicon
+        companyName: data.companyName,
+      };
+      const res = await apiRequest("PUT", API_ENDPOINTS.SITE_SETTINGS, payload);
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [API_ENDPOINTS.SITE_SETTINGS] });
+      toast({
+        title: "Branding Updated",
+        description: "Site branding has been updated successfully",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: "Failed to update branding. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const onBrandingSubmit = (values: BrandingFormValues) => {
+    updateSiteSettingsMutation.mutate(values);
+  };
+
+  // Handle logo file upload
+  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const dataUrl = event.target?.result as string;
+      brandingForm.setValue("logo", dataUrl);
+    };
+    reader.readAsDataURL(file);
+  };
+
   return (
     <div>
       <div className="mb-6">
@@ -214,9 +293,10 @@ const AdminSettings: React.FC = () => {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="profile">Profile</TabsTrigger>
           <TabsTrigger value="security">Security</TabsTrigger>
+          <TabsTrigger value="branding">Branding</TabsTrigger>
           <TabsTrigger value="website">Website Settings</TabsTrigger>
         </TabsList>
         
@@ -374,6 +454,114 @@ const AdminSettings: React.FC = () => {
                 </ul>
               </div>
             </CardFooter>
+          </Card>
+        </TabsContent>
+        
+        <TabsContent value="branding" className="mt-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Site Branding</CardTitle>
+              <CardDescription>
+                Upload your company logo and set branding options. The logo will also be used as the favicon.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Form {...brandingForm}>
+                <form onSubmit={brandingForm.handleSubmit(onBrandingSubmit)} className="space-y-6">
+                  <FormField
+                    control={brandingForm.control}
+                    name="companyName"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Company Name</FormLabel>
+                        <FormControl>
+                          <Input placeholder="National Fire Safe Pvt. Ltd." {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={brandingForm.control}
+                    name="logo"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Company Logo</FormLabel>
+                        <FormControl>
+                          <div className="space-y-4">
+                            <div className="flex items-center gap-4">
+                              <Input
+                                type="file"
+                                accept="image/*"
+                                onChange={handleLogoUpload}
+                                className="max-w-xs"
+                              />
+                              <span className="text-sm text-muted-foreground">or</span>
+                              <Input
+                                placeholder="Enter logo URL"
+                                value={field.value || ""}
+                                onChange={field.onChange}
+                                className="flex-1"
+                              />
+                            </div>
+                            
+                            {field.value && (
+                              <div className="border rounded-lg p-4 bg-gray-50">
+                                <p className="text-sm text-muted-foreground mb-2">Logo Preview:</p>
+                                <div className="flex items-center gap-6">
+                                  <div>
+                                    <p className="text-xs text-muted-foreground mb-1">Navbar Size</p>
+                                    <img 
+                                      src={field.value} 
+                                      alt="Logo preview" 
+                                      className="h-12 w-auto object-contain"
+                                    />
+                                  </div>
+                                  <div>
+                                    <p className="text-xs text-muted-foreground mb-1">Favicon Size</p>
+                                    <img 
+                                      src={field.value} 
+                                      alt="Favicon preview" 
+                                      className="h-8 w-8 object-contain"
+                                    />
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <Alert>
+                    <Info className="h-4 w-4" />
+                    <AlertTitle>Logo Usage</AlertTitle>
+                    <AlertDescription>
+                      The uploaded logo will be displayed in the website header/navbar and will also be used as the browser favicon. For best results, use a square image (1:1 ratio) of at least 192x192 pixels.
+                    </AlertDescription>
+                  </Alert>
+
+                  <Button
+                    type="submit"
+                    className="bg-primary hover:bg-primary/90"
+                    disabled={updateSiteSettingsMutation.isPending}
+                  >
+                    {updateSiteSettingsMutation.isPending ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Saving...
+                      </>
+                    ) : (
+                      <>
+                        <Upload className="mr-2 h-4 w-4" /> Save Branding
+                      </>
+                    )}
+                  </Button>
+                </form>
+              </Form>
+            </CardContent>
           </Card>
         </TabsContent>
         

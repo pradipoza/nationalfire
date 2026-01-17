@@ -39,6 +39,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { RichTextEditor } from '@/components/ui/rich-text-editor';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Plus, Edit, Trash2, Heart, Building2, Eye } from 'lucide-react';
@@ -277,10 +278,11 @@ export default function PortfolioManager() {
                     <FormItem>
                       <FormLabel>Description</FormLabel>
                       <FormControl>
-                        <Textarea 
-                          placeholder="Brief description of the project" 
-                          rows={3}
-                          {...field} 
+                        <RichTextEditor
+                          content={field.value || ""}
+                          onChange={field.onChange}
+                          placeholder="Brief description of the project"
+                          minHeight="150px"
                         />
                       </FormControl>
                       <FormMessage />
@@ -294,10 +296,11 @@ export default function PortfolioManager() {
                     <FormItem>
                       <FormLabel>Project Details</FormLabel>
                       <FormControl>
-                        <Textarea 
-                          placeholder="Detailed information about the project" 
-                          rows={5}
-                          {...field} 
+                        <RichTextEditor
+                          content={field.value || ""}
+                          onChange={field.onChange}
+                          placeholder="Detailed information about the project"
+                          minHeight="250px"
                         />
                       </FormControl>
                       <FormMessage />
@@ -487,10 +490,11 @@ export default function PortfolioManager() {
                   <FormItem>
                     <FormLabel>Description</FormLabel>
                     <FormControl>
-                      <Textarea 
-                        placeholder="Brief description of the project" 
-                        rows={3}
-                        {...field} 
+                      <RichTextEditor
+                        content={field.value || ""}
+                        onChange={field.onChange}
+                        placeholder="Brief description of the project"
+                        minHeight="150px"
                       />
                     </FormControl>
                     <FormMessage />
@@ -504,10 +508,11 @@ export default function PortfolioManager() {
                   <FormItem>
                     <FormLabel>Project Details</FormLabel>
                     <FormControl>
-                      <Textarea 
-                        placeholder="Detailed information about the project" 
-                        rows={5}
-                        {...field} 
+                      <RichTextEditor
+                        content={field.value || ""}
+                        onChange={field.onChange}
+                        placeholder="Detailed information about the project"
+                        minHeight="250px"
                       />
                     </FormControl>
                     <FormMessage />

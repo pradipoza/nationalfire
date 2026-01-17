@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { RichTextEditor } from "@/components/ui/rich-text-editor";
 import {
   Dialog,
   DialogContent,
@@ -345,11 +346,11 @@ export default function BrandManager() {
 
               <div>
                 <Label htmlFor="description">Description</Label>
-                <Textarea
-                  id="description"
-                  {...form.register("description")}
+                <RichTextEditor
+                  content={form.watch("description") || ""}
+                  onChange={(value) => form.setValue("description", value)}
                   placeholder="Enter brand description"
-                  rows={3}
+                  minHeight="150px"
                 />
               </div>
 
@@ -507,11 +508,11 @@ export default function BrandManager() {
 
             <div>
               <Label htmlFor="edit-description">Description</Label>
-              <Textarea
-                id="edit-description"
-                {...form.register("description")}
+              <RichTextEditor
+                content={form.watch("description") || ""}
+                onChange={(value) => form.setValue("description", value)}
                 placeholder="Enter brand description"
-                rows={3}
+                minHeight="150px"
               />
             </div>
 

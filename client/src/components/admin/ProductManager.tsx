@@ -43,6 +43,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { RichTextEditor } from "@/components/ui/rich-text-editor";
 import {
   Plus,
   Pencil,
@@ -422,10 +423,11 @@ const ProductManager: React.FC = () => {
                   <FormItem>
                     <FormLabel>Description</FormLabel>
                     <FormControl>
-                      <Textarea
+                      <RichTextEditor
+                        content={field.value || ""}
+                        onChange={field.onChange}
                         placeholder="Describe the product in detail"
-                        className="min-h-32"
-                        {...field}
+                        minHeight="200px"
                       />
                     </FormControl>
                     <FormMessage />
@@ -667,10 +669,11 @@ const ProductManager: React.FC = () => {
                   <FormItem>
                     <FormLabel>Description</FormLabel>
                     <FormControl>
-                      <Textarea
+                      <RichTextEditor
+                        content={field.value || ""}
+                        onChange={field.onChange}
                         placeholder="Describe the product in detail"
-                        className="min-h-32"
-                        {...field}
+                        minHeight="200px"
                       />
                     </FormControl>
                     <FormMessage />
