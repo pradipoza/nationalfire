@@ -14,13 +14,18 @@ import electricBusImg from "@assets/national fire 3_1751462265443.jpg";
 import ambulanceImg from "@assets/nationalfire2_1751462265445.webp";
 
 const AboutPage: React.FC = () => {
-  const { data, isLoading } = useQuery({
+  const { data, isLoading } = useQuery<{ aboutStats: { yearsExperience: number; customersServed: number; productsSupplied: number } }>({
     queryKey: [API_ENDPOINTS.ABOUT_STATS],
+  });
+
+  const { data: aboutContentData } = useQuery<{ aboutContent: { introTitle: string; content: string } | null }>({
+    queryKey: [API_ENDPOINTS.ABOUT_CONTENT],
   });
 
   const structuredData = generateStructuredData('organization');
 
   const aboutStats = data?.aboutStats;
+  const aboutContent = aboutContentData?.aboutContent;
   const counterRef = useRef<HTMLDivElement>(null);
   const [hasAnimated, setHasAnimated] = useState(false);
 
@@ -99,13 +104,24 @@ const AboutPage: React.FC = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
               <div className="mb-8">
-                <h3 className="text-2xl font-bold text-gray-900 font-montserrat mb-4">Our Company</h3>
-                <p className="text-gray-600 mb-4 leading-relaxed">
-                  At National Fire Safe Pvt. Ltd., safety and innovation drive everything we do. Since 2009, we've been dedicated to protecting lives and property across Nepal with top-tier fire safety, electric vehicles, and emergency solutions.
-                </p>
-                <p className="text-gray-600 mb-6 leading-relaxed">
-                  As a premier provider in Nepal, we supply comprehensive solutions including firefighting equipment, emergency vehicles, and eco-friendly transport options, complemented by expert consultation, professional installation, and reliable after-sales maintenance.
-                </p>
+                <h3 className="text-2xl font-bold text-gray-900 font-montserrat mb-4">
+                  {aboutContent?.introTitle || "Our Company"}
+                </h3>
+                {aboutContent?.content ? (
+                  <div 
+                    className="text-gray-600 mb-6 leading-relaxed prose prose-gray max-w-none"
+                    dangerouslySetInnerHTML={{ __html: aboutContent.content }}
+                  />
+                ) : (
+                  <>
+                    <p className="text-gray-600 mb-4 leading-relaxed">
+                      At National Fire Safe Pvt. Ltd., safety and innovation drive everything we do. Since 2009, we've been dedicated to protecting lives and property across Nepal with top-tier fire safety, electric vehicles, and emergency solutions.
+                    </p>
+                    <p className="text-gray-600 mb-6 leading-relaxed">
+                      As a premier provider in Nepal, we supply comprehensive solutions including firefighting equipment, emergency vehicles, and eco-friendly transport options, complemented by expert consultation, professional installation, and reliable after-sales maintenance.
+                    </p>
+                  </>
+                )}
               </div>
 
               <div className="bg-gradient-to-r from-red-50 to-blue-50 p-6 rounded-lg mb-6">

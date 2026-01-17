@@ -7,7 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import { API_ENDPOINTS } from "@/lib/config";
 
 const HeroSection: React.FC = () => {
-  const { data } = useQuery({
+  const { data } = useQuery<{ contactInfo: { whatsapp?: string } }>({
     queryKey: [API_ENDPOINTS.CONTACT_INFO],
   });
 
@@ -19,10 +19,10 @@ const HeroSection: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
         <div className="text-center md:text-left md:max-w-2xl">
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white font-montserrat leading-tight">
-            Fire Safety Equipment Nepal - Emergency Vehicles & Fire Protection Services
+            Importer and Supplier of Firefighting Vehicles, Special Vehicles, Ambulances, and Safety Equipments
           </h2>
           <p className="mt-6 text-xl text-gray-200 max-w-3xl">
-            Leading supplier of fire extinguishers, emergency vehicles, ambulances, and complete fire protection services in Kathmandu, Bhaktpur and across Nepal. Government approved fire safety equipment for hospitals, municipalities and industries.
+            Leading supplier of fire extinguishers, fire trucks, emergency vehicles, ambulances, and comprehensive fire protection services across Nepal. Government-approved fire safety equipment provider serving federal, provincial, metropolitan, and municipal authorities, security agencies, industries, and private sector organizations.
           </p>
           <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
             <Link href="/contact">

@@ -173,10 +173,19 @@ const Footer: React.FC = () => {
                 <MapPin className="mt-1 mr-3 text-primary" size={18} />
                 <span className="text-gray-400">{contactInfo?.address || config.contactAddress}</span>
               </li>
-              <li className="flex items-center">
-                <Phone className="mr-3 text-primary" size={18} />
-                <span className="text-gray-400">{contactInfo?.phone || config.contactPhone}</span>
-              </li>
+              {contactInfo?.phones && contactInfo.phones.length > 0 ? (
+                contactInfo.phones.map((phone, index) => (
+                  <li key={index} className="flex items-center">
+                    <Phone className="mr-3 text-primary" size={18} />
+                    <span className="text-gray-400">{phone}</span>
+                  </li>
+                ))
+              ) : (
+                <li className="flex items-center">
+                  <Phone className="mr-3 text-primary" size={18} />
+                  <span className="text-gray-400">{config.contactPhone}</span>
+                </li>
+              )}
               <li className="flex items-center">
                 <Mail className="mr-3 text-primary" size={18} />
                 <span className="text-gray-400">{contactInfo?.email || config.contactEmail}</span>
