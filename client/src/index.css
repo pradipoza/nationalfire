@@ -208,14 +208,14 @@ main::-webkit-scrollbar-thumb:hover {
   }
 
   .hero-section {
-    background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.7)), url('https://media.istockphoto.com/id/901429536/id/foto/truk-pemadam-kebakaran-new-york.jpg?s=2048x2048&w=is&k=20&c=hrs5L8-WdX4PaypMCniPx1HZdhRua7iU3Oc7VPtFmDw=');
+    background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.7)), url('attached_assets/ChatGPT_Image_Jan_17,_2026,_10_22_03_PM_1768667849192.png');
     background-size: cover;
     background-position: center;
     @apply min-h-screen flex items-center;
   }
 
   .counter-section {
-    background-image: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), url('https://images.unsplash.com/photo-1530018352490-c6eef07fd7e0?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80');
+    background-image: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), url('https://replit.com/@pradipojha406/NationalFireTracker#attached_assets/ChatGPT_Image_Jan_17,_2026,_10_22_03_PM_1768667849192.png');
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
