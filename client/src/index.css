@@ -207,12 +207,6 @@ main::-webkit-scrollbar-thumb:hover {
     font-size: 0.875em;
   }
 
-  .hero-section {
-    background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.7)), url('/attached_assets/ChatGPT_Image_Jan_17,_2026,_10_22_03_PM_1768668088621.png');
-    background-size: cover;
-    background-position: center;
-    @apply min-h-screen flex items-center;
-  }
 
   .counter-section {
     background-image: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), url('https://replit.com/@pradipojha406/NationalFireTracker#attached_assets/ChatGPT_Image_Jan_17,_2026,_10_22_03_PM_1768667849192.png');
