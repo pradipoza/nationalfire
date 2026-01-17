@@ -1,7 +1,6 @@
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
-import { Check } from "lucide-react";
 import { API_ENDPOINTS } from "@/lib/config";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -58,40 +57,6 @@ const AboutPreview: React.FC = () => {
                 </p>
               </>
             )}
-            <ul className="space-y-3">
-              <li className="flex items-start">
-                <div className="flex-shrink-0 h-6 w-6 rounded-full bg-red-600 flex items-center justify-center mt-1">
-                  <Check className="h-4 w-4 text-white" />
-                </div>
-                <span className="ml-3 text-gray-700">
-                  Firefighting equipment & suppression systems
-                </span>
-              </li>
-              <li className="flex items-start">
-                <div className="flex-shrink-0 h-6 w-6 rounded-full bg-blue-600 flex items-center justify-center mt-1">
-                  <Check className="h-4 w-4 text-white" />
-                </div>
-                <span className="ml-3 text-gray-700">
-                  Electric ambulances for rapid medical response
-                </span>
-              </li>
-              <li className="flex items-start">
-                <div className="flex-shrink-0 h-6 w-6 rounded-full bg-green-600 flex items-center justify-center mt-1">
-                  <Check className="h-4 w-4 text-white" />
-                </div>
-                <span className="ml-3 text-gray-700">
-                  Eco-friendly electric buses & transport solutions
-                </span>
-              </li>
-              <li className="flex items-start">
-                <div className="flex-shrink-0 h-6 w-6 rounded-full bg-purple-600 flex items-center justify-center mt-1">
-                  <Check className="h-4 w-4 text-white" />
-                </div>
-                <span className="ml-3 text-gray-700">
-                  Expert consultation & professional installation
-                </span>
-              </li>
-            </ul>
             <div className="mt-8">
               <Link href="/about">
                 <Button className="bg-gradient-to-r from-red-600 to-blue-600 text-white hover:from-red-700 hover:to-blue-700">

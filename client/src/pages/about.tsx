@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { API_ENDPOINTS } from "@/lib/config";
 import { Button } from "@/components/ui/button";
-import { Check, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "wouter";
 import CustomerSection from "@/components/CustomerSection";
@@ -122,30 +122,6 @@ const AboutPage: React.FC = () => {
                     </p>
                   </>
                 )}
-              </div>
-
-              <div className="bg-gradient-to-r from-red-50 to-blue-50 p-6 rounded-lg mb-6">
-                <h4 className="text-lg font-semibold text-gray-900 mb-3">Our Comprehensive Offerings:</h4>
-                <ul className="space-y-2">
-                  <li className="flex items-start">
-                    <div className="flex-shrink-0 h-6 w-6 rounded-full bg-red-600 flex items-center justify-center mt-1">
-                      <Check className="h-4 w-4 text-white" />
-                    </div>
-                    <span className="ml-3 text-gray-700">Firefighting equipment: extinguishers, hydrants, suppression systems, and accessories</span>
-                  </li>
-                  <li className="flex items-start">
-                    <div className="flex-shrink-0 h-6 w-6 rounded-full bg-blue-600 flex items-center justify-center mt-1">
-                      <Check className="h-4 w-4 text-white" />
-                    </div>
-                    <span className="ml-3 text-gray-700">Emergency vehicles: fully equipped electric ambulances for rapid medical response</span>
-                  </li>
-                  <li className="flex items-start">
-                    <div className="flex-shrink-0 h-6 w-6 rounded-full bg-green-600 flex items-center justify-center mt-1">
-                      <Check className="h-4 w-4 text-white" />
-                    </div>
-                    <span className="ml-3 text-gray-700">Eco-friendly transport: electric buses for safe, sustainable transportation</span>
-                  </li>
-                </ul>
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
