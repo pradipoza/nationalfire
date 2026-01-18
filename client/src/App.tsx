@@ -1,11 +1,13 @@
 import { Switch, Route, useLocation } from "wouter";
 import { queryClient } from "./lib/queryClient";
-import { QueryClientProvider } from "@tanstack/react-query";
+import { QueryClientProvider, useQuery } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/not-found";
 import { AuthProvider } from "@/context/AuthContext";
 import { useEffect } from "react";
+import { API_ENDPOINTS } from "@/lib/config";
+import type { SiteSettings } from "@shared/schema";
 
 // Layouts
 import MainLayout from "@/layouts/MainLayout";
@@ -48,6 +50,33 @@ function ScrollToTop() {
     window.scrollTo(0, 0);
   }, [location]);
   
+  return null;
+}
+
+const DEFAULT_FAVICON = "/attached_assets/image_1768730169464.png";
+
+function DynamicFavicon() {
+  const { data: siteSettingsData } = useQuery<{ siteSettings: SiteSettings | null }>({
+    queryKey: [API_ENDPOINTS.SITE_SETTINGS],
+  });
+
+  useEffect(() => {
+    const logo = siteSettingsData?.siteSettings?.logo;
+    let link = document.querySelector("link[rel='icon']") as HTMLLinkElement;
+    
+    if (!link) {
+      link = document.createElement("link");
+      link.rel = "icon";
+      document.head.appendChild(link);
+    }
+    
+    if (logo && (logo.startsWith("data:image/") || logo.startsWith("http"))) {
+      link.href = logo;
+    } else {
+      link.href = DEFAULT_FAVICON;
+    }
+  }, [siteSettingsData]);
+
   return null;
 }
 
@@ -243,6 +272,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <TooltipProvider>
+          <DynamicFavicon />
           <Toaster />
           <Router />
         </TooltipProvider>

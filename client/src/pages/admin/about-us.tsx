@@ -6,8 +6,9 @@ import { useToast } from "@/hooks/use-toast";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AboutStats, AboutContent } from "@shared/schema";
+import { AboutStats, AboutContent, SiteSettings } from "@shared/schema";
 import { RichTextEditor } from "@/components/ui/rich-text-editor";
+import defaultLogoImg from "@assets/image_1768730169464.png";
 
 import {
   Card,
@@ -38,6 +39,8 @@ import {
   Loader2,
   Save,
   Info,
+  Upload,
+  Image,
 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -53,8 +56,14 @@ const aboutStatsSchema = z.object({
   productsSupplied: z.number().min(0),
 });
 
+const siteSettingsSchema = z.object({
+  logo: z.string().optional(),
+  companyName: z.string().min(1, "Company name is required"),
+});
+
 type AboutContentFormValues = z.infer<typeof aboutContentSchema>;
 type AboutStatsFormValues = z.infer<typeof aboutStatsSchema>;
+type SiteSettingsFormValues = z.infer<typeof siteSettingsSchema>;
 
 const AdminAboutUs: React.FC = () => {
   const { toast } = useToast();
@@ -68,6 +77,12 @@ const AdminAboutUs: React.FC = () => {
   const { data: aboutStatsData, isLoading: isLoadingStats } = useQuery<{ aboutStats: AboutStats }>({
     queryKey: [API_ENDPOINTS.ABOUT_STATS],
   });
+
+  const { data: siteSettingsData, isLoading: isLoadingSettings } = useQuery<{ siteSettings: SiteSettings | null }>({
+    queryKey: [API_ENDPOINTS.SITE_SETTINGS],
+  });
+
+  const [logoPreview, setLogoPreview] = React.useState<string | null>(null);
 
   const contentForm = useForm<AboutContentFormValues>({
     resolver: zodResolver(aboutContentSchema),
@@ -84,6 +99,14 @@ const AdminAboutUs: React.FC = () => {
       yearsExperience: 35,
       customersServed: 500,
       productsSupplied: 1200,
+    },
+  });
+
+  const settingsForm = useForm<SiteSettingsFormValues>({
+    resolver: zodResolver(siteSettingsSchema),
+    defaultValues: {
+      logo: "",
+      companyName: "National Fire Safe Pvt. Ltd.",
     },
   });
 
@@ -108,6 +131,19 @@ const AdminAboutUs: React.FC = () => {
       });
     }
   }, [aboutStatsData, statsForm]);
+
+  React.useEffect(() => {
+    if (siteSettingsData?.siteSettings) {
+      const settings = siteSettingsData.siteSettings;
+      settingsForm.reset({
+        logo: settings.logo || "",
+        companyName: settings.companyName || "National Fire Safe Pvt. Ltd.",
+      });
+      if (settings.logo) {
+        setLogoPreview(settings.logo);
+      }
+    }
+  }, [siteSettingsData, settingsForm]);
 
   const updateContentMutation = useMutation({
     mutationFn: async (data: AboutContentFormValues) => {
@@ -151,12 +187,71 @@ const AdminAboutUs: React.FC = () => {
     },
   });
 
+  const updateSettingsMutation = useMutation({
+    mutationFn: async (data: SiteSettingsFormValues) => {
+      const res = await apiRequest("PUT", API_ENDPOINTS.SITE_SETTINGS, data);
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [API_ENDPOINTS.SITE_SETTINGS] });
+      toast({
+        title: "Branding Updated",
+        description: "Site branding has been updated successfully",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to update branding. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
   const onContentSubmit = (values: AboutContentFormValues) => {
     updateContentMutation.mutate(values);
   };
 
   const onStatsSubmit = (values: AboutStatsFormValues) => {
     updateStatsMutation.mutate(values);
+  };
+
+  const onSettingsSubmit = (values: SiteSettingsFormValues) => {
+    updateSettingsMutation.mutate(values);
+  };
+
+  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const validTypes = ["image/png", "image/jpeg", "image/jpg", "image/webp", "image/gif"];
+      const maxSizeBytes = 2 * 1024 * 1024;
+      
+      if (!validTypes.includes(file.type)) {
+        toast({
+          title: "Invalid File Type",
+          description: "Please upload a PNG, JPEG, WebP, or GIF image.",
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      if (file.size > maxSizeBytes) {
+        toast({
+          title: "File Too Large",
+          description: "Logo image must be smaller than 2MB.",
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result as string;
+        setLogoPreview(base64String);
+        settingsForm.setValue("logo", base64String);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   return (
@@ -167,9 +262,10 @@ const AdminAboutUs: React.FC = () => {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-2">
+        <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="content">Page Content</TabsTrigger>
           <TabsTrigger value="stats">Counter Statistics</TabsTrigger>
+          <TabsTrigger value="branding">Site Branding</TabsTrigger>
         </TabsList>
 
         <TabsContent value="content" className="mt-6">
@@ -367,6 +463,102 @@ const AdminAboutUs: React.FC = () => {
                       ) : (
                         <>
                           <Save className="mr-2 h-4 w-4" /> Update Statistics
+                        </>
+                      )}
+                    </Button>
+                  </form>
+                </Form>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="branding" className="mt-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Site Branding</CardTitle>
+              <CardDescription>
+                Manage your company logo and branding that appears across the website
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Alert className="mb-6">
+                <Image className="h-4 w-4" />
+                <AlertTitle>Logo & Branding</AlertTitle>
+                <AlertDescription>
+                  Upload your company logo here. This logo will be displayed in the navbar, footer, and as the browser favicon.
+                </AlertDescription>
+              </Alert>
+
+              {isLoadingSettings ? (
+                <div className="space-y-4">
+                  <Skeleton className="h-32 w-32" />
+                  <Skeleton className="h-10 w-full" />
+                </div>
+              ) : (
+                <Form {...settingsForm}>
+                  <form onSubmit={settingsForm.handleSubmit(onSettingsSubmit)} className="space-y-6">
+                    <div className="space-y-4">
+                      <FormLabel>Company Logo</FormLabel>
+                      <div className="flex items-start gap-6">
+                        <div className="border rounded-lg p-4 bg-gray-50">
+                          {logoPreview ? (
+                            <img
+                              src={logoPreview}
+                              alt="Logo Preview"
+                              className="h-24 w-auto object-contain"
+                            />
+                          ) : (
+                            <img
+                              src={defaultLogoImg}
+                              alt="Default Logo"
+                              className="h-24 w-auto object-contain"
+                            />
+                          )}
+                        </div>
+                        <div className="flex-1 space-y-2">
+                          <Input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleLogoUpload}
+                            className="cursor-pointer"
+                          />
+                          <p className="text-sm text-gray-500">
+                            Recommended: PNG or JPG, at least 200x200 pixels
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <FormField
+                      control={settingsForm.control}
+                      name="companyName"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Company Name</FormLabel>
+                          <FormControl>
+                            <Input placeholder="National Fire Safe Pvt. Ltd." {...field} />
+                          </FormControl>
+                          <FormDescription>
+                            The company name displayed next to the logo in the navbar
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <Button
+                      type="submit"
+                      className="bg-primary hover:bg-primary/90"
+                      disabled={updateSettingsMutation.isPending}
+                    >
+                      {updateSettingsMutation.isPending ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Saving...
+                        </>
+                      ) : (
+                        <>
+                          <Save className="mr-2 h-4 w-4" /> Save Branding
                         </>
                       )}
                     </Button>

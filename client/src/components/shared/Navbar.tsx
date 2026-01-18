@@ -3,14 +3,28 @@ import { Link, useLocation } from "wouter";
 import { cn } from "@/lib/utils";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { config } from "@/lib/config";
-import logoImg from "@assets/image_1768730169464.png";
+import { config, API_ENDPOINTS } from "@/lib/config";
+import { useQuery } from "@tanstack/react-query";
+import type { SiteSettings } from "@shared/schema";
+import defaultLogoImg from "@assets/image_1768730169464.png";
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [location] = useLocation();
 
-  // Close mobile menu when location changes
+  const { data: siteSettingsData } = useQuery<{ siteSettings: SiteSettings | null }>({
+    queryKey: [API_ENDPOINTS.SITE_SETTINGS],
+  });
+
+  const siteSettings = siteSettingsData?.siteSettings;
+  const logoFromSettings = siteSettings?.logo;
+  const isValidLogo = logoFromSettings && (
+    logoFromSettings.startsWith("data:image/") || 
+    logoFromSettings.startsWith("http")
+  );
+  const logoSrc = isValidLogo ? logoFromSettings : defaultLogoImg;
+  const companyName = siteSettings?.companyName || "National Fire Safe Pvt Ltd";
+
   useEffect(() => {
     setIsOpen(false);
   }, [location]);
@@ -28,12 +42,12 @@ const Navbar: React.FC = () => {
           <div className="flex">
             <Link href="/" className="flex-shrink-0 flex items-center">
               <img 
-                src={logoImg} 
-                alt="National Fire Safe Pvt Ltd" 
+                src={logoSrc} 
+                alt={companyName} 
                 className="h-12 w-auto mr-2"
               />
               <span className="text-xl font-bold text-gray-900 font-montserrat">
-                National Fire Safe Pvt Ltd
+                {companyName}
               </span>
             </Link>
           </div>

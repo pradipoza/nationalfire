@@ -4,8 +4,8 @@ import { useQuery } from "@tanstack/react-query";
 import { API_ENDPOINTS } from "@/lib/config";
 import { config } from "@/lib/config";
 import { Facebook, Twitter, Instagram, Linkedin, MapPin, Phone, Mail } from "lucide-react";
-import type { ContactInfo, Product } from "@shared/schema";
-import logoImg from "@assets/image_1768730169464.png";
+import type { ContactInfo, Product, SiteSettings } from "@shared/schema";
+import defaultLogoImg from "@assets/image_1768730169464.png";
 
 const Footer: React.FC = () => {
   const { data } = useQuery<{ contactInfo: ContactInfo } | undefined>({
@@ -16,8 +16,19 @@ const Footer: React.FC = () => {
     queryKey: [API_ENDPOINTS.PRODUCTS],
   });
 
+  const { data: siteSettingsData } = useQuery<{ siteSettings: SiteSettings | null }>({
+    queryKey: [API_ENDPOINTS.SITE_SETTINGS],
+  });
+
   const contactInfo = data?.contactInfo;
   const products = productsData?.products || [];
+  const siteSettings = siteSettingsData?.siteSettings;
+  const logoFromSettings = siteSettings?.logo;
+  const isValidLogo = logoFromSettings && (
+    logoFromSettings.startsWith("data:image/") || 
+    logoFromSettings.startsWith("http")
+  );
+  const logoSrc = isValidLogo ? logoFromSettings : defaultLogoImg;
 
   return (
     <footer className="bg-gray-900 text-white pt-16 pb-6">
@@ -26,8 +37,8 @@ const Footer: React.FC = () => {
           <div>
             <div className="mb-6">
               <img 
-                src={logoImg} 
-                alt="National Fire Safe Pvt Ltd" 
+                src={logoSrc} 
+                alt={siteSettings?.companyName || "National Fire Safe Pvt Ltd"} 
                 className="h-16 w-auto"
               />
             </div>
