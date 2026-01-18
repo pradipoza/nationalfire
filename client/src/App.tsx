@@ -61,7 +61,7 @@ function DynamicFavicon() {
   });
 
   useEffect(() => {
-    const logo = siteSettingsData?.siteSettings?.logo;
+    const faviconUrl = siteSettingsData?.siteSettings?.faviconUrl;
     let link = document.querySelector("link[rel='icon']") as HTMLLinkElement;
     
     if (!link) {
@@ -70,8 +70,8 @@ function DynamicFavicon() {
       document.head.appendChild(link);
     }
     
-    if (logo && (logo.startsWith("data:image/") || logo.startsWith("http"))) {
-      link.href = logo;
+    if (faviconUrl && (faviconUrl.startsWith("data:image/") || faviconUrl.startsWith("http"))) {
+      link.href = faviconUrl;
     } else {
       link.href = DEFAULT_FAVICON;
     }

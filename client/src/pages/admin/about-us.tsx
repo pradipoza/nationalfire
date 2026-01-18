@@ -58,6 +58,7 @@ const aboutStatsSchema = z.object({
 
 const siteSettingsSchema = z.object({
   logo: z.string().optional(),
+  faviconUrl: z.string().optional(),
   companyName: z.string().min(1, "Company name is required"),
 });
 
@@ -83,6 +84,7 @@ const AdminAboutUs: React.FC = () => {
   });
 
   const [logoPreview, setLogoPreview] = React.useState<string | null>(null);
+  const [faviconPreview, setFaviconPreview] = React.useState<string | null>(null);
 
   const contentForm = useForm<AboutContentFormValues>({
     resolver: zodResolver(aboutContentSchema),
@@ -106,6 +108,7 @@ const AdminAboutUs: React.FC = () => {
     resolver: zodResolver(siteSettingsSchema),
     defaultValues: {
       logo: "",
+      faviconUrl: "",
       companyName: "National Fire Safe Pvt. Ltd.",
     },
   });
@@ -137,10 +140,14 @@ const AdminAboutUs: React.FC = () => {
       const settings = siteSettingsData.siteSettings;
       settingsForm.reset({
         logo: settings.logo || "",
+        faviconUrl: settings.faviconUrl || "",
         companyName: settings.companyName || "National Fire Safe Pvt. Ltd.",
       });
       if (settings.logo) {
         setLogoPreview(settings.logo);
+      }
+      if (settings.faviconUrl) {
+        setFaviconPreview(settings.faviconUrl);
       }
     }
   }, [siteSettingsData, settingsForm]);
@@ -249,6 +256,40 @@ const AdminAboutUs: React.FC = () => {
         const base64String = reader.result as string;
         setLogoPreview(base64String);
         settingsForm.setValue("logo", base64String);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleFaviconUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const validTypes = ["image/png", "image/jpeg", "image/jpg", "image/webp", "image/gif", "image/x-icon", "image/ico"];
+      const maxSizeBytes = 500 * 1024;
+      
+      if (!validTypes.includes(file.type)) {
+        toast({
+          title: "Invalid File Type",
+          description: "Please upload a PNG, JPEG, ICO, or WebP image for favicon.",
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      if (file.size > maxSizeBytes) {
+        toast({
+          title: "File Too Large",
+          description: "Favicon image must be smaller than 500KB.",
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result as string;
+        setFaviconPreview(base64String);
+        settingsForm.setValue("faviconUrl", base64String);
       };
       reader.readAsDataURL(file);
     }
@@ -486,7 +527,7 @@ const AdminAboutUs: React.FC = () => {
                 <Image className="h-4 w-4" />
                 <AlertTitle>Logo & Branding</AlertTitle>
                 <AlertDescription>
-                  Upload your company logo here. This logo will be displayed in the navbar, footer, and as the browser favicon.
+                  Upload your company logo and favicon separately. The logo appears in the navbar and footer, while the favicon is the small icon shown in browser tabs.
                 </AlertDescription>
               </Alert>
 
@@ -524,7 +565,37 @@ const AdminAboutUs: React.FC = () => {
                             className="cursor-pointer"
                           />
                           <p className="text-sm text-gray-500">
-                            Recommended: PNG or JPG, at least 200x200 pixels
+                            Recommended: PNG or JPG, at least 200x200 pixels. Max 2MB.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="space-y-4">
+                      <FormLabel>Browser Favicon</FormLabel>
+                      <div className="flex items-start gap-6">
+                        <div className="border rounded-lg p-4 bg-gray-50">
+                          {faviconPreview ? (
+                            <img
+                              src={faviconPreview}
+                              alt="Favicon Preview"
+                              className="h-16 w-16 object-contain"
+                            />
+                          ) : (
+                            <div className="h-16 w-16 flex items-center justify-center bg-gray-200 rounded text-gray-400 text-xs">
+                              No favicon
+                            </div>
+                          )}
+                        </div>
+                        <div className="flex-1 space-y-2">
+                          <Input
+                            type="file"
+                            accept="image/png,image/jpeg,image/x-icon,image/ico,image/webp"
+                            onChange={handleFaviconUpload}
+                            className="cursor-pointer"
+                          />
+                          <p className="text-sm text-gray-500">
+                            Recommended: PNG or ICO, 32x32 or 64x64 pixels. Max 500KB.
                           </p>
                         </div>
                       </div>
