@@ -231,7 +231,7 @@ const AdminAboutUs: React.FC = () => {
     const file = e.target.files?.[0];
     if (file) {
       const validTypes = ["image/png", "image/jpeg", "image/jpg", "image/webp", "image/gif"];
-      const maxSizeBytes = 2 * 1024 * 1024;
+      const maxSizeBytes = 5 * 1024 * 1024;
       
       if (!validTypes.includes(file.type)) {
         toast({
@@ -245,7 +245,7 @@ const AdminAboutUs: React.FC = () => {
       if (file.size > maxSizeBytes) {
         toast({
           title: "File Too Large",
-          description: "Logo image must be smaller than 2MB.",
+          description: "Logo image must be smaller than 5MB.",
           variant: "destructive",
         });
         return;
@@ -265,7 +265,7 @@ const AdminAboutUs: React.FC = () => {
     const file = e.target.files?.[0];
     if (file) {
       const validTypes = ["image/png", "image/jpeg", "image/jpg", "image/webp", "image/gif", "image/x-icon", "image/ico"];
-      const maxSizeBytes = 500 * 1024;
+      const maxSizeBytes = 1 * 1024 * 1024;
       
       if (!validTypes.includes(file.type)) {
         toast({
@@ -279,7 +279,7 @@ const AdminAboutUs: React.FC = () => {
       if (file.size > maxSizeBytes) {
         toast({
           title: "File Too Large",
-          description: "Favicon image must be smaller than 500KB.",
+          description: "Favicon image must be smaller than 1MB.",
           variant: "destructive",
         });
         return;
@@ -565,7 +565,7 @@ const AdminAboutUs: React.FC = () => {
                             className="cursor-pointer"
                           />
                           <p className="text-sm text-gray-500">
-                            Recommended: PNG or JPG, at least 200x200 pixels. Max 2MB.
+                            Recommended: PNG or JPG, at least 200x200 pixels. Max 5MB.
                           </p>
                         </div>
                       </div>
@@ -595,7 +595,7 @@ const AdminAboutUs: React.FC = () => {
                             className="cursor-pointer"
                           />
                           <p className="text-sm text-gray-500">
-                            Recommended: PNG or ICO, 32x32 or 64x64 pixels. Max 500KB.
+                            Recommended: PNG or ICO, 32x32 or 64x64 pixels. Max 1MB.
                           </p>
                         </div>
                       </div>
