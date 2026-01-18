@@ -30,8 +30,11 @@ const Navbar: React.FC = () => {
               <img 
                 src={logoImg} 
                 alt="National Fire Safe Pvt Ltd" 
-                className="h-12 w-auto"
+                className="h-12 w-auto mr-2"
               />
+              <span className="text-xl font-bold text-gray-900 font-montserrat">
+                National Fire Safe Pvt Ltd
+              </span>
             </Link>
           </div>
 
